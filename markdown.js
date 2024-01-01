@@ -12,7 +12,7 @@ function processMarkdownFile(filePath) {
   const markdown = fs.readFileSync(filePath, 'utf8');
   const html = convertMarkdownToHTML(markdown);
 
-  const htmlFilePath = filePath.replace('.md', '.html');
+  const htmlFilePath = "docs/" + filePath.replace('.md', '.html').split("/")[1];
   fs.writeFileSync(htmlFilePath, html, 'utf8');
 
   console.log(`Converted: ${filePath} => ${htmlFilePath}`);
