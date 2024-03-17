@@ -41,6 +41,7 @@
     <table id="data">
         <thead>
             <tr>
+                <th>Num</th>
                 <th>Sentence</th>
                 <th>English Translation</th>
                 <th>Complexity</th>
@@ -72,16 +73,17 @@
 
                     paginatedData.forEach((item, index) => {
                         const row = table.insertRow();
-                        row.insertCell(0).innerText = item.sentence;
-                        row.insertCell(1).innerText = item.english_translation;
-                        row.insertCell(2).innerText = item.complexity;
+                        row.insertCell(0).innerText = startIndex + index + 1;
+                        row.insertCell(1).innerText = item.sentence;
+                        row.insertCell(2).innerText = item.english_translation;
+                        row.insertCell(3).innerText = item.complexity;
                         
-                        for (let i = 3; i <= 6; i++) {
+                        for (let i = 4; i <= 7; i++) {
                             const audioCell = row.insertCell(i);
                             const audio = document.createElement('audio');
                             audio.controls = true;
                             const source = document.createElement('source');
-                            const audio_num = i - 3
+                            const audio_num = i - 4
                             source.src = `https://audio-files.river.berlin/audio-mp3/${startIndex + index + 1}_${audio_num}.mp3`;
                             source.type = 'audio/mpeg';
                             audio.appendChild(source);
