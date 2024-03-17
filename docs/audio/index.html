@@ -58,7 +58,7 @@
     <ul class="pagination" id="pagination"></ul>
 
     <script>
-        fetch('https://audio.river.berlin/audio.json')
+        fetch('https://audio-files.river.berlin/german_sentences.json')
             .then(response => response.json())
             .then(data => {
                 const table = document.getElementById('data').getElementsByTagName('tbody')[0];
