@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JSON Data Display</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .pagination {
+            display: flex;
+            justify-content: center;
+            list-style-type: none;
+            padding: 0;
+        }
+        .pagination li {
+            display: inline-block;
+            margin: 0 5px;
+        }
+        .pagination li a {
+            text-decoration: none;
+            padding: 5px 10px;
+            border: 1px solid #ccc;
+            color: #333;
+        }
+        .pagination li a.active {
+            background-color: #007bff;
+            color: #fff;
+            border: 1px solid #007bff;
+        }
+    </style>
+</head>
+<body>
+    <table id="data">
+        <thead>
+            <tr>
+                <th>Sentence</th>
+                <th>English Translation</th>
+                <th>Complexity</th>
+                <th>Audio 1</th>
+                <th>Audio 2</th>
+                <th>Audio 3</th>
+                <th>Audio 4</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+    <ul class="pagination" id="pagination"></ul>
+
+    <script>
+        fetch('https://audio.river.berlin/audio.json')
+            .then(response => response.json())
+            .then(data => {
+                const table = document.getElementById('data').getElementsByTagName('tbody')[0];
+                const pagination = document.getElementById('pagination');
+                const itemsPerPage = 50;
+                let currentPage = 1;
+
+                function displayData(page) {
+                    table.innerHTML = '';
+                    pagination.innerHTML = '';
+                    const startIndex = (page - 1) * itemsPerPage;
+                    const endIndex = startIndex + itemsPerPage;
+                    const paginatedData = data.slice(startIndex, endIndex);
+
+                    paginatedData.forEach((item, index) => {
+                        const row = table.insertRow();
+                        row.insertCell(0).innerText = item.sentence;
+                        row.insertCell(1).innerText = item.english_translation;
+                        row.insertCell(2).innerText = item.complexity;
+                        
+                        for (let i = 3; i <= 6; i++) {
+                            const audioCell = row.insertCell(i);
+                            const audio = document.createElement('audio');
+                            audio.controls = true;
+                            const source = document.createElement('source');
+                            const audio_num = i - 2
+                            source.src = `audio-files.river.berlin/audio-mp3/${index}_${audio_num}.mp3`;
+                            source.type = 'audio/mpeg';
+                            audio.appendChild(source);
+                            audioCell.appendChild(audio);
+                        }
+                    });
+
+                    const totalPages = Math.ceil(data.length / itemsPerPage);
+                    for (let i = 1; i <= totalPages; i++) {
+                        const li = document.createElement('li');
+                        const link = document.createElement('a');
+                        link.href = '#';
+                        link.innerText = i;
+                        if (i === currentPage) {
+                            link.classList.add('active');
+                        }
+                        link.addEventListener('click', () => {
+                            currentPage = i;
+                            displayData(currentPage);
+                        });
+                        li.appendChild(link);
+                        pagination.appendChild(li);
+                    }
+                }
+
+                displayData(currentPage);
+            })
+            .catch(error => console.error('Error fetching data:', error));
+    </script>
+</body>
+</html>
