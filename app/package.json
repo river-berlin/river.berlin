@@ -4,7 +4,7 @@
 	"private": true,
 	"scripts": {
 		"dev": "vite dev",
-		"build": "vite build && rm -rf ../docs && cp -r ./build ../docs",
+		"build": "vite build && rm -rf ../docs && cp -r ./build/ ../docs && cp ./docs-common/* ../docs",
 		"preview": "vite preview",
 		"test": "npm run test:integration && npm run test:unit",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
