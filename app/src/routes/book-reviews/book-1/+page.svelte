@@ -1,0 +1,45 @@
+<script>
+    import image from "$lib/images/meditating-enby.svg"
+    import hhImage from "$lib/images/happiness_hypothesis_image.svg"
+</script>
+
+<a class="header-link" href="/">
+    <div class="header">
+        <img src="{image}" alt="a meditating non-binary person" height="80">
+        <h1>River's blog</h1>
+    </div>
+</a>
+
+<div class="content">
+    <div class="stuff book-review">
+        <h1>Book take away #1 : The Happiness hypothesis by Jonathan Heidt</h1>
+    </div>
+
+    <img src="{hhImage}" alt="" width="200">
+
+    <div class="review">
+        <h3 id="disclaimer">Disclaimer</h3>
+            <p>As I am writing this takeaway, I am aware that I am not quite experienced at writing such content, this is my first such article, and I hope this can be of quite a bit of utilization to other individuals</p>
+            <p>This takeaway does contain spoilers from the book</p>
+            <h3 id="stuffiamtakingawayfromthebook">Stuff I am taking away from the book</h3>
+            <p>The major value of Heidt's work to me comes from my relation it - to me, atleast</p>
+            <p>To a certain degree, quite a few of Heidt's points in the book do "intuitively" connect with me very well, </p>
+            <p>At the start of Heidt's book, Heidt does give a notion of the human mind as the "Rider" and the "Elephant", the Elephant being close to automated processes and habits we have, and the "Rider" being the conscious self</p>
+            <p>My major take away from this book is that I need to control the <em>elephant</em>, more than consciously choosing the right thing, i.e. controlling the rider - although, that is indeed important too</p>
+            <p>Ideas such as <strong><em>meditation</em></strong> and <strong><em>cognitive behavioral therapy</em></strong> let the rider "train" the elephant into being calmer, not chasing after resources that seem tempting, but rather of ideas that will <em>actually</em> help the individual as a whole</p>
+            <p>Jonathan also gets into - our lack of knowledge as human beings quite significantly on the book, how, we often post-facto reason quite significantly, or have poor evidence to hold up to on our claims - this, when coupled with our push towards seeing the faults of others further than our own faults - ends up harming relationships, because we aren't able to see our own faults, see where <em>we might have gone wrong</em>, </p>
+            <blockquote>
+            <p>Though you see the seven defects of others, we do not see our own ten defects. (Japanese proverb)</p>
+            </blockquote>
+            <p><sub>- Haidt, Jonathan. The Happiness Hypothesis: Finding Modern Truth in Ancient Wisdom (p. 92). Basic Books. Kindle Edition.</sub></p>
+            <p>or, maybe - and this is an extrapolation, and jonathan doesn't explicitly say this, but my therapist did - maybe it doesn't matter who is right or wrong, maybe all that matters is trying to reach a compromise with someone else, and finding a way to make things work out with other people ¯\_(ツ)_/¯</p>
+            <p>Jonathan also posits looking at other human beings and everything else from a more <em>optimistic</em> angle, and how that can be a huge motivation towards actually following through and doing things to go further</p>
+            <p>Lastly, Jonathan's arguments towards altruism, and a rejection of temporary happiness measures (such as buying that big car, or rolex watch) - and push towards virtue ethics (ethics are a habit - i.e. on the elephant, not the rider), did make alot of sense to me holistically and are important points I do take away from this additionally</p>
+            <h3 id="thingsiwishjonathanwouldlookintomore">Things I wish Jonathan would look into more</h3>
+            <p>like I said, this is my first "book takeaway" article, but I really do wish psychologists studying the Indian culture looked further into the caste system and spoke more to individuals from lower-caste backgrounds, and multiple backgrounds in India, in my experience, well - from reading 2 psychology books (this, and polysecure) - I do wish both Jonathan and Jessica Fern would look into writings from individuals of lower caste backgrounds to be able to get a more holistic portrait of Hinduism</p>
+            <h3 id="overall">Overall</h3>
+            <p>I loved the book, I might refine this review in the future, or not, not sure, I think this book has made me aware of quite a few aspects of human behavior that do help me guide and choose the path I wish to choose better</p>
+            <p>I do appreciate the effort Jon made into writing this book alot, thanku :)</p>
+    </div>
+    
+</div>

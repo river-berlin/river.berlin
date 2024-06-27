@@ -1,0 +1,1 @@
+import{k as o}from"./disclose-version.CQKkOcUf.js";function g(r,s,i){i=i==null?null:i+"";var t=r.__attributes??(r.__attributes={});if(o){t[s]=r.getAttribute(s);return}t[s]!==(t[s]=i)&&(i===null?r.removeAttribute(s):r.setAttribute(s,i))}const n=""+new URL("../assets/meditating-enby.Ddx2L9rE.svg",import.meta.url).href;export{n as i,g as s};
