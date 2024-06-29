@@ -1,13 +1,8 @@
 <script>
     import Header from "$lib/header.svelte";
-    import showdown from "showdown"
 
     export let data;
-
-    // convert markdown
-    const converter = new showdown.Converter({metadata : true})
-    const html = converter.makeHtml(data.content)
-    const metadata = converter.getMetadata()
+    let {markdownHTML, metadata, icon} = data;
 </script>
 
 <Header/>
@@ -17,10 +12,10 @@
         <h1>Book take away #1 : {metadata.title}</h1>
     </div>
     
-    <img src="{data.icon}" alt="" width="200">
+    <img src="{icon}" alt="" width="200">
 
     <div class="review">
-        {@html html}
+        {@html markdownHTML}
     </div>
     
 </div>
