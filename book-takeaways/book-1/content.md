@@ -1,5 +1,6 @@
 ---
 title: The Happiness hypothesis by Jonathan Heidt
+icon: icon.svg # maybe wanna always keep this as icon.svg
 ---
 
 
