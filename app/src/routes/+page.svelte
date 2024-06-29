@@ -1,13 +1,8 @@
 <script>
-    import image from "$lib/images/meditating-enby.svg"
+    import Header from "$lib/header.svelte";
 </script>
 
-<a class="header-link" href="/">
-    <div class="header">
-        <img src="{image}" alt="a meditating non-binary person" height="80">
-        <h1>River's blog</h1>
-    </div>
-</a>
+<Header />
 
 <div class="content">
     <div class="stuff book-review">
