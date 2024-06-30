@@ -27,14 +27,21 @@
 
 .stuff.book-review a{
     position: relative;
-    display: inline-block; 
-    background: url('/scroll.svg') no-repeat left center; 
+    display: flex;
     padding: 5px;
-    padding-left: 40px;
     background-size: 20px 20px;
     margin-bottom: 20px;
     text-decoration: none;
     color: black;
+}
+
+.stuff.book-review a img{
+    margin-right: 20px;
+    transition: 1.5s filter;
+}
+
+.stuff.book-review a:hover img{
+    filter: hue-rotate(151deg);
 }
 
 .stuff.book-review a .take-away{
@@ -60,12 +67,12 @@
     right: 0;
     width: 0%;
     height: 2px;
-    transition: 0.3s width;
+    transition: 2s width, 1s background;
 }
 
 .stuff.book-review a:hover::after{
     background: rgb(37, 145, 172);
-    width: calc(100% - 50px);
+    width: calc(100% - 40px);
 }
 
 .content{
