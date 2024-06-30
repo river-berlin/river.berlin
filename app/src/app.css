@@ -26,10 +26,46 @@
 }
 
 .stuff.book-review a{
+    position: relative;
     display: inline-block; 
-    background: url('/book.jpg') no-repeat left center; 
+    background: url('/scroll.svg') no-repeat left center; 
+    padding: 5px;
     padding-left: 40px;
     background-size: 20px 20px;
+    margin-bottom: 20px;
+    text-decoration: none;
+    color: black;
+}
+
+.stuff.book-review a .take-away{
+    font-weight: 500;
+    color: #375883;
+}
+
+.stuff.book-review a::before{
+    content: "";
+    background: #f0e3d4;
+    position: absolute;
+    bottom: 0;
+    left: 40px;
+    width: calc(100% - 40px);
+    height: 2px;
+}
+
+.stuff.book-review a::after{
+    content: "";
+    background: rgb(230, 182, 26);
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 0%;
+    height: 2px;
+    transition: 0.3s width;
+}
+
+.stuff.book-review a:hover::after{
+    background: rgb(37, 145, 172);
+    width: calc(100% - 50px);
 }
 
 .content{
