@@ -20,6 +20,12 @@
 }
 
 .stuff.book-review{
+    display: flex;
+    flex-direction: column;
+
+}
+
+.stuff.book-review a{
     display: inline-block; 
     background: url('/book.jpg') no-repeat left center; 
     padding-left: 40px;

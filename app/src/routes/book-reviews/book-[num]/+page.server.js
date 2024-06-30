@@ -10,5 +10,5 @@ export async function load({ params }) {
     const markdownHTML = converter.makeHtml(markdown)
     const metadata = converter.getMetadata()
 
-    return {markdown, icon, markdownHTML, metadata}
+    return {blogNum : params.num,markdown, icon, markdownHTML, metadata}
 }

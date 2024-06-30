@@ -2,14 +2,14 @@
     import Header from "$lib/header.svelte";
 
     export let data;
-    let {markdownHTML, metadata, icon} = data;
+    let {blogNum, markdownHTML, metadata, icon} = data;
 </script>
 
 <Header/>
 
 <div class="content">
     <div class="stuff book-review">
-        <h1>Book take away #1 : {metadata.title}</h1>
+        <h1>Book take away #{blogNum} : {metadata.title}</h1>
     </div>
     
     <img src="{icon}" alt="" width="200">
