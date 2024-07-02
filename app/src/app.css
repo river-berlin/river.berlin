@@ -37,7 +37,7 @@
 
 .stuff.book-review a img{
     margin-right: 20px;
-    transition: 1.5s filter;
+    transition: 2s filter;
 }
 
 .stuff.book-review a:hover img{
@@ -49,9 +49,15 @@
     color: #375883;
 }
 
+@keyframes underline-color-change {
+    0% {background-color: rgb(240, 227, 212);}
+    50% {background-color: rgb(230, 182, 26);}
+    100% {background-color: rgb(91, 205, 233);}
+}
+
 .stuff.book-review a::before{
     content: "";
-    background: #f0e3d4;
+    background: rgb(240, 227, 212);
     position: absolute;
     bottom: 0;
     left: 40px;
@@ -59,19 +65,9 @@
     height: 2px;
 }
 
-.stuff.book-review a::after{
-    content: "";
-    background: rgb(230, 182, 26);
-    position: absolute;
-    bottom: 0;
-    right: 0;
-    width: 0%;
-    height: 2px;
-    transition: 2s width, 1s background;
-}
-
-.stuff.book-review a:hover::after{
-    background: rgb(37, 145, 172);
+.stuff.book-review a:hover::before{
+    animation: underline-color-change 1s linear;
+    animation-fill-mode: forwards;
     width: calc(100% - 40px);
 }
 
