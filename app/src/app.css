@@ -76,7 +76,6 @@
 .stuff a:hover::before{
     animation: underline-color-change 1s linear;
     animation-fill-mode: forwards;
-    width: calc(100% - 40px);
 }
 
 .content{
