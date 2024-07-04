@@ -15,17 +15,12 @@
     margin-left: 20px;
 }
 
-.stuff{
-    margin: 30px auto;
-}
-
 .stuff.book-review{
     display: flex;
     flex-direction: column;
-
 }
 
-.stuff.book-review a{
+.stuff a{
     position: relative;
     display: flex;
     padding: 5px;
@@ -35,16 +30,24 @@
     color: black;
 }
 
-.stuff.book-review a img{
+.stuff a img{
     margin-right: 20px;
     transition: 2s filter;
 }
 
-.stuff.book-review a:hover img{
+.stuff a .fruits{
+    margin-right: 20px;
+}
+
+.stuff a .fruits img{
+    margin-right: 0;
+}
+
+.stuff a:hover img{
     filter: hue-rotate(151deg);
 }
 
-.stuff.book-review a .take-away{
+.stuff a .take-away{
     font-weight: 500;
     color: #375883;
 }
@@ -55,7 +58,7 @@
     100% {background-color: rgb(91, 205, 233);}
 }
 
-.stuff.book-review a::before{
+.stuff a::before{
     content: "";
     background: rgb(240, 227, 212);
     position: absolute;
@@ -65,7 +68,12 @@
     height: 2px;
 }
 
-.stuff.book-review a:hover::before{
+.stuff.project a::before, .stuff.project a::after{
+    left: 61px;
+    width: calc(100% - 61px);
+}
+
+.stuff a:hover::before{
     animation: underline-color-change 1s linear;
     animation-fill-mode: forwards;
     width: calc(100% - 40px);
@@ -75,9 +83,10 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    width: 800px;
+    width: 100%;
     margin-left: auto;
     margin-right: auto;
+    margin: 30px auto;
 }
 
 .header-link {
