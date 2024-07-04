@@ -1,11 +1,7 @@
 <script>
-    import Header from "$lib/header.svelte";
-
     export let data;
     let {blogNum, markdownHTML, metadata, icon} = data;
 </script>
-
-<Header/>
 
 <div class="content">
     <div class="stuff book-review">
