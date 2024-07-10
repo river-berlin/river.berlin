@@ -1,3 +1,7 @@
+/* @tailwind base;
+@tailwind components;
+@tailwind utilities; */
+
 * {
     font-family: "Reenie Beanie", cursive;
     font-weight: 400;
