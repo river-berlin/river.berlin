@@ -1,18 +1,33 @@
 <script>
-    import Header from "$lib/header.svelte";
-
     export let data;
+
+    let projects = [
+        {
+            projectNum : 1,
+            name : "Press M to repeat voice",
+            url : "/projects/voice-repeater"
+        },
+        {
+            projectNum : 2,
+            name : "Effect or Affect?",
+            url : "/projects/effect-or-affect"
+        }
+    ]
+
+    projects.sort((a, b) => a - b).reverse()
 </script>
 
 <div class="content">
     <div class="stuff project">
-        <a href="/voice-repeater">
-            <div class="fruits">
-                <img src="/fruits/orange.svg" alt="" width="15">
-                <img src="/fruits/watermelon.svg" alt="" width="15">
-            </div>
-            <span class="take-away">Project #1</span> : Press M to repeat voice
-        </a>
+        {#each projects as project}    
+            <a href="{project.url}">
+                <div class="fruits">
+                    <img src="/fruits/orange.svg" alt="" width="15">
+                    <img src="/fruits/watermelon.svg" alt="" width="15">
+                </div>
+                <span class="take-away">Project #{project.projectNum}</span> : {project.name}
+            </a>
+        {/each}
     </div>
     <div class="stuff book-review">
         {#each data.blogs as blog }
