@@ -1,0 +1,1 @@
+import{q as b,t as c,b as h,v as k,S as q}from"./runtime.ChTHN0K2.js";function S(r,i){var t;var f=r&&((t=r[q])==null?void 0:t.t);return r===i||f===i}function x(r,i,f,t){b(()=>{var a,s;return c(()=>{a=s,s=[],h(()=>{r!==f(...s)&&(i(r,...s),a&&S(f(...a),r)&&i(null,...a))})}),()=>{k(()=>{s&&S(f(...s),r)&&i(null,...s)})}})}export{x as b};
