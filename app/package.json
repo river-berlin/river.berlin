@@ -3,8 +3,10 @@
 	"version": "0.0.1",
 	"private": true,
 	"scripts": {
-		"dev": "vite dev",
-		"build": "vite build",
+		"dev": "vite dev --port 5000",
+		"build-opengraph": "node generate-opengraph.js",
+		"build-vite": "vite build",
+		"build": "npm run build-opengraph && npm run build-vite",
 		"publish": "gh-pages -d build --cname river.berlin --nojekyll",
 		"preview": "vite preview",
 		"test": "npm run test:integration && npm run test:unit",
@@ -22,6 +24,7 @@
 		"@sveltejs/kit": "^2.0.0",
 		"@sveltejs/vite-plugin-svelte": "^3.0.0",
 		"@types/eslint": "^8.56.7",
+		"@types/js-yaml": "^4.0.9",
 		"@types/node": "^20.14.9",
 		"@types/showdown": "^2.0.6",
 		"autoprefixer": "^10.4.19",
@@ -45,6 +48,12 @@
 	},
 	"type": "module",
 	"dependencies": {
+		"canvas": "^2.11.2",
+		"glob": "^11.0.0",
+		"html-to-image": "^1.11.11",
+		"js-yaml": "^4.1.0",
+		"jsdom": "^24.1.0",
+		"node-html-to-image": "^4.0.0",
 		"showdown": "^2.1.0"
 	}
 }
