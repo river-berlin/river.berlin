@@ -1,0 +1,1 @@
+import{d as i}from"./disclose-version.CH91H9RR.js";import{o as A}from"./runtime.B-ryE9h1.js";function d(s,r,f){f=f==null?null:f+"";var o=s.__attributes??(s.__attributes={});i&&(o[r]=s.getAttribute(r),r==="src"||r==="href"||r==="srcset")||o[r]!==(o[r]=f)&&(r==="loading"&&(s[A]=f),f===null?s.removeAttribute(r):s.setAttribute(r,f))}export{d as s};
