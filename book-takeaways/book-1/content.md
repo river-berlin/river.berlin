@@ -1,5 +1,9 @@
 ---
-title: The Happiness hypothesis by Jonathan Heidt
+bookTitle: The Happiness Hypothesis
+shortSummary: The Happiness Hypothesis explores what actually makes people happier?, written by positive psychologist Jonathan Heidt
+author: Jonathan Heidt
+dated: 2024-06-24
+title: The Happiness Hypothesis by Jonathan Heidt
 icon: icon.svg # maybe wanna always keep this as icon.svg
 ---
 

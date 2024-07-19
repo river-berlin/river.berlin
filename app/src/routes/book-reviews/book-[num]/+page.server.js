@@ -1,4 +1,5 @@
 import showdown from "showdown"
+import { dev } from '$app/environment';
 
 // @ts-ignore
 export async function load({ params }) {
@@ -10,5 +11,12 @@ export async function load({ params }) {
     const markdownHTML = converter.makeHtml(markdown)
     const metadata = converter.getMetadata()
 
-    return {blogNum : params.num,markdown, icon, markdownHTML, metadata}
+    const returnObj = {blogNum : params.num,markdown, icon, markdownHTML, metadata};
+
+    if (dev){
+        // @ts-ignore
+        returnObj.codespaceName = process.env.CODESPACE_NAME;
+    }
+
+    return returnObj;
 }

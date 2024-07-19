@@ -1,5 +1,9 @@
 ---
+bookTitle: The little prince
+shortSummary: A child explores worlds to bring us otherworldy wisdom
+author: Antoine de Saint-Exupéry
 title: The little prince by Antoine de Saint-Exupéry
+dated: 2024-06-30
 icon: icon.svg # maybe wanna always keep this as icon.svg
 ---
 
