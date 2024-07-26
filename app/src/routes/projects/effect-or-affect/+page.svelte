@@ -7,7 +7,8 @@
         "Knowledge of the burden of responsibility affects her actions strongly",
         "Dunham was crying quietly beside me, and all the men were affected by the piteous cries",
         "That man's demeanor was not affected by the fog",
-        "The woman's crazy dance moves affected her boyfriend strongly; he later married her"
+        "The woman's crazy dance moves affected her boyfriend strongly; he later married her",
+        "Martin the German-Ethiopian Penguin's affectionate gesture of giving Leela a rock affected her self esteem",
     ]
 
     let effectSentences = [
@@ -15,7 +16,6 @@
         "Francisco The Divine Elephant's victory had a strong effect on her personality thereafter",
         "The new vegan penguin cheese had a great effect on the taste of the pizza",
         "She kissed her, and it had the effect of turning them both into unicorns - from horses",
-        "Martin the German-Ethiopian Penguin's affectionate gesture of giving Leela a rock effected her self esteem",
         "The magical divine smell had no effect on anybody; it was a placebo; "
     ]
 
