@@ -1,0 +1,1 @@
+import{M as r,N as e,O as c,Q as a,A as i,R as l,g as u,T as _}from"./runtime.exGAXoH1.js";function g(){const s=c,n=s.l.u;n&&(n.b.length&&r(()=>{f(s),a(n.b)}),e(()=>{const o=i(()=>n.m.map(l));return()=>{for(const t of o)typeof t=="function"&&t()}}),n.a.length&&e(()=>{f(s),a(n.a)}))}function f(s){if(s.l.s)for(const n of s.l.s)u(n);_(s.s)}export{g as i};

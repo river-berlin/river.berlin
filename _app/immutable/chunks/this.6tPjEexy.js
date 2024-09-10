@@ -1,0 +1,1 @@
+import{U as c,V as h,A as k,q,S as u}from"./runtime.exGAXoH1.js";function S(r,i){var t;var f=r&&((t=r[u])==null?void 0:t.t);return r===i||f===i}function A(r,i,f,t){c(()=>{var a,s;return h(()=>{a=s,s=[],k(()=>{r!==f(...s)&&(i(r,...s),a&&S(f(...a),r)&&i(null,...a))})}),()=>{q(()=>{s&&S(f(...s),r)&&i(null,...s)})}})}export{A as b};
