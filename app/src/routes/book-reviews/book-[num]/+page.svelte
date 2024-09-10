@@ -11,6 +11,18 @@
     }
 </script>
 
+<style>
+    .content{
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+        margin-left: auto;
+        margin-right: auto;
+        margin: 30px auto;
+    }
+</style>
+
 <svelte:head>
     <title>River's Blog: Book takeaways`- {metadata.title}</title>
     <meta name="twitter:title" content="River's Blog: Book takeaways - {metadata.title}" />
