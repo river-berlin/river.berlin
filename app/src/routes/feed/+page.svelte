@@ -83,9 +83,9 @@
     <div class="stuff project">
         {#each data.projects as project}    
             <a href="/projects/{project.metadata.shortPath}">
-                <div class="fruits">
+                <div class="fruits flex">
                     <img src="/fruits/orange.svg" alt="" width="15">
-                    <img src="/fruits/watermelon.svg" alt="" width="15">
+                    <img src="/fruits/watermelon.svg" alt="" width="15" class="ml-2">
                 </div>
                 <span class="take-away">Project #{project.num}</span> : {project.metadata.title}
             </a>
