@@ -80,6 +80,14 @@
 </style>
 
 <div class="content">
+    <div class="stuff book-review">
+        {#each data.blogs as blog }
+            <a href="/blog/blog-{blog.num}">
+                <img src="/scroll.svg" alt="" width="15">
+                <span class="take-away">Blog #{blog.num}</span> : {blog.metadata.title}
+            </a>
+        {/each}
+    </div>
     <div class="stuff project">
         {#each data.projects as project}    
             <a href="/projects/{project.metadata.shortPath}">
@@ -92,10 +100,10 @@
         {/each}
     </div>
     <div class="stuff book-review">
-        {#each data.blogs as blog }
-            <a href="/book-reviews/book-{blog.num}">
+        {#each data.bookTakeaways as book }
+            <a href="/book-reviews/book-{book.num}">
                 <img src="/scroll.svg" alt="" width="15">
-                <span class="take-away">Book take away #{blog.num}</span> : {blog.metadata.title}
+                <span class="take-away">Book take away #{book.num}</span> : {book.metadata.title}
             </a>
         {/each}
     </div>

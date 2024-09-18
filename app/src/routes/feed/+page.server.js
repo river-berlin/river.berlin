@@ -1,8 +1,9 @@
-import { getBlogs, getProjects } from "$lib/server/get-contents";
+import { getBlogs, getBookTakeaways, getProjects } from "$lib/server/get-contents";
 
 
 export async function load(){
+    const bookTakeaways = await getBookTakeaways();
     const blogs = await getBlogs();
     const projects = await getProjects();
-    return { blogs, projects }
+    return { bookTakeaways, projects, blogs }
 }

@@ -16,15 +16,66 @@
         display: flex;
         flex-direction: column;
         align-items: center;
-        width: 100%;
         margin-left: auto;
         margin-right: auto;
         margin: 30px auto;
+        font-family: "Inter", system-ui;
+        font-optical-sizing: auto;
+        font-style: normal;
+    }
+
+    .stuff.book-review{
+        display: flex;
+        flex-direction: column;
+    }
+
+    .stuff.book-review *{
+        font-family: "Inter", system-ui;
+        font-optical-sizing: auto;
+        font-style: normal;
+    }
+
+    .stuff a{
+        position: relative;
+        display: flex;
+        padding: 5px;
+        background-size: 20px 20px;
+        margin-bottom: 20px;
+        text-decoration: none;
+        color: black;
+    }
+
+    .stuff a img{
+        margin-right: 20px;
+        transition: 2s filter;
+    }
+
+    .stuff a .fruits img{
+        margin-right: 0;
+    }
+
+    .stuff a:hover img{
+        filter: hue-rotate(151deg);
+    }
+
+    .stuff a .take-away{
+        font-weight: 500;
+        color: #375883;
+    }
+
+    .stuff a::before{
+        content: "";
+        background: rgb(91, 205, 233);
+        position: absolute;
+        bottom: 0;
+        left: 40px;
+        width: calc(100% - 40px);
+        height: 2px;
     }
 </style>
 
 <svelte:head>
-    <title>River's Blog: Book takeaways`- {metadata.title}</title>
+    <title>River's Blog: Book takeaways- {metadata.title}</title>
     <meta name="twitter:title" content="River's Blog: Book takeaways - {metadata.title}" />
     <meta property="og:title" content="River's Blog: Book takeaways - {metadata.title}" />
 
@@ -47,10 +98,13 @@
     <meta name="twitter:description" content="{metadata.shortSummary}" />
 </svelte:head>
 
-<div class="content">
+<div class="content w-full max-w-3xl font-inter">
 
     <div class="stuff book-review">
-        <h1>Book take away #{blogNum} : {metadata.title}</h1>
+        <a href="/blog/blog-{blogNum}">
+            <img src="/scroll.svg" alt="" width="15">
+            <span class="take-away">Book take away #{blogNum}</span> : {metadata.title}
+        </a>
     </div>
     
     <img src="{icon}" alt="" width="200">

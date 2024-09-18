@@ -8,7 +8,24 @@
     font-style: normal;
 }
 
+font-inter {
+    font-family: "Inter", system-ui;
+    font-optical-sizing: auto;
+    font-style: normal;
+}
+
+
+.review *{
+    font-family: "Inter", system-ui;
+    font-optical-sizing: auto;
+    font-style: normal;
+}
+
 /* for markdown */
 .review h3{
     font-weight: bold;
+}
+
+.review a{
+    color: blue
 }
