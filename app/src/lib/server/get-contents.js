@@ -6,9 +6,15 @@ import path from 'path';
 import yaml from "js-yaml";
 import { fileURLToPath } from 'url'
 
-async function getMarkdownFiles(thingsPath) {
+async function getMarkdownFiles(thingsPath, markdownOf) {
+    let files;
+
     // Find all matching markdown files
-    const files = glob.sync(`${thingsPath}/book-takeaways/book-*/content.md`);
+    if (markdownOf == "book-takeaway"){
+        files = glob.sync(`${thingsPath}/book-takeaways/book-*/content.md`);
+    } else if (markdownOf == "blog"){
+        files = glob.sync(`${thingsPath}/blog/blog-*/content.md`);
+    }
 
     // Read the content of each file
     const fileContents = await Promise.all(files.map(async (file) => {
@@ -83,7 +89,7 @@ export async function getBookTakeaways(viteEnvironment=true, thingsPath=null){
             query : "?raw"
         })
     } else {
-        markdowns = await getMarkdownFiles(thingsPath)
+        markdowns = await getMarkdownFiles(thingsPath, "book-takeaway")
     } 
 
     const blogs = [];
@@ -121,7 +127,7 @@ export async function getBlogs(viteEnvironment=true, thingsPath=null){
             query : "?raw"
         })
     } else {
-        markdowns = await getMarkdownFiles(thingsPath)
+        markdowns = await getMarkdownFiles(thingsPath, "blog")
     } 
 
     const blogs = [];

@@ -81,16 +81,16 @@
     <meta property="og:title" content="River's Blog: Book takeaways - {metadata.title}" />
 
 
-    <meta property="og:url" content="{BASE_URL}/book-reviews/book-{blogNum}/">
+    <meta property="og:url" content="{BASE_URL}/blog/blog-{blogNum}/">
     <meta property="og:type" content="article" />
     <meta property="article:publisher" content="https://river.berlin" />
     <!-- <meta property="article:section" content="Coding" />
     <meta property="article:tag" content="Coding" /> -->
 
-    <meta property="og:image" content="{BASE_URL}/opengraph/book-takeaways/{blogNum}.png" />
-    <meta name="twitter:image" content="{BASE_URL}/opengraph/book-takeaways/{blogNum}.png" />
+    <meta property="og:image" content="{BASE_URL}/opengraph/blog/{blogNum}.png" />
+    <meta name="twitter:image" content="{BASE_URL}/opengraph/blog/{blogNum}.png" />
 
-    <meta property="og:image:secure_url" content="{BASE_URL}/opengraph/book-takeaways/{blogNum}.png" />
+    <meta property="og:image:secure_url" content="{BASE_URL}/opengraph/blog/{blogNum}.png" />
     <meta property="og:description" content="{metadata.shortSummary}" />
     <meta property="og:image:width" content="1000">
     <meta property="og:image:height" content="500">
