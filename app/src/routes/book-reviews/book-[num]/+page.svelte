@@ -101,7 +101,7 @@
 <div class="content w-full max-w-3xl font-inter">
 
     <div class="stuff book-review">
-        <a href="/blog/blog-{blogNum}">
+        <a href="/book-reviews/book-{blogNum}">
             <img src="/scroll.svg" alt="" width="15">
             <span class="take-away">Book take away #{blogNum}</span> : {metadata.title}
         </a>

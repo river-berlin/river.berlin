@@ -1,7 +1,7 @@
 // pen saved at https://codepen.io/thegraything/pen/WNqQmoj
 import path from 'path';
 import nodeHtmlToImage from 'node-html-to-image';
-import {getBookTakeaways, getProjects} from './src/lib/server/get-contents.js'
+import {getBlogs, getBookTakeaways, getProjects} from './src/lib/server/get-contents.js'
 
 
 const style = `
@@ -133,8 +133,9 @@ return `<html lang="en">
 
 const currentDir = process.cwd();
 
-const blogs = await getBookTakeaways(false, path.join(currentDir, "/src/things"))
+const bookTakeaways = await getBookTakeaways(false, path.join(currentDir, "/src/things"))
 const projects = await getProjects(false)
+const blogs = await getBlogs(false, path.join(currentDir, "/src/things"))
 
 function formatDate(dateString) {
   const date = new Date(dateString);
@@ -161,10 +162,17 @@ function formatDate(dateString) {
   return formattedDate;
 }
 
+for(let bookTakeaway of bookTakeaways){
+  nodeHtmlToImage({
+    output : path.join(currentDir, `/static/opengraph/book-takeaways/${bookTakeaway.num}.png`),
+    html : generateHTML("https://river.berlin/scroll.svg", `book take away #${bookTakeaway.num}`, bookTakeaway.metadata.bookTitle, `by ${bookTakeaway.metadata.author} ··· ${formatDate(bookTakeaway.metadata.dated)}`)
+  })
+}
+
 for(let blog of blogs){
   nodeHtmlToImage({
-    output : path.join(currentDir, `/static/opengraph/book-takeaways/${blog.num}.png`),
-    html : generateHTML("https://river.berlin/scroll.svg", `book take away #${blog.num}`, blog.metadata.bookTitle, `by ${blog.metadata.author} ··· ${formatDate(blog.metadata.dated)}`)
+    output : path.join(currentDir, `/static/opengraph/blog/${blog.num}.png`),
+    html : generateHTML("https://river.berlin/scroll.svg", `book take away #${blog.num}`, blog.metadata.title, `by ${blog.metadata.author} ··· ${formatDate(blog.metadata.dated)}`)
   })
 }
 
