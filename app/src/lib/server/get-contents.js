@@ -5,6 +5,7 @@ import { glob } from 'glob';
 import path from 'path';
 import yaml from "js-yaml";
 import { fileURLToPath } from 'url'
+
 async function getMarkdownFiles(thingsPath) {
     // Find all matching markdown files
     const files = glob.sync(`${thingsPath}/book-takeaways/book-*/content.md`);
@@ -73,7 +74,7 @@ export async function getProjects(viteEnvironment=true) {
     return metadata;
 }
 
-export async function getBlogs(viteEnvironment=true, thingsPath=null){
+export async function getBookTakeaways(viteEnvironment=true, thingsPath=null){
 
     let markdowns;
 
@@ -89,6 +90,44 @@ export async function getBlogs(viteEnvironment=true, thingsPath=null){
     
     for (let markdownKey in markdowns){
         const num = Number.parseInt(markdownKey.split('/src/things/book-takeaways/book-')[1].split("/content.md")[0])
+
+        let mdContent;
+        if(viteEnvironment){
+
+            mdContent = (await (markdowns[markdownKey]())).default;
+        } else {
+
+            mdContent = markdowns[markdownKey]
+        }
+
+        const converter = new showdown.Converter({metadata : true})
+        const markdownHTML = converter.makeHtml(mdContent)
+        const metadata = converter.getMetadata()
+
+        blogs.push({markdownHTML, metadata, num})
+    }
+
+    // ensure latest blog comes on top
+    blogs.reverse()
+    return blogs
+}
+
+export async function getBlogs(viteEnvironment=true, thingsPath=null){
+
+    let markdowns;
+
+    if(viteEnvironment){
+        markdowns = import.meta.glob("$things/blog/blog-*/content.md", {
+            query : "?raw"
+        })
+    } else {
+        markdowns = await getMarkdownFiles(thingsPath)
+    } 
+
+    const blogs = [];
+    
+    for (let markdownKey in markdowns){
+        const num = Number.parseInt(markdownKey.split('/src/things/blog/blog-')[1].split("/content.md")[0])
 
         let mdContent;
         if(viteEnvironment){

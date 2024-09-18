@@ -7,7 +7,7 @@
      */
     function checkFeed(page){
         const pathName = page.url.pathname
-        return pathName.startsWith("/feed/")||pathName.startsWith("/projects/")||pathName.startsWith("/book-reviews/")
+        return pathName.startsWith("/feed/")||pathName.startsWith("/projects/")||pathName.startsWith("/book-reviews/")||pathName.startsWith("/blog/")
     }
 </script>
 

@@ -1,7 +1,7 @@
 // pen saved at https://codepen.io/thegraything/pen/WNqQmoj
 import path from 'path';
 import nodeHtmlToImage from 'node-html-to-image';
-import {getBlogs, getProjects} from './src/lib/server/get-contents.js'
+import {getBookTakeaways, getProjects} from './src/lib/server/get-contents.js'
 
 
 const style = `
@@ -133,7 +133,7 @@ return `<html lang="en">
 
 const currentDir = process.cwd();
 
-const blogs = await getBlogs(false, path.join(currentDir, "/src/things"))
+const blogs = await getBookTakeaways(false, path.join(currentDir, "/src/things"))
 const projects = await getProjects(false)
 
 function formatDate(dateString) {
