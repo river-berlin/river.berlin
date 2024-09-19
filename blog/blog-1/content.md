@@ -20,10 +20,12 @@ idk, at its core, I would, much rather the Chef, and the cooks and the waiter go
 
 In one of the local asian grocery stores I frequented, I remember the store owner's hanging their 8-10 year old kid's pokemon drawings, I loved them - they're line drawings, not the best drawings, but they made the grocery store more "human" to me, they weren't the "best" drawings, the store owner could've definitely put up expensive high-tier drawings to make the place more pretty, but...I am kinda glad he didn't
 
-Thanks don't have to be "perfect" for me to enjoy them
+Things don't have to be "perfect" for me to enjoy them
 
 Ellie Anderson's video above does go into how this "grind" ends up having an aftermath of depression, because of-course it will
 
 idk, dude take your time, life is difficult, I get it, it's cool to take more time to cook your food, take 30 minutes more - it's okay, this restaurant is beautiful and I am honored to have you cooking for me and another person is serving me - thank you so so much for everything
 
 I want you to go home happy to your kids, I want you to have a happy family and a good relationship and other hobbies beside being a chef, I want you to enjoy life, we're chill dude
+
+Edit : 2024-09-19, typo correction "Things" not Thanks
