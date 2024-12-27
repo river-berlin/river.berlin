@@ -22,6 +22,7 @@
     <div class="grid gap-6 md:grid-cols-2">
 
       <div class="bg-white/10 p-6 rounded-xl border border-white/20">
+        <img src="/company-logos/runpod.svg" alt="RunPod logo" class="h-8 mb-4" />
         <h3 class="font-bold text-xl mb-2">RunPod</h3>
         <p class="text-sm text-gray-300 mb-3">Jan 2023 - Present</p>
         <p class="mb-2">Technical Customer Service / Development team</p>
@@ -34,6 +35,7 @@
       </div>
 
       <div class="bg-white/10 p-6 rounded-xl border border-white/20">
+        <img src="/company-logos/upwork.png" alt="Upwork logo" class="h-8 mb-4" />
         <h3 class="font-bold text-xl mb-2">Upwork</h3>
         <p class="text-sm text-gray-300 mb-3">Jan 2021 - Dec 2022</p>
         <p class="mb-2">Full Stack Developer</p>
@@ -45,6 +47,7 @@
       </div>
 
       <div class="bg-white/10 p-6 rounded-xl border border-white/20">
+        <img src="/company-logos/auditional.svg" alt="Auditional logo" class="h-8 mb-4" />
         <h3 class="font-bold text-xl mb-2">Auditional</h3>
         <p class="text-sm text-gray-300 mb-3">Jan 2022 - Jan 2023</p>
         <p class="mb-2">Data Extraction Engineer & Bot Developer</p>
@@ -57,6 +60,7 @@
       </div>
 
       <div class="bg-white/10 p-6 rounded-xl border border-white/20">
+        <img src="/company-logos/repunzel.svg" alt="Repunzel logo" class="h-8 mb-4" />
         <h3 class="font-bold text-xl mb-2">Repunzel</h3>
         <p class="text-sm text-gray-300 mb-3">Jan 2022 - Jan 2023</p>
         <p class="mb-2">Full Stack Engineer</p>

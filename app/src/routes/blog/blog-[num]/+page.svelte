@@ -16,70 +16,6 @@
     }
 </script>
 
-<style>
-    .content{
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        margin-left: auto;
-        margin-right: auto;
-        margin: 30px auto;
-        font-family: "Inter", system-ui;
-        font-optical-sizing: auto;
-        font-style: normal;
-    }
-
-    .stuff.book-review{
-        display: flex;
-        flex-direction: column;
-    }
-
-    .stuff.book-review *{
-        font-family: "Inter", system-ui;
-        font-optical-sizing: auto;
-        font-style: normal;
-    }
-
-    .stuff a{
-        position: relative;
-        display: flex;
-        padding: 5px;
-        background-size: 20px 20px;
-        margin-bottom: 20px;
-        text-decoration: none;
-        color: black;
-    }
-
-    .stuff a img{
-        margin-right: 20px;
-        transition: 2s filter;
-    }
-
-    .stuff a .fruits img{
-        margin-right: 0;
-    }
-
-    .stuff a:hover img{
-        filter: hue-rotate(151deg);
-    }
-
-    .stuff a .take-away{
-        font-weight: 500;
-        color: #375883;
-    }
-
-    .stuff a::before{
-        content: "";
-        background: rgb(91, 205, 233);
-        position: absolute;
-        bottom: 0;
-        left: 40px;
-        width: calc(100% - 40px);
-        height: 2px;
-    }
-</style>
-
-
 <svelte:head>
     <title>River's Blog: Blog - {metadata.title}</title>
     <meta name="twitter:title" content="River's Blog: Book takeaways - {metadata.title}" />
@@ -104,18 +40,18 @@
     <meta name="twitter:description" content="{metadata.shortSummary}" />
 </svelte:head>
 
-<div class="content w-full max-w-3xl font-inter">
-    <div class="stuff book-review">
-        <a href="/blog/blog-{blogNum}">
-            <img src="/scroll.svg" alt="" width="15">
-            <span class="take-away">Blog #{blogNum}</span> : {metadata.title}
+<div class="content w-full max-w-3xl font-inter flex flex-col items-center mx-auto my-7">
+    <div class="stuff book-review flex flex-col">
+        <a href="/blog/blog-{blogNum}" class="relative flex p-1.5 mb-5 no-underline text-black group">
+            <img src="/scroll.svg" alt="" width="15" class="mr-5 transition-all duration-700 group-hover:hue-rotate-[151deg]">
+            <span class="take-away font-medium text-[#375883]">Blog #{blogNum}</span> : {metadata.title}
+            <div class="absolute bottom-0 left-10 w-[calc(100%-40px)] h-0.5 bg-[#5bcde9]"></div>
         </a>
     </div>
     
     <img src="{icon}" alt="" width="200" class="my-5" >
 
-    <div class="review">
+    <div class="prose prose-lg dark:prose-invert max-w-none">
         {@html markdownHTML}
     </div>
-    
 </div>
