@@ -1,6 +1,6 @@
 ---
 shortSummary: I would so much rather have a healthy chef than the best food
-author: River
+author: River / Aditya Shankar
 dated: 2024-09-18
 title: I'd much rather have a not-best meal than a mentally drained chef
 icon: icon.svg # maybe wanna always keep this as icon.svg
