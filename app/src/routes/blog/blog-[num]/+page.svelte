@@ -4,10 +4,15 @@
 
     import { dev } from '$app/environment';
 
-    let BASE_URL="https://river.berlin";
+    let BASE_URL = "https://river.berlin";
 
     if (dev) {
-        BASE_URL=`https://${data.codespaceName}-5000.app.github.dev`
+        if (data.codespaceName) {
+            BASE_URL = `https://${data.codespaceName}-5000.app.github.dev`;
+        } else {
+            const port = import.meta.env.VITE_PORT;
+            BASE_URL = `http://localhost:${port}`;
+        }
     }
 </script>
 

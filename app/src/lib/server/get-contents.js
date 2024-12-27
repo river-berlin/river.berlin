@@ -126,6 +126,7 @@ export async function getBlogs(viteEnvironment=true, thingsPath=null){
         markdowns = import.meta.glob("$things/blog/blog-*/content.md", {
             query : "?raw"
         })
+
     } else {
         markdowns = await getMarkdownFiles(thingsPath, "blog")
     } 
