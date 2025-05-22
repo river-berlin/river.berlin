@@ -18,11 +18,11 @@ Google achieved this via ensuring that every other major competetor, firefox or 
 
 1. "AGI" is not the goal, "Good enough" is the goal
 
-Take the difference between a (waterman pen)[https://www.waterman.com/] and a regular [0.12€ pen](https://www.promostore.de/nash-kugelschreiber-mit-farbigem-schaft-und-griff-456940.html), a majority of people will not buy a waterman pen – The pens are rediculously expensive, and sell aesthetics and a brand of luxury that most people do not need
+    Take the difference between a [waterman pen](https://www.waterman.com/) and a regular [0.12€ pen](https://www.promostore.de/nash-kugelschreiber-mit-farbigem-schaft-und-griff-456940.html), a majority of people will not buy a waterman pen – The pens are rediculously expensive, and sell aesthetics and a brand of luxury that most people do not need
 
-For 90% of use cases, you likely will be able to get away with using a much smaller model, such as [gemma3 27b](https://huggingface.co/google/gemma-3-27b-it) or even much smaller models
+    For 90% of use cases, you likely will be able to get away with using a much smaller model, such as [gemma3 27b](https://huggingface.co/google/gemma-3-27b-it) or even much smaller models
 
-The SOTA model difference between the best open source model (Qwen3 235B w/ 22B active parameters) and the SOTA closed source model is 10% [(65% to 75%)](https://livecodebench.github.io/leaderboard.html) – This is [without considering benchmark overfitting](https://arxiv.org/abs/2503.21934v1)
+    The SOTA model difference between the best open source model (Qwen3 235B w/ 22B active parameters) and the SOTA closed source model is 10% [(65% to 75%)](https://livecodebench.github.io/leaderboard.html) – This is [without considering benchmark overfitting](https://arxiv.org/abs/2503.21934v1)
 
 2. Every single AI tool – has an open source alternative, every. single. one – so programming wise, for a new company to implement these features is not a matter of development complexity but a matter of getting the biggest audience
 
@@ -37,7 +37,7 @@ The SOTA model difference between the best open source model (Qwen3 235B w/ 22B 
 
 3. The entire industry is changing at such a significant pace, that nearly nobody is able to keep up and build effective tooling that will last on the longer run
 
-    - A common trope that has come up now is that implementation details are constantly missing features due to the rapid progress of change within the industry
+    A common trope that has come up now is that implementation details are constantly missing features due to the rapid progress of change within the industry, this has mad it very hard for developers to keep up with the progression of change, and thus, broken software has become a norm
 
     Changes here are quite evident in the mannerism where
 
