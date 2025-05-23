@@ -1,7 +1,7 @@
 ---
 shortSummary: My concerns with the impact of AI on the human psyche
 author: River / Aditya Shankar
-dated: 2025-05-24
+dated: 2025-05-23
 title: My concerns with the impact of AI on the human psyche
 icon: icon.jpg
 ---
