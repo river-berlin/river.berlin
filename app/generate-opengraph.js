@@ -172,7 +172,7 @@ for(let bookTakeaway of bookTakeaways){
 for(let blog of blogs){
   nodeHtmlToImage({
     output : path.join(currentDir, `/static/opengraph/blog/${blog.num}.png`),
-    html : generateHTML("https://river.berlin/scroll.svg", `book take away #${blog.num}`, blog.metadata.title, `by ${blog.metadata.author} ··· ${formatDate(blog.metadata.dated)}`)
+    html : generateHTML("https://river.berlin/scroll.svg", `blog #${blog.num}`, blog.metadata.title, `by ${blog.metadata.author} ··· ${formatDate(blog.metadata.dated)}`)
   })
 }
 
