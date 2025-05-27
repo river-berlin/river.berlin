@@ -7,6 +7,7 @@
         title: string;
         dated: string | Date; // Can be either string or Date object
         shortPath?: string;
+        url?: string;
     }
     
     interface ContentItem {
@@ -240,7 +241,7 @@
     <div class="stuff book-review">
         {#each data.blogs as blog }
             <div class="blog-or-book-container">
-                <a href="/blog/blog-{blog.num}">
+                <a href="/blog/{blog.metadata.url}">
                     <img src="/scroll.svg" alt="" width="15">
                     <span class="take-away">Blog #{blog.num}</span> : {blog.metadata.title}
                 </a>

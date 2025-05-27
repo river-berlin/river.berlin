@@ -4,6 +4,7 @@ author: River / Aditya Shankar
 dated: 2025-05-23
 title: My concerns with the impact of AI on the human psyche
 icon: icon.jpg
+url: impact-of-llm-on-human-psyche
 ---
 
 <p style="font-size: 10px; text-align: center">(above image by Alexander Wivel from Wikimedia commons, <a href="https://en.wikipedia.org/wiki/Brain_in_a_vat#/media/File:Braininvat.jpg">from here</a>)</p>

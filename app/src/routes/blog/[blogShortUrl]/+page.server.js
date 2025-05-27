@@ -14,12 +14,11 @@ const dynamicImageMap = import.meta.glob('$things/blog/blog-*/**.{svg,jpg,png}',
   import: 'default'
 });
 
-console.log(imageMap)
 
 /**
  * Load function for blog page
  * @param {Object} params.params - Route parameters
- * @param {string} params.params.num - Blog number
+ * @param {string} params.params.blogShortUrl - Blog number
  * @returns {Promise<{
  *   blogNum: string,
  *   markdown: string,
@@ -32,7 +31,11 @@ console.log(imageMap)
 
 
 export async function load({ params }) {
-    const markdown = (await import(`$things/blog/blog-${params.num}/content.md?raw`)).default;
+    const allBlogs = await getBlogs();
+    const blogShortUrl = params.blogShortUrl;
+    const blogNum = allBlogs.find(blog => blog.metadata.url === blogShortUrl)?.num;
+
+    const markdown = (await import(`$things/blog/blog-${blogNum}/content.md?raw`)).default;
     
     // Configure showdown converter with syntax highlighting and metadata
     const converter = new showdown.Converter({
@@ -46,16 +49,13 @@ export async function load({ params }) {
     const metadata = converter.getMetadata()
 
     // Get icon path from metadata and load it
-    const iconPath = `/src/things/blog/blog-${params.num}/${metadata.icon || 'icon.svg'}`;
+    const iconPath = `/src/things/blog/blog-${blogNum}/${metadata.icon || 'icon.svg'}`;
     const icon = import.meta.env.SSR ? 
         imageMap[iconPath] : 
         await dynamicImageMap[iconPath]();
 
     // Convert markdown again for the HTML (or reuse previous conversion)
     const markdownHTML = converter.makeHtml(markdown)
-
-    // Get all blogs for related articles
-    const allBlogs = await getBlogs();
     
     const returnObj = {
         blogNum: params.num, 
