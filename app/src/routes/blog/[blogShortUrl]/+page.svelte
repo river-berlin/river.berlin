@@ -53,7 +53,7 @@
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Roboto+Mono:wght@400;500&family=Source+Code+Pro:wght@400;500&display=swap" rel="stylesheet">
 
 
-    <meta property="og:url" content="{BASE_URL}/blog/blog-{blogNum}/">
+    <meta property="og:url" content="{BASE_URL}/blog/{metadata.url}/">
     <meta property="og:type" content="article" />
     <meta property="article:publisher" content="https://river.berlin" />
     <!-- <meta property="article:section" content="Coding" />
