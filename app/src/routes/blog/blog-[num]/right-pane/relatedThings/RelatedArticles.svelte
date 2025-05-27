@@ -33,7 +33,7 @@
             month: 'short',
             day: 'numeric'
         });
-        return `${weekday} – ${restOfDate}`;
+        return `${weekday} · ${restOfDate}`;
     }
 </script>
 
