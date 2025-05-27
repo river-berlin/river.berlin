@@ -1,11 +1,11 @@
-<script>
+<script lang="ts">
     import image from "$lib/images/meditating-enby.svg"
     import { page } from '$app/stores';
 
     /**
      * checks if we're accessing something in the feed page
      */
-    function checkFeed(page){
+    function checkFeed(page: any){
         const pathName = page.url.pathname
         return pathName.startsWith("/feed/")||pathName.startsWith("/projects/")||pathName.startsWith("/book-reviews/")||pathName.startsWith("/blog/")
     }

@@ -1,8 +1,8 @@
-<script>
-    export let markdownHTML;
+<script lang="ts">
+    export let markdownHTML : string;
     import { onMount } from 'svelte';
     
-    let headings = [];
+    let headings : any[] = [];
     
     onMount(() => {
         // Use a timeout to ensure the DOM is fully rendered
@@ -13,7 +13,7 @@
             headings = Array.from(articleHeadings).map(heading => {
                 // Create an id if it doesn't exist
                 if (!heading.id) {
-                    heading.id = heading.textContent.toLowerCase().replace(/\s+/g, '-');
+                    heading.id = heading.textContent?.toLowerCase().replace(/\s+/g, '-') || '';
                 }
                 
                 return {

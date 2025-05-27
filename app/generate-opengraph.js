@@ -21,19 +21,8 @@ const style = `
   position : absolute;
   left : 35px;
   right : 35px;
-  bottom : 45px;
+  bottom : 35px;
   display : flex;
-}
-
-.bottom-thingy::before{
-  content: "";
-  position : absolute;
-  left: 0;
-  bottom : -15px;
-  width: 100%;
-  height: 1px;
-  background: #e6a05b;
-  border-radius: 3px;
 }
 
 .mainimg{
@@ -46,7 +35,7 @@ const style = `
 
 
 .bottom-thingy h1{
-  font-size: 25px;
+  font-size: 20px;
   margin-left : 15px;
   margin-bottom: 0;
   padding: 0;
@@ -61,6 +50,15 @@ const style = `
 .content-indicator .big-text{
   margin-top: 7px;
   margin-bottom: 0;
+  width: 270px;
+  margin-left: 30px;
+  font-family: 'Comic Neue', cursive;
+  font-weight: 300;
+  font-size: 20px;
+}
+
+.type-container img{
+  margin-right: 15px;
 }
 
 .content-indicator .author{
@@ -83,7 +81,21 @@ const style = `
 }
 
 .text-stuff{
-  margin-left: 40px;
+  margin-left: 0;
+}
+
+.type-container {
+  display: flex;
+  align-items: center;
+  margin-bottom: 5px;
+}
+
+.type-container img {
+  margin-right: 15px;
+}
+
+.type-container .type {
+  margin-left: 0;
 }`
 
 function generateHTML(preImageURL, topShortText, mainText, byText){
@@ -93,6 +105,7 @@ return `<html lang="en">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link href="https://fonts.googleapis.com/css2?family=Reenie+Beanie&amp;display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Comic+Neue:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&family=Delius&family=Shadows+Into+Light&display=swap" rel="stylesheet">
   <title>Document</title>
   <style>
    ${style}
@@ -110,9 +123,11 @@ return `<html lang="en">
   <div class="main">
     
     <div class="content-indicator">
-      <img src="${preImageURL}" alt="" class="scroll" width=60>
       <div class="text-stuff">
-        <h4 class="type">${topShortText}</h4>
+        <div class="type-container">
+          <img src="${preImageURL}" alt="" class="scroll" width=15>
+          <h4 class="type">${topShortText}</h4>
+        </div>
         <h1 class="big-text">${mainText}</h1>
         <p class='author'>${byText} </p>
       </div>
@@ -141,7 +156,7 @@ function formatDate(dateString) {
   const date = new Date(dateString);
   
   // Array of suffixes for day of the month (1st, 2nd, 3rd, etc.)
-  const suffixes = ['th', 'st', 'nd', 'rd', 'th', 'th', 'th', 'th', 'th', 'th'];
+  const suffixes = ['ᵗʰ', 'ˢᵗ', 'ⁿᵈ', 'ʳᵈ', 'ᵗʰ', 'ᵗʰ', 'ᵗʰ', 'ᵗʰ', 'ᵗʰ', 'ᵗʰ'];
   
   // Function to get the suffix for the day of the month
   function getSuffix(day) {
@@ -153,7 +168,7 @@ function formatDate(dateString) {
   
   // Get day, month, and year
   const day = date.getDate();
-  const month = date.toLocaleString('default', { month: 'long' });
+  const month = date.toLocaleString('default', { month: 'short' });
   const year = date.getFullYear();
   
   // Construct the formatted date string
@@ -165,20 +180,20 @@ function formatDate(dateString) {
 for(let bookTakeaway of bookTakeaways){
   nodeHtmlToImage({
     output : path.join(currentDir, `/static/opengraph/book-takeaways/${bookTakeaway.num}.png`),
-    html : generateHTML("https://river.berlin/scroll.svg", `book take away #${bookTakeaway.num}`, bookTakeaway.metadata.bookTitle, `by ${bookTakeaway.metadata.author} ··· ${formatDate(bookTakeaway.metadata.dated)}`)
+    html : generateHTML("https://river.berlin/scroll.svg", `book take away #${bookTakeaway.num} · ${formatDate(bookTakeaway.metadata.dated)}`, bookTakeaway.metadata.bookTitle, ``)
   })
 }
 
 for(let blog of blogs){
   nodeHtmlToImage({
     output : path.join(currentDir, `/static/opengraph/blog/${blog.num}.png`),
-    html : generateHTML("https://river.berlin/scroll.svg", `blog #${blog.num}`, blog.metadata.title, `by ${blog.metadata.author} ··· ${formatDate(blog.metadata.dated)}`)
+    html : generateHTML("https://river.berlin/scroll.svg", `blog #${blog.num} · ${formatDate(blog.metadata.dated)}`, blog.metadata.title, ``)
   })
 }
 
 for(let project of projects){
   nodeHtmlToImage({
     output : path.join(currentDir, `/static/opengraph/projects/${project.metadata.shortPath}.png`),
-    html : generateHTML("https://river.berlin/fruits/watermelon.svg", `project #${project.num}`, project.metadata.projectTitle, `by ${project.metadata.author} ··· ${formatDate(project.metadata.dated)}`)
+    html : generateHTML("https://river.berlin/fruits/watermelon.svg", `project #${project.num} · ${formatDate(project.metadata.dated)}`, project.metadata.projectTitle, ``)
   })
 }
