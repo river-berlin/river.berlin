@@ -45,7 +45,7 @@
             {#each relatedBlogs as blog}
                 <!-- Force a full page reload for reliable navigation -->
                 <a 
-                    href="/blog/blog-{blog.num}" 
+                    href="/blog/{blog.metadata.url}" 
                     class="related-blog-link block w-full text-left"
                     data-sveltekit-reload
                 >

@@ -7,7 +7,7 @@
 
 <div class="markdown-container">
     <div class="stuff book-review flex flex-col">
-        <a href="/blog/blog-{blogNum}" class="relative p-1.5 mb-5 no-underline text-black group">
+        <a href="/blog/{metadata.url}" class="relative p-1.5 mb-5 no-underline text-black group">
             <div class="flex flex-col">
                 <span class="take-away font-medium text-[#375883]">Blog #{blogNum}</span>
                 <span class="font-medium mt-1">{metadata.title}</span>
