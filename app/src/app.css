@@ -29,3 +29,15 @@ font-inter {
 .review a{
     color: blue
 }
+
+.code-highlight-wrapper {
+    font-family: 'Courier New', Courier, monospace !important;
+}
+
+.code-highlight-wrapper pre{
+    font-family: 'Courier New', Courier, monospace !important;
+}
+
+.code-highlight-wrapper pre *{
+    font-family: 'Courier New', Courier, monospace !important;
+}

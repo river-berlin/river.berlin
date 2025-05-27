@@ -18,8 +18,16 @@
 
 <svelte:head>
     <title>River's Blog: Blog - {metadata.title}</title>
-    <meta name="twitter:title" content="River's Blog: Book takeaways - {metadata.title}" />
-    <meta property="og:title" content="River's Blog: Book takeaways - {metadata.title}" />
+    <meta name="twitter:title" content="River's Blog: Blog - {metadata.title}" />
+    <meta property="og:title" content="River's Blog: Blog - {metadata.title}" />
+    
+    <!-- Highlight.js CSS for code syntax highlighting -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/atom-one-dark.min.css">
+    
+    <!-- Google Fonts for code blocks -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Roboto+Mono:wght@400;500&family=Source+Code+Pro:wght@400;500&display=swap" rel="stylesheet">
 
 
     <meta property="og:url" content="{BASE_URL}/blog/blog-{blogNum}/">
@@ -51,7 +59,7 @@
     
     <img src="{icon}" alt="" width="200" class="my-5" >
 
-    <div class="prose prose-lg dark:prose-invert max-w-none">
+    <div class="prose prose-lg dark:prose-invert max-w-none code-highlight-wrapper">
         {@html markdownHTML}
     </div>
 </div>

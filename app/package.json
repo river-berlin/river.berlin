@@ -27,6 +27,7 @@
 		"@types/eslint": "^8.56.7",
 		"@types/js-yaml": "^4.0.9",
 		"@types/node": "^20.14.9",
+		"@types/prismjs": "^1.26.5",
 		"@types/showdown": "^2.0.6",
 		"autoprefixer": "^10.4.19",
 		"daisyui": "^4.12.10",
@@ -56,7 +57,10 @@
 		"js-yaml": "^4.1.0",
 		"jsdom": "^24.1.0",
 		"node-html-to-image": "^5.0.0",
+		"prism-svelte": "^0.5.0",
+		"prismjs": "^1.30.0",
 		"showdown": "^2.1.0",
+		"showdown-highlight": "^3.1.0",
 		"ws": "^8.17.1"
 	},
 	"resolutions": {

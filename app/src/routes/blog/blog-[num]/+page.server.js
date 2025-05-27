@@ -1,4 +1,5 @@
-import showdown from "showdown"
+import showdown from "showdown";
+import showdownHighlight from "showdown-highlight";
 import { dev } from '$app/environment';
 
 const imageMap = import.meta.glob('$things/blog/blog-*/**.{svg,jpg,png}', {
@@ -22,7 +23,6 @@ console.log(imageMap)
  * @returns {Promise<{
  *   blogNum: string,
  *   markdown: string,
- *   icon: string,
  *   markdownHTML: string,
  *   metadata: Object,
  *   codespaceName?: string
@@ -32,7 +32,13 @@ export async function load({ params }) {
     const markdown = (await import(`$things/blog/blog-${params.num}/content.md?raw`)).default;
     
     // convert markdown first to get metadata
-    const converter = new showdown.Converter({metadata: true})
+    const converter = new showdown.Converter({
+        metadata: true,
+        extensions: [
+            showdownHighlight({pre: true})
+        ]
+    });
+    
     converter.makeHtml(markdown)
     const metadata = converter.getMetadata()
 

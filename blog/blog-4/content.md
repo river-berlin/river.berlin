@@ -6,7 +6,7 @@ title: My concerns with the impact of AI on the human psyche
 icon: icon.jpg
 ---
 
-(above image by Alexander Wivel from Wikimedia commons, https://en.wikipedia.org/wiki/Brain_in_a_vat#/media/File:Braininvat.jpg, original provided url does return a 404)
+<p style="font-size: 10px; text-align: center">(above image by Alexander Wivel from Wikimedia commons, <a href="https://en.wikipedia.org/wiki/Brain_in_a_vat#/media/File:Braininvat.jpg">from here</a>)</p>
 
 ## Concerns of the impact of LLMs on the human psyche
 
