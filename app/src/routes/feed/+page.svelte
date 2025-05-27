@@ -36,7 +36,7 @@
         });
         
         // Combine with en dash
-        return `${weekday} – ${restOfDate}`;
+        return `${weekday} · ${restOfDate}`;
     }
     
     let activeFilter: 'all' | 'blogs' | 'projects' | 'books' = 'all';
