@@ -18,8 +18,8 @@ console.log(imageMap)
 
 /**
  * Load function for blog page
- * @param {Object} params - Route parameters
- * @param {string} params.num - Blog number
+ * @param {Object} params.params - Route parameters
+ * @param {string} params.params.num - Blog number
  * @returns {Promise<{
  *   blogNum: string,
  *   markdown: string,
