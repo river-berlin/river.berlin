@@ -1,12 +1,12 @@
 ---
-shortSummary: Why I feel Svelte is better than React (it's state management)
+shortSummary: Why I like Svelte more than React (it's store management)
 author: River / Aditya Shankar
 dated: 2025-05-24
-title: Why I feel Svelte is better than React (it's state management)
+title: Why I like Svelte more than React (it's store management)
 icon: icon.jpg
 ---
 
-## Why I feel Svelte is better than React (it's state management)
+## Why I like Svelte more than React (it's store management)
 
 The developer experience of svelte is miles better than react, apart from pre-planned request layout structures and less cognitive work on that area
 
