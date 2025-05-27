@@ -4,6 +4,7 @@ author: River / Aditya Shankar
 dated: 2024-09-18
 title: I'd much rather have a not-best meal than a mentally drained chef
 icon: icon.svg
+url: mentally-healthy-chef
 ---
 
 ### I would much rather have a not-best meal than a mentally drained chef

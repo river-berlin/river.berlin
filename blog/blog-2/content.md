@@ -4,6 +4,7 @@ author: River / Aditya Shankar
 dated: 2024-12-27
 title: Building something that works, and then expanding it
 icon: icon.jpg
+url: building-something-that-works
 ---
 
 ## Building something that works, and then work on expanding it

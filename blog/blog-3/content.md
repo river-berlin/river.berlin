@@ -4,6 +4,7 @@ author: River / Aditya Shankar
 dated: 2025-05-22
 title: Ignore the hype – AI still has no moat
 icon: icon.jpg
+url: there-is-still-no-moat
 ---
 
 ## Ignore the hype – AI still has no moat
