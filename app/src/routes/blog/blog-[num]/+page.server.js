@@ -1,6 +1,7 @@
 import showdown from "showdown";
 import showdownHighlight from "showdown-highlight";
 import { dev } from '$app/environment';
+import { getBlogs } from '$lib/server/get-contents';
 
 const imageMap = import.meta.glob('$things/blog/blog-*/**.{svg,jpg,png}', {
   eager: true,  // Always load eagerly for SSR
@@ -15,7 +16,6 @@ const dynamicImageMap = import.meta.glob('$things/blog/blog-*/**.{svg,jpg,png}',
 
 console.log(imageMap)
 
-
 /**
  * Load function for blog page
  * @param {Object} params - Route parameters
@@ -25,13 +25,16 @@ console.log(imageMap)
  *   markdown: string,
  *   markdownHTML: string,
  *   metadata: Object,
- *   codespaceName?: string
+ *   codespaceName?: string,
+ *   allBlogs: Array
  * }>}
  */
+
+
 export async function load({ params }) {
     const markdown = (await import(`$things/blog/blog-${params.num}/content.md?raw`)).default;
     
-    // convert markdown first to get metadata
+    // Configure showdown converter with syntax highlighting and metadata
     const converter = new showdown.Converter({
         metadata: true,
         extensions: [
@@ -51,12 +54,16 @@ export async function load({ params }) {
     // Convert markdown again for the HTML (or reuse previous conversion)
     const markdownHTML = converter.makeHtml(markdown)
 
+    // Get all blogs for related articles
+    const allBlogs = await getBlogs();
+    
     const returnObj = {
         blogNum: params.num, 
         markdown, 
         icon: import.meta.env.SSR ? icon : icon.default,
         markdownHTML, 
-        metadata
+        metadata,
+        allBlogs
     };
 
     if (dev) {

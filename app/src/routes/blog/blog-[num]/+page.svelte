@@ -1,17 +1,40 @@
-<script>
-    export let data;
-    let {blogNum, markdownHTML, metadata, icon} = data;
-
+<script lang="ts">
+    import MarkdownDisplay from './left-pane/MarkdownDisplay.svelte';
+    import RightPane from './right-pane/RightPane.svelte';
     import { dev } from '$app/environment';
+    
+    interface BlogMetadata {
+        title: string;
+        dated: string | Date;
+        shortPath?: string;
+        shortSummary?: string;
+        [key: string]: any; // For other potential metadata properties
+    }
+    
+    interface BlogItem {
+        num: string;
+        metadata: BlogMetadata;
+    }
+    
+    interface PageData {
+        blogNum: string;
+        markdownHTML: string;
+        metadata: BlogMetadata;
+        icon: string;
+        allBlogs: BlogItem[];
+    }
+    
+    export let data: PageData;
+    
+    let {blogNum, markdownHTML, metadata, icon, allBlogs} = data;
 
     let BASE_URL = "https://river.berlin";
 
     if (dev) {
-        if (data.codespaceName) {
-            BASE_URL = `https://${data.codespaceName}-5000.app.github.dev`;
-        } else {
-            const port = import.meta.env.VITE_PORT;
-            BASE_URL = `http://localhost:${port}`;
+        let port = 5001; 
+        if (typeof window !== 'undefined') {
+            const windowPort = window.location.port;
+            BASE_URL = `http://localhost:${windowPort}`;
         }
     }
 </script>
@@ -48,18 +71,15 @@
     <meta name="twitter:description" content="{metadata.shortSummary}" />
 </svelte:head>
 
-<div class="content w-full max-w-3xl font-inter flex flex-col items-center mx-auto my-7">
-    <div class="stuff book-review flex flex-col">
-        <a href="/blog/blog-{blogNum}" class="relative flex p-1.5 mb-5 no-underline text-black group">
-            <img src="/scroll.svg" alt="" width="15" class="mr-5 transition-all duration-700 group-hover:hue-rotate-[151deg]">
-            <span class="take-away font-medium text-[#375883]">Blog #{blogNum}</span> : {metadata.title}
-            <div class="absolute bottom-0 left-10 w-[calc(100%-40px)] h-0.5 bg-[#5bcde9]"></div>
-        </a>
-    </div>
-    
-    <img src="{icon}" alt="" width="200" class="my-5" >
-
-    <div class="prose prose-lg dark:prose-invert max-w-none code-highlight-wrapper">
-        {@html markdownHTML}
+<div class="content w-full max-w-6xl font-inter mx-auto my-7">
+    <div class="flex flex-col lg:flex-row gap-8">
+        <div class="lg:w-3/4 w-full">
+            <MarkdownDisplay {markdownHTML} {blogNum} {metadata} {icon} />
+        </div>
+        
+        <!-- Hide on mobile screens, show on lg (large) screens and up -->
+        <div class="hidden lg:block lg:w-1/4">
+            <RightPane {markdownHTML} {blogNum} {allBlogs} />
+        </div>
     </div>
 </div>
