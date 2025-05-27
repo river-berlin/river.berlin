@@ -8,16 +8,16 @@
       />
       <div class="mt-3 text-lg text-center md:text-left">
         <h1 class="text-2xl font-bold mb-3">Hi there! 👋</h1>
-        <p class="mb-2">I am <span class="font-bold">Aditya Shankar</span></p>
-        <p class="mb-2">I am a full stack developer that mostly does<br>python or javascript stuff</p>
-        <p>Currently working at <a href="https://www.runpod.io" class="text-blue-400 hover:text-blue-300 transition-colors" target="_blank" rel="noopener noreferrer">RunPod</a> to give our customers the awesomest experience they could dream of.</p>
-        <p class="text-sm text-gray-400 mt-3">Berlin, Germany · Remote</p>
+        <p class="mb-2">I am <span class="font-bold">Aditya Shankar</span>, I am a <span class="font-bold">Software Engineer</span> that dabbles with everything, I am currently in university to study <span class="font-bold">Artificial Intelligence</span></p>
+        <p>I currently work at <a href="https://www.runpod.io" class="text-blue-400 hover:text-blue-300 transition-colors" target="_blank" rel="noopener noreferrer">RunPod</a> to give our customers the awesomest experience they could dream of.</p>
+        <p></p><br/>
+        <p>I do contract on the side, if you want to take a look at my resumé, you can <a href="https://river.berlin/resume.pdf" class="text-blue-400 hover:text-blue-300 transition-colors" target="_blank" rel="noopener noreferrer">find it here</a></p>
       </div>
     </div>
   </div>
 
   <div class="space-y-6">
-    <hr class="w-24 mx-auto border-t-2 border-black/20 mb-20" />
+    <div class="curly-separator"></div>
     <h2 class="text-2xl font-bold text-center">Work Experience</h2>
     <div class="grid gap-6 md:grid-cols-2">
 
@@ -73,4 +73,18 @@
       </div>
     </div>
   </div>
+   
+  <div class="curly-separator mb-12"></div>
 </div>
+
+<style>
+  .curly-separator {
+    height: 12px;
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto 24px;
+    background-image: url("data:image/svg+xml,%3Csvg width='100' height='12' viewBox='0 0 100 12' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0,6 C12.5,0 12.5,12 25,6 C37.5,0 37.5,12 50,6 C62.5,0 62.5,12 75,6 C87.5,0 87.5,12 100,6' stroke='%23ddd' fill='none' stroke-width='1' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat: repeat-x;
+    background-size: 100px 12px;
+  }
+</style>

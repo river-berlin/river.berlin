@@ -34,7 +34,7 @@
         <a class="header-link" href="/">
             <div class="flex items-center">
                 <img src="{image}" alt="a meditating non-binary person" height="80" class="h-20">
-                <h1 class="ml-5 text-4xl font-['Reenie_Beanie']">River's blog</h1>
+                <h1 class="ml-5 text-4xl font-['Reenie_Beanie']">River's webstuff</h1>
             </div>
         </a>
 
