@@ -58,7 +58,7 @@ export async function load({ params }) {
     const markdownHTML = converter.makeHtml(markdown)
     
     const returnObj = {
-        blogNum: params.num, 
+        blogNum, 
         markdown, 
         icon: import.meta.env.SSR ? icon : icon.default,
         markdownHTML, 
