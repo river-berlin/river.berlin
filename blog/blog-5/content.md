@@ -11,9 +11,7 @@ url: why-i-like-svelte-more-than-react
 
 The developer experience of svelte is miles better than react, apart from pre-planned request layout structures and less cognitive work on that area
 
-And that's it, React projects get into state-hell very easily, and then users are forced to use alternative options such as https://github.com/pmndrs/zustand or https://jotai.org/
-
-This is due to the fact that react by default does not have any "Global state storage" by default, so unless you are relying on the above mentioned libary – you likely will have to create a huge amount of inheritance and prop-drilling - which quickly gets messy and becomes a maintenance nightmare
+This is due to the fact that react by default does not have any "stores" by default, so unless you are relying on libraries mentioned below – you likely will have to create a huge amount of inheritance and prop-drilling - which quickly gets messy and becomes a maintenance nightmare
 
 for example, lets say you have a simple react function with children
 
@@ -95,6 +93,7 @@ function Controls() {
 
 This is indeed better, since it makes the stores "global" instead of something chained down
 
+And that's it, React projects get into state-hell very easily, and then users are forced to use alternative options such as https://github.com/pmndrs/zustand or https://jotai.org/
 
 Svelte manages this via svelte stores, which I feel are alot alot more intuitive, and because they come pre-packaged in svelte, it is one less additional library to use
 
