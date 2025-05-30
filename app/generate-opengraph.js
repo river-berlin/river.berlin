@@ -9,6 +9,7 @@ const style = `
   font-family: Reenie Beanie,cursive;
   font-weight: 400;
   font-style: normal;
+  color: #f0f0f0;
 }
 
 .main {
@@ -116,6 +117,20 @@ return `<html lang="en">
       padding: 0;
       scale: 2;
       transform: translate(25%, 25%);
+      background-color: #121212;
+      color: #f0f0f0;
+    }
+    
+    .type-container .type,
+    .big-text,
+    .author,
+    .name-and-stuff h1,
+    .name-and-stuff p {
+      color: #f0f0f0;
+    }
+    
+    .main {
+      background-color: #121212;
     }
   </style>
 </head>
