@@ -135,7 +135,7 @@
                 <a href="/blog/{blog.metadata.url}" class="relative flex flex-col sm:flex-row p-1.5 mb-5 no-underline text-gray-900 dark:text-gray-100 group animate-underline">
                     <div class="flex items-center mb-1 sm:mb-0">
                         <img src="/scroll.svg" alt="" width="15" class="mr-3 transition-all duration-2000 group-hover:hue-rotate-[151deg]">
-                        <span class="font-medium text-primary-700 dark:text-primary-400">Blog #{blog.num}</span>
+                        <span class="font-medium text-primary-700 dark:text-primary-400 ml-1.5">Blog #{blog.num}</span>
                         <span class="mx-1 sm:inline">:</span>
                     </div>
                     <div class="pl-0 sm:pl-3">{blog.metadata.title}</div>
