@@ -16,10 +16,10 @@
     function toggleDarkMode() {
         isDarkMode = !isDarkMode;
         if (isDarkMode) {
-            document.documentElement.classList.add('dark-mode');
+            document.documentElement.classList.add('dark');
             localStorage.setItem('darkMode', 'true');
         } else {
-            document.documentElement.classList.remove('dark-mode');
+            document.documentElement.classList.remove('dark');
             localStorage.setItem('darkMode', 'false');
         }
     }
@@ -29,16 +29,16 @@
         const savedTheme = localStorage.getItem('darkMode');
         if (savedTheme === 'true') {
             isDarkMode = true;
-            document.documentElement.classList.add('dark-mode');
+            document.documentElement.classList.add('dark');
         } else if (savedTheme === 'false') {
             isDarkMode = false;
-            document.documentElement.classList.remove('dark-mode');
+            document.documentElement.classList.remove('dark');
         } else {
             // Check system preference
             const prefersDark = window.matchMedia('(prefers-color-scheme: dark)');
             if (prefersDark.matches) {
                 isDarkMode = true;
-                document.documentElement.classList.add('dark-mode');
+                document.documentElement.classList.add('dark');
             }
             
             // Listen for system preference changes
@@ -46,10 +46,10 @@
                 if (localStorage.getItem('darkMode') !== null) return; // User has manual preference
                 if (e.matches) {
                     isDarkMode = true;
-                    document.documentElement.classList.add('dark-mode');
+                    document.documentElement.classList.add('dark');
                 } else {
                     isDarkMode = false;
-                    document.documentElement.classList.remove('dark-mode');
+                    document.documentElement.classList.remove('dark');
                 }
             });
         }
@@ -58,41 +58,29 @@
 
 <style lang="postcss">
     .header-link {
-        color: black;
-        text-decoration: none;
-        font-family: 'Sofia Sans', sans-serif;
+        @apply text-gray-900 dark:text-white no-underline font-['Sofia_Sans'];
     }
 
     .page:hover{
-        text-decoration: underline;
-        text-decoration-color: gainsboro;
+        @apply underline decoration-gray-300 dark:decoration-gray-600;
     }
 
     .highlighted{
-        text-decoration: underline;
-        text-decoration-color: rgb(68, 68, 68);
+        @apply underline decoration-gray-700 dark:decoration-gray-300;
     }
     
     /* Dark mode button styles */
     .theme-toggle {
         @apply p-2 rounded-full hover:bg-primary-100 dark:hover:bg-primary-800 transition-colors;
     }
-    
-    :global(.dark-mode) {
-        filter: invert(1) hue-rotate(180deg);
-    }
-    
-    :global(.dark-mode img), :global(.dark-mode video), :global(.dark-mode .preserve-colors) {
-        filter: invert(1) hue-rotate(180deg); /* Revert the inversion for images and videos */
-    }
 </style>
 
-<div class="w-full flex justify-center px-6 mt-8 mb-8">
+<div class="w-full flex justify-center px-6 pt-8 mb-8 bg-white dark:bg-gray-900 transition-colors duration-200">
     <div class="flex flex-col md:flex-row justify-between items-center w-full max-w-[700px] gap-4">
         <a class="header-link" href="/">
             <div class="flex items-center">
                 <img src="{image}" alt="a meditating non-binary person" height="80" class="h-20">
-                <h1 class="ml-5 text-4xl font-['Reenie_Beanie'] text-primary-700">River's webstuff</h1>
+                <h1 class="ml-5 text-4xl font-['Reenie_Beanie'] text-primary-700 dark:text-primary-400">River's webstuff</h1>
             </div>
         </a>
 
@@ -100,11 +88,11 @@
             <div class="font-['Sofia_Sans']">
                 <div class="flex gap-3">
                     <div class="page">
-                        <a href="/about-me" class:highlighted={$page.url.pathname.startsWith("/about-me/")}>About me</a>
+                        <a href="/about-me" class="text-gray-800 dark:text-gray-200 hover:text-primary-600 dark:hover:text-primary-400 transition-colors" class:highlighted={$page.url.pathname.startsWith("/about-me/")}>About me</a>
                     </div>
-                    <div class="text-gray-400">/</div>
+                    <div class="text-gray-400 dark:text-gray-500">/</div>
                     <div class="page">
-                        <a href="/feed" class:highlighted={checkFeed($page)}>Feed</a>
+                        <a href="/feed" class="text-gray-800 dark:text-gray-200 hover:text-primary-600 dark:hover:text-primary-400 transition-colors" class:highlighted={checkFeed($page)}>Feed</a>
                     </div>
                 </div>
             </div>
@@ -112,15 +100,15 @@
             <!-- Dark mode toggle button -->
             <button 
                 aria-label="Toggle dark mode" 
-                class="theme-toggle preserve-colors" 
+                class="theme-toggle bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200" 
                 on:click={toggleDarkMode}
             >
                 {#if isDarkMode}
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-secondary-500" viewBox="0 0 20 20" fill="currentColor">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-yellow-400" viewBox="0 0 20 20" fill="currentColor">
                         <path fill-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" clip-rule="evenodd" />
                     </svg>
                 {:else}
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-primary-500" viewBox="0 0 20 20" fill="currentColor">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-primary-600" viewBox="0 0 20 20" fill="currentColor">
                         <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z" />
                     </svg>
                 {/if}

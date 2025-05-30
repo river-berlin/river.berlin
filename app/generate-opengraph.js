@@ -117,7 +117,7 @@ return `<html lang="en">
       padding: 0;
       scale: 2;
       transform: translate(25%, 25%);
-      background-color: #121212;
+      background-color:rgb(17 24 39);
       color: #f0f0f0;
     }
     
@@ -130,7 +130,7 @@ return `<html lang="en">
     }
     
     .main {
-      background-color: #121212;
+      background-color: rgb(17 24 39);
     }
   </style>
 </head>

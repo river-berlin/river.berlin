@@ -20,7 +20,7 @@
 
 <div class="right-pane">
     <TableOfContents {markdownHTML} />
-    <div class="curly-separator !ml-[15px]"></div>
+    <div class="curly-separator !ml-[15px] dark:opacity-50"></div>
     <RelatedArticles currentBlogNum={blogNum} {allBlogs} />
 </div>
 
