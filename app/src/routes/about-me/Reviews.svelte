@@ -24,10 +24,10 @@
       linkedInUrl: "https://www.linkedin.com/in/aditya-shankar-338641252/details/recommendations" // LinkedIn recommendation URL
     },
     {
-      name: "Geovany",
-      company: "Repunzel",
-      content: "Aditya is such a kind and knowledgeable person. They are a top tier performer in our group and are someone who is dependable. Their technical knowledge in cloud support based products and development truly shine in this field. Great person to work with! :)",
-      image: "/review-images/geovany.jpg",
+      name: "Howard",
+      company: "Rapunzel.com",
+      content: "Adi was an invaluable resource to me in the development of both my Saas products. He developed an early prototype of Repunzel.com, and although we were not able to finish the project together, I continued to rely on his technical advice and expertise for other related projects. He is passionate about technology, loyal, and kind. I would highly recommend Adi for anyone looking for a competent engineer.",
+      image: "/review-images/howard.jpg",
       linkedInUrl: "https://www.linkedin.com/in/aditya-shankar-338641252/details/recommendations" // LinkedIn recommendation URL
     },
     {
@@ -41,19 +41,19 @@
   
   const secondRowReviews: Review[] = [
     {
-      name: "Howard",
-      company: "Rapunzel.com",
-      content: "Adi was an invaluable resource to me in the development of both my Saas products. He developed an early prototype of Repunzel.com, and although we were not able to finish the project together, I continued to rely on his technical advice and expertise for other related projects. He is passionate about technology, loyal, and kind. I would highly recommend Adi for anyone looking for a competent engineer.",
-      image: "/review-images/howard.jpg",
-      linkedInUrl: "https://www.linkedin.com/in/aditya-shankar-338641252/details/recommendations" // LinkedIn recommendation URL
-    },
-    {
       name: "Tim Pietrusky",
       company: "RunPod",
       content: "Aditya stands out for his creative approach to solving customer problems. When faced with new challenges, he willingly goes above and beyond what is expected, finding innovative solutions that benefit both our team and our customers. His development of effective tools has helped us diagnose and resolve issues more quickly. Aditya's readiness to take on extra responsibilities and his genuine care for everyone around him make a real difference every day.",
       image: "/review-images/tim-pietrusky.jpg",
       linkedInUrl: "https://www.linkedin.com/in/aditya-shankar-338641252/details/recommendations" // LinkedIn recommendation URL
-    }
+    },
+    {
+      name: "Geovany",
+      company: "Runpod",
+      content: "Aditya is such a kind and knowledgeable person. They are a top tier performer in our group and are someone who is dependable. Their technical knowledge in cloud support based products and development truly shine in this field. Great person to work with! :)",
+      image: "/review-images/geovany.jpg",
+      linkedInUrl: "https://www.linkedin.com/in/aditya-shankar-338641252/details/recommendations" // LinkedIn recommendation URL
+    },
   ];
   
   // Initialize expandable state
@@ -85,22 +85,22 @@
 </script>
 
 <div class="space-y-8">
-  <h2 class="text-2xl font-bold text-center">What people say about me!</h2>
+  <h2 class="text-2xl font-bold text-center text-gray-900 dark:text-white">What people say about me!</h2>
   
   <!-- Two rows of reviews -->
   <div class="space-y-6">
     <!-- First row -->
     <div class="flex flex-wrap justify-center gap-6">
       {#each firstRowReviews as review, index}
-        <div class="w-full md:w-[45%] rounded-xl p-4 bg-white/5">
+        <div class="w-full md:w-[45%] rounded-xl p-4">
           <div class="flex flex-col w-full">
           <div class="flex justify-between items-start mb-3">
             <div class="flex items-center gap-2">
               <div class="flex items-center gap-2">
                 <img class="rounded-lg h-10 w-10" src={review.image} alt="Client from {review.company}" on:error={handleImageError} />
                 <div>
-                  <h3 class="font-bold text-base">{review.name}</h3>
-                  <p class="text-xs text-gray-300">{review.company}</p>
+                  <h3 class="font-bold text-base text-gray-900 dark:text-white">{review.name}</h3>
+                  <p class="text-xs text-gray-500 dark:text-gray-400">{review.company}</p>
                 </div>
               </div>
               {#if review.linkedInUrl}
@@ -108,7 +108,7 @@
                   href={review.linkedInUrl} 
                   target="_blank" 
                   rel="noopener noreferrer" 
-                  class="text-blue-400 hover:text-blue-300 transition-colors ml-1" 
+                  class="text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 transition-colors ml-1" 
                   title="View on LinkedIn"
                   aria-label="View {review.name}'s recommendation on LinkedIn"
                 >
@@ -130,10 +130,10 @@
             {/if}
           </div>
           <div class={`overflow-hidden transition-all duration-300 ${expandedReviews[`first-${index}`] ? 'max-h-[1000px]' : 'max-h-[100px]'}`}>
-            <p class="text-gray-500 text-sm whitespace-pre-line">{review.content}</p>
+            <p class="text-gray-600 dark:text-gray-300 text-sm whitespace-pre-line">{review.content}</p>
           </div>
           <button 
-            class="flex items-center text-blue-500 hover:text-blue-400 text-xs mt-2 focus:outline-none" 
+            class="flex items-center text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 text-xs mt-2 focus:outline-none" 
             on:click={() => toggleExpanded('first', index)}
             aria-label={expandedReviews[`first-${index}`] ? "Collapse review" : "Expand review"}
           >
@@ -157,15 +157,15 @@
     <!-- Second row -->
     <div class="flex flex-wrap justify-center gap-6">
       {#each secondRowReviews as review, index}
-        <div class="w-full md:w-[45%] rounded-xl p-4 bg-white/5">
+        <div class="w-full md:w-[45%] rounded-xl p-4">
           <div class="flex flex-col w-full">
           <div class="flex justify-between items-start mb-3">
             <div class="flex items-center gap-2">
               <div class="flex items-center gap-2">
                 <img class="rounded-lg h-10 w-10" src={review.image} alt="Client from {review.company}" on:error={handleImageError} />
                 <div>
-                  <h3 class="font-bold text-base">{review.name}</h3>
-                  <p class="text-xs text-gray-300">{review.company}</p>
+                  <h3 class="font-bold text-base text-gray-900 dark:text-white">{review.name}</h3>
+                  <p class="text-xs text-gray-500 dark:text-gray-400">{review.company}</p>
                 </div>
               </div>
               {#if review.linkedInUrl}
@@ -173,7 +173,7 @@
                   href={review.linkedInUrl} 
                   target="_blank" 
                   rel="noopener noreferrer" 
-                  class="text-blue-400 hover:text-blue-300 transition-colors ml-1" 
+                  class="text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 transition-colors ml-1" 
                   title="View on LinkedIn"
                   aria-label="View {review.name}'s recommendation on LinkedIn"
                 >
@@ -195,10 +195,10 @@
             {/if}
           </div>
           <div class={`overflow-hidden transition-all duration-300 ${expandedReviews[`second-${index}`] ? 'max-h-[1000px]' : 'max-h-[100px]'}`}>
-            <p class="text-gray-500 text-sm whitespace-pre-line">{review.content}</p>
+            <p class="text-gray-600 dark:text-gray-300 text-sm whitespace-pre-line">{review.content}</p>
           </div>
           <button 
-            class="flex items-center text-blue-500 hover:text-blue-400 text-xs mt-2 focus:outline-none" 
+            class="flex items-center text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 text-xs mt-2 focus:outline-none" 
             on:click={() => toggleExpanded('second', index)}
             aria-label={expandedReviews[`second-${index}`] ? "Collapse review" : "Expand review"}
           >

@@ -66,230 +66,141 @@
 </script>
 
 <style>
-.filter-nav {
-    margin-bottom: 16px;
-}
-
-.curly-separator {
-    height: 12px;
-    width: 100%;
-    max-width: 600px;
-    margin: 0 auto 24px;
+  /* This keeps the curly separator styling using a custom background image */
+  .curly-separator-bg {
     background-image: url("data:image/svg+xml,%3Csvg width='100' height='12' viewBox='0 0 100 12' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0,6 C12.5,0 12.5,12 25,6 C37.5,0 37.5,12 50,6 C62.5,0 62.5,12 75,6 C87.5,0 87.5,12 100,6' stroke='%23ddd' fill='none' stroke-width='1' stroke-linecap='round'/%3E%3C/svg%3E");
     background-repeat: repeat-x;
     background-size: 100px 12px;
-}
-
-.curly-separator.final{
-    margin-bottom: 50px;
-}
-
-/* These styles should match header.svelte styles */
-.filter-link {
-    color: black;
-    text-decoration: none;
-    cursor: pointer;
-    background: none;
-    border: none;
-    padding: 0;
-    font: inherit;
-    outline: none;
-}
-
-.filter-link:hover {
-    text-decoration: underline;
-    text-decoration-color: gainsboro;
-}
-
-.highlighted {
-    text-decoration: underline !important;
-    text-decoration-color: rgb(68, 68, 68) !important;
-}
-
-.stuff.book-review{
-    display: flex;
-    flex-direction: column;
-}
-
-.stuff .blog-or-book-container{
-    position: relative;
-    margin-bottom: 15px;
-
-}
-
-.stuff .blog-or-book-container .dated{
-    position: absolute;
-    left: 40px;
-    bottom: 0;
-    font-size: 12px;
-}
-
-.stuff .project-container{
-    position: relative;
-    margin-bottom: 35px;
-}
-
-.stuff .project-container .dated{
-    position: absolute;
-    left: 61px;
-    bottom: -20px;
-    font-size: 12px;
-}
-
-.stuff a{
-    position: relative;
-    display: flex;
-    padding: 5px;
-    background-size: 20px 20px;
-    margin-bottom: 20px;
-    text-decoration: none;
-    color: black;
-}
-
-.stuff a img{
-    margin-right: 20px;
-    transition: 2s filter;
-}
-
-.stuff a .fruits{
-    margin-right: 20px;
-}
-
-.stuff a .fruits img{
-    margin-right: 0;
-}
-
-.stuff a:hover img{
-    filter: hue-rotate(151deg);
-}
-
-.stuff a .take-away{
-    font-weight: 500;
-    color: #375883;
-}
-
-@keyframes underline-color-change {
-    0% {background-color: rgb(240, 227, 212);}
-    50% {background-color: rgb(230, 182, 26);}
-    100% {background-color: rgb(91, 205, 233);}
-}
-
-.stuff a::before{
-    content: "";
-    background: rgb(240, 227, 212);
-    position: absolute;
-    bottom: 0;
-    left: 40px;
-    width: calc(100% - 40px);
-    height: 2px;
-}
-
-.stuff.project{
-    margin-bottom: 20px;
-}
-
-.stuff.project a::before, .stuff.project a::after{
-    left: 61px;
-    width: calc(100% - 61px);
-}
-
-.stuff a:hover::before{
-    animation: underline-color-change 1s linear;
-    animation-fill-mode: forwards;
-}
-
-.content{
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 100%;
-    margin-left: auto;
-    margin-right: auto;
-    margin: 30px auto;
-}
-
-.appreciation{
-    margin-bottom: 5px;
-}
-
+  }
+  
+  /* Animation for the underline hover effect */
+  @keyframes underline-color-change {
+    100% {background-color: #89e6ff;}
+  }
+  
+  .animate-underline:hover::before {
+    animation: underline-color-change 1s linear forwards;
+  }
 </style>
 
-<div class="content">
-    <div class="filter-nav font-['Sofia_Sans']">
+<div class="flex flex-col items-center w-full mx-auto my-7">
+    <div class="mb-4 font-['Sofia_Sans']">
         <div class="flex gap-3 justify-center">
-            <div class="page">
-                <button class="filter-link {activeFilter === 'all' ? 'highlighted' : ''}" on:click={() => setFilter('all')}>All</button>
+            <div>
+                <button 
+                    class="text-gray-900 dark:text-gray-100 cursor-pointer bg-transparent border-0 p-0 font-inherit outline-none hover:underline hover:decoration-gray-200 dark:hover:decoration-gray-700 {activeFilter === 'all' ? 'underline decoration-gray-700 dark:decoration-gray-400' : ''}"
+                    on:click={() => setFilter('all')}
+                >
+                    All
+                </button>
             </div>
-            <div class="text-gray-400">/</div>
-            <div class="page">
-                <button class="filter-link {activeFilter === 'blogs' ? 'highlighted' : ''}" on:click={() => setFilter('blogs')}>Blogs</button>
+            <div class="text-gray-400 dark:text-gray-500">/</div>
+            <div>
+                <button 
+                    class="text-gray-900 dark:text-gray-100 cursor-pointer bg-transparent border-0 p-0 font-inherit outline-none hover:underline hover:decoration-gray-200 dark:hover:decoration-gray-700 {activeFilter === 'blogs' ? 'underline decoration-gray-700 dark:decoration-gray-400' : ''}"
+                    on:click={() => setFilter('blogs')}
+                >
+                    Blogs
+                </button>
             </div>
-            <div class="text-gray-400">/</div>
-            <div class="page">
-                <button class="filter-link {activeFilter === 'projects' ? 'highlighted' : ''}" on:click={() => setFilter('projects')}>Projects</button>
+            <div class="text-gray-400 dark:text-gray-500">/</div>
+            <div>
+                <button 
+                    class="text-gray-900 dark:text-gray-100 cursor-pointer bg-transparent border-0 p-0 font-inherit outline-none hover:underline hover:decoration-gray-200 dark:hover:decoration-gray-700 {activeFilter === 'projects' ? 'underline decoration-gray-700 dark:decoration-gray-400' : ''}"
+                    on:click={() => setFilter('projects')}
+                >
+                    Projects
+                </button>
             </div>
-            <div class="text-gray-400">/</div>
-            <div class="page">
-                <button class="filter-link {activeFilter === 'books' ? 'highlighted' : ''}" on:click={() => setFilter('books')}>Book Reviews</button>
+            <div class="text-gray-400 dark:text-gray-500">/</div>
+            <div>
+                <button 
+                    class="text-gray-900 dark:text-gray-100 cursor-pointer bg-transparent border-0 p-0 font-inherit outline-none hover:underline hover:decoration-gray-200 dark:hover:decoration-gray-700 {activeFilter === 'books' ? 'underline decoration-gray-700 dark:decoration-gray-400' : ''}"
+                    on:click={() => setFilter('books')}
+                >
+                    Book Reviews
+                </button>
             </div>
         </div>
     </div>
     
-    <div class="curly-separator"></div>
+    <!-- First Separator -->
+    <div class="h-3 w-full max-w-[600px] mx-auto mb-6 curly-separator-bg"></div>
 
+    <!-- Blogs Section -->
     {#if activeFilter === 'all' || activeFilter === 'blogs'}
-    <div class="stuff book-review">
+    <div class="flex flex-col w-full max-w-[600px] mx-auto">
         {#each data.blogs as blog }
-            <div class="blog-or-book-container">
-                <a href="/blog/{blog.metadata.url}">
-                    <img src="/scroll.svg" alt="" width="15">
-                    <span class="take-away">Blog #{blog.num}</span> : {blog.metadata.title}
-                </a>
-                <p class="dated">{formatDate(blog.metadata.dated)}</p>
-            </div>
-        {/each}
-    </div>
-    {/if}
-
-    {#if (activeFilter === 'all' && data.blogs.length > 0 && (data.projects.length > 0 || data.bookTakeaways.length > 0))}
-    <div class="curly-separator"></div>
-    {/if}
-
-    {#if activeFilter === 'all' || activeFilter === 'projects'}
-    <div class="stuff project">
-        {#each data.projects as project}  
-            <div class="project-container">  
-                <a href="/projects/{project.metadata.shortPath}">
-                    <div class="fruits flex">
-                        <img src="/fruits/orange.svg" alt="" width="15">
-                        <img src="/fruits/watermelon.svg" alt="" width="15" class="ml-2">
+            <div class="relative mb-4 w-full">
+                <a href="/blog/{blog.metadata.url}" class="relative flex flex-col sm:flex-row p-1.5 mb-5 no-underline text-gray-900 dark:text-gray-100 group animate-underline">
+                    <div class="flex items-center mb-1 sm:mb-0">
+                        <img src="/scroll.svg" alt="" width="15" class="mr-3 transition-all duration-2000 group-hover:hue-rotate-[151deg]">
+                        <span class="font-medium text-primary-700 dark:text-primary-400">Blog #{blog.num}</span>
+                        <span class="mx-1 sm:inline">:</span>
                     </div>
-                    <span class="take-away">Project #{project.num}</span> : {project.metadata.title}
+                    <div class="pl-0 sm:pl-3">{blog.metadata.title}</div>
+                    <span class="absolute bottom-0 left-0 sm:left-10 w-full sm:w-[calc(100%-2.5rem)] h-0.5 bg-amber-100 dark:bg-amber-900/50 group-hover:bg-sky-300 dark:group-hover:bg-sky-700 transition-colors duration-1000"></span>
                 </a>
-                <p class="dated">{formatDate(project.metadata.dated)}</p>
+                <p class="absolute left-0 sm:left-10 bottom-0 text-xs text-gray-500 dark:text-gray-400">{formatDate(blog.metadata.dated)}</p>
             </div>
         {/each}
     </div>
     {/if}
 
+    <!-- Middle Separator (conditional) -->
+    {#if (activeFilter === 'all' && data.blogs.length > 0 && (data.projects.length > 0 || data.bookTakeaways.length > 0))}
+    <div class="h-3 w-full max-w-[600px] mx-auto mb-6 curly-separator-bg"></div>
+    {/if}
+
+    <!-- Projects Section -->
+    {#if activeFilter === 'all' || activeFilter === 'projects'}
+    <div class="flex flex-col w-full max-w-[600px] mx-auto">
+        {#each data.projects as project}  
+            <div class="relative mb-9 w-full">  
+                <a href="/projects/{project.metadata.shortPath}" class="relative flex flex-col sm:flex-row p-1.5 mb-5 no-underline text-gray-900 dark:text-gray-100 group animate-underline">
+                    <div class="flex items-center mb-1 sm:mb-0">
+                        <div class="flex mr-3">
+                            <img src="/fruits/orange.svg" alt="" width="15" class="transition-all duration-2000 group-hover:hue-rotate-[151deg]">
+                            <img src="/fruits/watermelon.svg" alt="" width="15" class="ml-2 transition-all duration-2000 group-hover:hue-rotate-[151deg]">
+                        </div>
+                        <span class="font-medium text-primary-700 dark:text-primary-400">Project #{project.num}</span>
+                        <span class="mx-1 sm:inline">:</span>
+                    </div>
+                    <div class="pl-0 sm:pl-3">{project.metadata.title}</div>
+                    <span class="absolute bottom-0 left-0 sm:left-[3.8rem] w-full sm:w-[calc(100%-3.8rem)] h-0.5 bg-amber-100 dark:bg-amber-900/50 group-hover:bg-sky-300 dark:group-hover:bg-sky-700 transition-colors duration-1000"></span>
+                </a>
+                <p class="absolute left-0 sm:left-[3.8rem] bottom-[-20px] text-xs text-gray-500 dark:text-gray-400">{formatDate(project.metadata.dated)}</p>
+            </div>
+        {/each}
+    </div>
+    {/if}
+
+    <!-- Another Conditional Separator -->
     {#if (activeFilter === 'all' && data.projects.length > 0 && data.bookTakeaways.length > 0)}
-    <div class="curly-separator"></div>
+    <div class="h-3 w-full max-w-[600px] mx-auto mb-6 curly-separator-bg"></div>
     {/if}
 
+    <!-- Book Reviews Section -->
     {#if activeFilter === 'all' || activeFilter === 'books'}
-    <div class="stuff book-review">
+    <div class="flex flex-col w-full max-w-[600px] mx-auto">
         {#each data.bookTakeaways as book }
-            <div class="blog-or-book-container">
-                <a href="/book-reviews/book-{book.num}">
-                    <img src="/scroll.svg" alt="" width="15">
-                    <span class="take-away">Book take away #{book.num}</span> : {book.metadata.title}
+            <div class="relative mb-4 w-full">
+                <a href="/book-reviews/book-{book.num}" class="relative flex flex-col sm:flex-row p-1.5 mb-5 no-underline text-gray-900 dark:text-gray-100 group animate-underline">
+                    <div class="flex items-center mb-1 sm:mb-0">
+                        <img src="/scroll.svg" alt="" width="15" class="mr-3 transition-all duration-2000 group-hover:hue-rotate-[151deg]">
+                        <span class="font-medium text-primary-700 dark:text-primary-400">Book take away #{book.num}</span>
+                        <span class="mx-1 sm:inline">:</span>
+                    </div>
+                    <div class="pl-0 sm:pl-3">{book.metadata.title}</div>
+                    <span class="absolute bottom-0 left-0 sm:left-10 w-full sm:w-[calc(100%-2.5rem)] h-0.5 bg-amber-100 dark:bg-amber-900/50 group-hover:bg-sky-300 dark:group-hover:bg-sky-700 transition-colors duration-1000"></span>
                 </a>
-                <p class="dated">{formatDate(book.metadata.dated)}</p>
+                <p class="absolute left-0 sm:left-10 bottom-0 text-xs text-gray-500 dark:text-gray-400">{formatDate(book.metadata.dated)}</p>
             </div>
         {/each}
     </div>
     {/if}
 
-    <div class="final curly-separator"></div>
-    <p class="appreciation">xoxo/appreciate you 🙂</p>
+    <!-- Final Separator and Appreciation Message -->
+    <div class="h-3 w-full max-w-[600px] mx-auto mb-12 curly-separator-bg dark:opacity-50"></div>
+    <p class="mb-1 text-gray-800 dark:text-gray-200">xoxo/appreciate you 🙂</p>
 </div>

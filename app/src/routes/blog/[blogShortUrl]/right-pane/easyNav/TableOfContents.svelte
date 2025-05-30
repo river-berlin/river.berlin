@@ -1,5 +1,6 @@
 <script lang="ts">
-    export let markdownHTML : string;
+    // Using export const since this property is only for external reference and not used directly
+    export const markdownHTML : string = "";
     import { onMount } from 'svelte';
     
     let headings : any[] = [];
@@ -27,7 +28,7 @@
 </script>
 
 <div class="toc-container !mb-0 !pb-0">
-    <h2 class="text-lg font-bold mb-4">Contents</h2>
+    <h2 class="text-lg font-bold mb-4 text-gray-900 dark:text-gray-100">Contents</h2>
     <nav class="toc-nav">
         <ul class="toc-list">
             {#each headings as heading}
@@ -43,11 +44,16 @@
 
 <style>
     .toc-container {
-        background-color: rgba(255, 255, 255, 0.05);
+        background-color: rgba(240, 240, 240, 0.1);
         border-radius: 0.5rem;
         padding: 1rem;
         margin-bottom: 2rem;
-        border: 1px solid rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(200, 200, 200, 0.1);
+    }
+    
+    :global(.dark) .toc-container {
+        background-color: rgba(30, 30, 30, 0.1);
+        border: 1px solid rgba(70, 70, 70, 0.2);
     }
     
     .toc-list {
@@ -61,13 +67,22 @@
     }
     
     .toc-link {
-        color: #5bcde9;
+        color: #4896b0;
         text-decoration: none;
         font-size: 0.9rem;
         transition: color 0.2s;
     }
     
+    :global(.dark) .toc-link {
+        color: #5bcde9;
+    }
+    
     .toc-link:hover {
+        color: #366d80;
+        text-decoration: underline;
+    }
+    
+    :global(.dark) .toc-link:hover {
         color: #89e6ff;
         text-decoration: underline;
     }

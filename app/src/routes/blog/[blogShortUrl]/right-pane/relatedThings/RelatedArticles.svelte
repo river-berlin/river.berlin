@@ -38,7 +38,7 @@
 </script>
 
 <div class="related-container">
-    <p class="text-lg font-thin mb-4">Related</p>
+    <p class="text-lg font-thin mb-4 text-gray-900 dark:text-gray-100">Related</p>
     
     {#if relatedBlogs.length > 0}
         <div class="related-blogs">
@@ -50,23 +50,28 @@
                     data-sveltekit-reload
                 >
                     <div class="related-blog">
-                        <h3 class="text-md font-medium">{blog.metadata.title}</h3>
-                        <p class="text-xs text-gray-400">{formatDate(blog.metadata.dated)}</p>
+                        <h3 class="text-md font-medium text-gray-900 dark:text-gray-100">{blog.metadata.title}</h3>
+                        <p class="text-xs text-gray-400 dark:text-gray-500">{formatDate(blog.metadata.dated)}</p>
                     </div>
                 </a>
             {/each}
         </div>
     {:else}
-        <p class="text-sm text-gray-400">No related articles found.</p>
+        <p class="text-sm text-gray-400 dark:text-gray-500">No related articles found.</p>
     {/if}
 </div>
 
 <style>
     .related-container {
-        background-color: rgba(255, 255, 255, 0.05);
+        background-color: rgba(240, 240, 240, 0.1);
         border-radius: 0.5rem;
         padding: 1rem;
-        border: 1px solid rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(200, 200, 200, 0.1);
+    }
+    
+    :global(.dark) .related-container {
+        background-color: rgba(30, 30, 30, 0.1);
+        border: 1px solid rgba(70, 70, 70, 0.2);
     }
     
     .related-blogs {
@@ -76,9 +81,13 @@
     }
     
     .related-blog {
-        border-left: 2px solid #5bcde9;
+        border-left: 2px solid #4896b0;
         padding-left: 0.75rem;
         transition: all 0.2s;
+    }
+    
+    :global(.dark) .related-blog {
+        border-left: 2px solid #5bcde9;
     }
     
     .related-blog-link {
@@ -87,8 +96,13 @@
     }
     
     .related-blog-link:hover .related-blog {
+        border-left-color: #366d80;
+        background-color: rgba(0, 0, 0, 0.03);
+        transform: translateX(2px);
+    }
+    
+    :global(.dark) .related-blog-link:hover .related-blog {
         border-left-color: #89e6ff;
         background-color: rgba(255, 255, 255, 0.03);
-        transform: translateX(2px);
     }
 </style>

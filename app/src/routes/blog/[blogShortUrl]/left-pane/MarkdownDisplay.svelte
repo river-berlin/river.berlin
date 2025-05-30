@@ -7,12 +7,12 @@
 
 <div class="markdown-container">
     <div class="stuff book-review flex flex-col">
-        <a href="/blog/{metadata.url}" class="relative p-1.5 mb-5 no-underline text-black group">
+        <a href="/blog/{metadata.url}" class="relative p-1.5 mb-5 no-underline text-gray-900 dark:text-gray-100 group">
             <div class="flex flex-col">
-                <span class="take-away font-medium text-[#375883]">Blog #{blogNum}</span>
+                <span class="take-away font-medium text-primary-700 dark:text-primary-400">Blog #{blogNum}</span>
                 <span class="font-medium mt-1">{metadata.title}</span>
             </div>
-            <div class="absolute bottom-0 left-0 w-[calc(100%-40px)] h-[1px] bg-gray-200"></div>
+            <div class="absolute bottom-0 left-0 w-[calc(100%-40px)] h-[1px] bg-gray-200 dark:bg-gray-700"></div>
         </a>
     </div>
     
@@ -24,8 +24,8 @@
         {@html markdownHTML}
     </div>
     
-    <div class="curly-separator mt-8 mb-5"></div>
-    <p class="text-sm text-center mb-5">xoxo - appreciate you</p>
+    <div class="curly-separator mt-8 mb-5 dark:opacity-50"></div>
+    <p class="text-sm text-center mb-5 text-gray-800 dark:text-gray-200">xoxo - appreciate you</p>
 </div>
 
 <style>
@@ -57,6 +57,10 @@
         white-space: normal;
         background-color: rgba(0, 0, 0, 0.05);
     }
+    
+    :global(.dark :not(pre) > code) {
+        background-color: rgba(255, 255, 255, 0.1);
+    }
 
     /* Enhanced monospace fonts for all code elements */
     :global(code), 
@@ -81,6 +85,11 @@
         border-bottom-left-radius: 0.25rem;
         background-color: rgba(229, 229, 229, 0.8);
         z-index: 10;
+    }
+    
+    :global(.dark pre)::before {
+        color: #e0e0e0;
+        background-color: rgba(40, 40, 40, 0.8);
     }
 
     .markdown-container {

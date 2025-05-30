@@ -4,12 +4,12 @@
 </script>
 
 <div class="flex flex-col gap-12 max-w-3xl mx-auto p-6">
-  <div class="flex justify-center bg-white/10 p-6 rounded-xl border border-white/20">
+  <div class="flex justify-center p-6 rounded-xl">
     <div class="flex flex-col md:flex-row items-center gap-8">
       <img
         src="/me.jpg"
         alt="me"
-        class="w-48 h-48 rounded-lg border-2 border-white/20"
+        class="w-48 h-48 rounded-lg"
       />
       <div class="mt-3 text-lg text-center md:text-left">
         <h1 class="text-2xl font-bold mb-3">Hi there! 👋</h1>
