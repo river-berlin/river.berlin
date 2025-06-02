@@ -75,7 +75,7 @@
     }
 </style>
 
-<div class="w-full flex justify-center px-6 pt-8 mb-8 bg-white dark:bg-gray-900 transition-colors duration-200">
+<div class="w-full flex justify-center px-6 pt-8 mb-8 bg-white dark:bg-black transition-colors duration-200">
     <div class="flex flex-col md:flex-row justify-between items-center w-full max-w-[700px] gap-4">
         <a class="header-link" href="/">
             <div class="flex items-center">
