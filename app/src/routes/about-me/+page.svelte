@@ -3,8 +3,8 @@
   import Reviews from "./Reviews.svelte";
 </script>
 
-<div class="flex flex-col gap-12 max-w-3xl mx-auto p-6">
-  <div class="flex justify-center p-6 rounded-xl">
+<div class="flex flex-col gap-12 mx-auto p-6">
+  <div class="flex justify-center p-6 rounded-xl max-w-3xl mx-auto">
     <div class="flex flex-col md:flex-row items-center gap-8">
       <img
         src="/me.jpg"
@@ -21,7 +21,7 @@
     </div>
   </div>
 
-  <div class="curly-separator mb-12"></div>
+  <div class="curly-separator"></div>
 
   <div class="space-y-6">
     <Reviews />
@@ -40,8 +40,7 @@
   .curly-separator {
     height: 12px;
     width: 100%;
-    max-width: 600px;
-    margin: 0 auto 24px;
+    margin: 0 auto;
     background-image: url("data:image/svg+xml,%3Csvg width='100' height='12' viewBox='0 0 100 12' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0,6 C12.5,0 12.5,12 25,6 C37.5,0 37.5,12 50,6 C62.5,0 62.5,12 75,6 C87.5,0 87.5,12 100,6' stroke='%23ddd' fill='none' stroke-width='1' stroke-linecap='round'/%3E%3C/svg%3E");
     background-repeat: repeat-x;
     background-size: 100px 12px;
