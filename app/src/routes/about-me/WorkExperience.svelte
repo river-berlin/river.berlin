@@ -31,7 +31,7 @@
           <li>Freelance projects using various technologies.</li>
       </ul>
       <p class="text-sm text-gray-400 mt-3">Worked remotely</p>
-      <a href="https://www.upwork.com/freelancers/settings/profile" class="text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 transition-colors mt-2 inline-block">Upwork Profile</a>
+      <a href="https://www.upwork.com/freelancers/~01743d8599b93d48c7" class="text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 transition-colors mt-2 inline-block">Upwork Profile</a>
     </div>
 
     <div class="p-6 rounded-xl">
