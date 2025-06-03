@@ -49,7 +49,7 @@
     error = '';
 
     try {
-      const response = await fetch('http://emailer.theadityashankar.workers.dev', {
+      const response = await fetch('https://emailer.theadityashankar.workers.dev', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
