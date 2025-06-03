@@ -1,3 +1,28 @@
+
+// workaround for sveltekit
+// because loclstorage isn't present during server side rendering
+if(!globalThis.localStorage){
+    // @ts-ignore
+    globalThis.localStorage = {
+        getItem: () => null,
+        setItem: () => {}
+    }
+}
+
+let currentDarkMode = globalThis.localStorage.getItem('darkMode') === 'true';
+
+function pollDarkMode(callback: () => void){
+    const isDarkMode = globalThis.localStorage.getItem('darkMode') === 'true';
+    if (isDarkMode !== currentDarkMode) {
+        console.log("darkmode changed")
+        currentDarkMode = isDarkMode;
+        callback();
+    }
+    setTimeout(() => {
+        pollDarkMode(callback);
+    }, 100);
+}
+
 class FireFly {
     private element: HTMLDivElement;
     private container: HTMLElement;
@@ -10,10 +35,12 @@ class FireFly {
     private size: number;
     private brightness: number;
     private animationFrame: number | null = null;
+    public isBlue: boolean;
 
     constructor(container: HTMLElement) {
         this.container = container;
         this.size = Math.random() * 2 + 2; // Random size between 2-4px
+        this.isBlue = Math.random() > 0.5; // Randomly determine if this is a blue firefly
         
         // Create the firefly element
         this.element = document.createElement('div');
@@ -37,12 +64,19 @@ class FireFly {
         this.speedY = Math.random() * 0.5 + 0.1;
         this.setNewTarget();
         
-        // Start with random brightness
+        // Start with full brightness
         this.brightness = 1;
         this.updateBrightness();
         
         // Start the animation
         this.animate();
+        
+        // Listen for dark mode changes in localStorage
+        pollDarkMode(() => {
+            // randomly change firefly colors as a random tidbit
+            this.isBlue = Math.random() > 0.5;
+            this.updateBrightness();
+        });
     }
     
     private setNewTarget(): void {
@@ -56,23 +90,30 @@ class FireFly {
         this.element.style.top = `${this.y}px`;
     }
     
-    private updateBrightness(): void {
-        // Style for light mode: subtle glow
-        const lightModeColor = `rgba(255, 255, 150, ${this.brightness})`;  
+    public updateBrightness(): void {
+        // Check localStorage for dark mode status
+        const isDarkMode = localStorage.getItem('darkMode') === 'true';
         
-        // Style for dark mode: stronger glow
-        const darkModeColor = `rgba(255, 255, 150, ${this.brightness})`;  
+        // Configure colors based on firefly type and dark mode
+        let glowColor;
+        let backgroundColor;
+        const glowSize = this.size * (isDarkMode ? 3 : 2);
+        const glowIntensity = this.brightness;
         
-        // Set the styles with different classes for light/dark mode
-        this.element.style.backgroundColor = 'rgba(255, 255, 236, 1)';
-        this.element.style.boxShadow = `0 0 ${this.size * 2}px ${this.size}px ${lightModeColor}`;
+        if (this.isBlue) {
+            // Blue firefly
+            glowColor = `rgba(42, 148, 230, ${glowIntensity})`;
+            backgroundColor = 'rgba(42, 148, 230, 0.7)';
+            this.element.classList.add('blue-firefly'); // to be able to filter easily
+        } else {
+            // Yellow firefly
+            glowColor = `rgba(255, 255, 150, ${glowIntensity})`;
+            backgroundColor = 'rgba(255, 255, 150, 0.7)';
+        }
         
-        // Add a CSS class that will be targeted by dark mode styles
-        this.element.classList.add('dark-mode-glow');
-        
-        // Add css variable for dark mode styling
-        this.element.style.setProperty('--glow-color', darkModeColor);
-        this.element.style.setProperty('--glow-size', `${this.size * 3}px`);
+        // Apply styles directly based on current dark mode state
+        this.element.style.backgroundColor = backgroundColor;
+        this.element.style.boxShadow = `0 0 ${glowSize}px ${glowSize / 2}px ${glowColor}`;
     }
     
     private moveTowardsTarget(): void {
@@ -128,8 +169,21 @@ class FireFlies {
             this.container.style.position = 'relative';
         }
         
+        // Create fireflies
         this.createFireflies();
-        this.addDarkModeStyles();
+        
+        // Listen for dark mode changes
+        window.addEventListener('storage', (e) => {
+            console.log("storage event", e)
+            if (e.key === 'darkMode' && this.fireflies.length > 0) {
+                console.log("darkmode changed")
+                // Update all fireflies when dark mode changes
+                this.fireflies.forEach(firefly => {
+                    firefly.isBlue = Math.random() > 0.5;
+                    firefly.updateBrightness();
+                });
+            }
+        });
     }
     
     private createFireflies(): void {
@@ -138,17 +192,6 @@ class FireFlies {
         for (let i = 0; i < this.count; i++) {
             this.fireflies.push(new FireFly(this.container));
         }
-    }
-    
-    private addDarkModeStyles(): void {
-        const styleTag = document.createElement('style');
-        styleTag.textContent = `
-            .dark .dark-mode-glow, :global(.dark) .dark-mode-glow {
-                background-color: rgba(255, 255, 100, 0.3) !important;
-                box-shadow: 0 0 var(--glow-size) calc(var(--glow-size) / 2) var(--glow-color) !important;
-            }
-        `;
-        document.head.appendChild(styleTag);
     }
     
     public destroy(): void {
