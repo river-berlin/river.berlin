@@ -1,39 +1,28 @@
-<script>
+<script lang="ts">
   import WorkExperience from "./WorkExperience.svelte";
   import Reviews from "./Reviews.svelte";
+  import Profile from "./Profile.svelte";
+  import Contact from "./Contact.svelte";
+  
+  let contactSection: HTMLDivElement;
+  
+  function scrollToContact() {
+    contactSection.scrollIntoView({ behavior: 'smooth' });
+  }
 </script>
 
 <div class="flex flex-col gap-12 mx-auto p-6">
-  <div class="flex justify-center p-6 rounded-xl max-w-3xl mx-auto">
-    <div class="flex flex-col md:flex-row items-center gap-8">
-      <img
-        src="/me.jpg"
-        alt="me"
-        class="w-48 h-48 rounded-lg"
-      />
-      <div class="mt-3 text-lg text-center md:text-left">
-        <h1 class="text-2xl font-bold mb-3">Hi there! 👋</h1>
-        <p class="mb-2">I am <span class="font-bold">Aditya Shankar</span>, I am a <span class="font-bold">Software Engineer</span> that dabbles with everything, I am currently in university to study <span class="font-bold">Artificial Intelligence</span></p>
-        <p>I currently work at <a href="https://www.runpod.io" class="text-blue-400 hover:text-blue-300 transition-colors" target="_blank" rel="noopener noreferrer">RunPod</a> to give our customers the awesomest experience they could dream of.</p>
-        <p></p><br/>
-        <p>I do contract work, here is <a href="https://river.berlin/resume.pdf" class="text-blue-400 hover:text-blue-300 transition-colors" target="_blank" rel="noopener noreferrer">my resume</a></p>
-      </div>
-    </div>
-  </div>
-
+  <Profile {scrollToContact} />
   <div class="curly-separator"></div>
 
-  <div class="space-y-6">
-    <Reviews />
-  </div>
-  
-
-  <div class="space-y-6">
-    <div class="curly-separator"></div>
-    <WorkExperience />
-  </div>
-   
+  <Reviews />
   <div class="curly-separator"></div>
+
+  <WorkExperience />
+  <div class="curly-separator"></div>
+  <div bind:this={contactSection}>
+    <Contact />
+  </div>
 </div>
 
 <style>

@@ -369,8 +369,13 @@
           aria-expanded={containerExpanded}
           aria-controls="review-container"
         >
-          <FontAwesomeIcon icon={containerExpanded ? faAngleUp : faAngleDown} class="h-6 w-6 animate-bounce" />
-          <span class="font-medium">{containerExpanded ? 'Show less' : 'Show all reviews'}</span>
+          {#if containerExpanded}
+            <FontAwesomeIcon icon={faAngleUp} class="h-6 w-6" />
+            <span class="font-medium">Show less</span>
+          {:else}
+            <FontAwesomeIcon icon={faAngleDown} class="h-6 w-6" />
+            <span class="font-medium">Show all reviews</span>
+          {/if}
         </button>
       </div>
       
