@@ -4,7 +4,7 @@ author: River / Aditya Shankar
 dated: 2025-05-29
 title: Deterministically, you're probably just lucky you're not a criminal
 icon: icon.jpg
-url: deterministim-crime-and-empathy
+url: determinism-crime-and-empathy
 ---
 
 ## Deterministically, you're probably just lucky you're not a criminal
