@@ -2,14 +2,12 @@
 shortSummary: maybe we should be much kinder to each other then
 author: River / Aditya Shankar
 dated: 2025-05-29
-title: Deterministically, maybe we're lucky we're not criminals
+title: Deterministically, you're probably just lucky you're not a criminal
 icon: icon.jpg
 url: deterministim-crime-and-empathy
 ---
 
-## Deterministically, maybe we're lucky we're not criminals
-
-and maybe so we can be so much kinder
+## Deterministically, you're probably just lucky you're not a criminal
 
 ### Some good news
 
