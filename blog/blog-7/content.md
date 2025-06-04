@@ -21,7 +21,7 @@ U.S. violent and property crime rates have plunged since 1990s, regardless of da
 
 For those not familiar with philosophy (if you are, maybe skip this section), determinism is the idea that every event is determined by previous events, and that there is no "free will", in the sense of a concept to where you can make "completely free choices"
 
-So maybe if you chose to have a blue ice-cream today morning, that event might have been influenced by you seeing a blue haired person today morning, and someone, even if unconciously, finding yourself having been attracted to that – so you got a blue ice cream
+So maybe if you chose to have a blue ice-cream today morning, that event might have been influenced by you seeing a blue haired person yesterday morning, and someone, even if unconciously, finding yourself having been attracted to that – so you got a blue ice cream
 
 This topic is debated strongly amongst philosphers
 
@@ -45,7 +45,7 @@ At it's core, even for individuals that are extremely priviledged, say a very ri
 
 Determinism would argue that they had no choice but to do otherwise, and that in the exact same circumstances – you likely would have been influenced via the exact same factors and commited the exact same form of harm
 
-Like we still should seperate people that are commiting harm towards society, but recognition of determinism (if you believe so), only leads to the conclusion that if we work on changing people's circumstances, perhaps helping people psycologically – even if the same things were to happen to us, i.e. we are influenced via the same factors – we can feel lucky that we're in a society that seeks to help us heal, correct us – rather than punishing us or looking at us as irrepairable individuals
+We still should seperate people that are commiting harm towards society, but recognition of determinism (if you believe so), only leads to the conclusion that if we work on changing people's circumstances, perhaps helping people psycologically – even if the same things were to happen to us, i.e. we are influenced via the same factors – we can feel lucky that we're in a society that seeks to help us heal, correct us – rather than punishing us or looking at us as irrepairable individuals
 
 #### The statistical argument
 
