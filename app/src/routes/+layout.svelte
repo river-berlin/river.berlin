@@ -2,7 +2,7 @@
     import '../app.css'
     import Header from "$lib/header.svelte"
     import { onMount } from 'svelte'
-    import FireFlies from './fireflies'
+/*     import FireFlies from './fireflies'
     
     let fireflies: FireFlies;
     
@@ -17,7 +17,7 @@
                 fireflies.destroy();
             }
         };
-    });
+    }); */
 </script>
 
 <div class="min-h-screen bg-white dark:bg-black text-gray-900 dark:text-white transition-colors duration-200">
