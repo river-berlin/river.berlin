@@ -1,5 +1,6 @@
 <script lang="ts">
   import WorkExperience from "./WorkExperience.svelte";
+  import WorkSamples from "./WorkSamples.svelte";
   import Reviews from "./Reviews.svelte";
   import Profile from "./Profile.svelte";
   import Contact from "./Contact.svelte";
@@ -20,6 +21,12 @@
 
   <WorkExperience />
   <div class="curly-separator"></div>
+
+  <!--
+  <WorkSamples />
+  <div class="curly-separator"></div>
+  -->
+  
   <div bind:this={contactSection}>
     <Contact />
   </div>

@@ -2,22 +2,27 @@
     import '../app.css'
     import Header from "$lib/header.svelte"
     import { onMount } from 'svelte'
-/*     import FireFlies from './fireflies'
+    import FireFlies from './fireflies'
+    import { page } from '$app/stores'
     
-    let fireflies: FireFlies;
+    let fireflies: FireFlies | null = null;
     
     onMount(() => {
-        // Initialize fireflies after a small delay to ensure DOM is ready
-        setTimeout(() => {
-            fireflies = new FireFlies('#fireflies-container', 5);
-        }, 100);
+/*         // Only initialize fireflies on the about-me page or the feed page
+        if ($page.url.pathname.startsWith('/about-me') || $page.url.pathname.startsWith('/feed')) {
+            // Initialize fireflies after a small delay to ensure DOM is ready
+            setTimeout(() => {
+                fireflies = new FireFlies('#fireflies-container', 10);
+            }, 100);
+        } */
         
         return () => {
             if (fireflies) {
+                // @ts-ignore
                 fireflies.destroy();
             }
         };
-    }); */
+    });
 </script>
 
 <div class="min-h-screen bg-white dark:bg-black text-gray-900 dark:text-white transition-colors duration-200">
