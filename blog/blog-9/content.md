@@ -4,10 +4,11 @@ author: River / Aditya Shankar
 dated: 2025-06-05
 title: A good development environment is likely much more about soft-skills than anything else
 icon: icon.jpg
-url: good-dev-env
+url: future-blog
+hidden: true
 ---
 
-<p style="font-size: 9px; text-align: center;">Illustration by <a href="https://unsplash.com/illustrations/two-people-sitting-at-a-table-having-a-conversation-1oq6CMRWnJU">Go to Ian Mikraz</a></p>
+<p style="font-size: 9px;">Illustration by <a href="https://unsplash.com/illustrations/two-people-sitting-at-a-table-having-a-conversation-1oq6CMRWnJU">Ian Mikraz</a></p>
 
 ## A good development environment is likely much more about soft-skills than anything else
 
