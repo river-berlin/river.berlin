@@ -8,9 +8,7 @@ url: future-blog
 hidden: true
 ---
 
-<p style="font-size: 9px;">Illustration by <a href="https://unsplash.com/illustrations/two-people-sitting-at-a-table-having-a-conversation-1oq6CMRWnJU">Ian Mikraz</a></p>
-
-## A good development environment is likely much more about soft-skills than anything else
+## How I hacked into my flashcards app
 
 I do want to prefix this by saying this isn't the *only* thing needed, you do need to be a great developer in your own right, i.e. being able to code via the tools you use
 
