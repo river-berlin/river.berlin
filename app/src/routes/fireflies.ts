@@ -14,7 +14,6 @@ let currentDarkMode = globalThis.localStorage.getItem('darkMode') === 'true';
 function pollDarkMode(callback: () => void){
     const isDarkMode = globalThis.localStorage.getItem('darkMode') === 'true';
     if (isDarkMode !== currentDarkMode) {
-        console.log("darkmode changed")
         currentDarkMode = isDarkMode;
         callback();
     }
@@ -174,9 +173,7 @@ class FireFlies {
         
         // Listen for dark mode changes
         window.addEventListener('storage', (e) => {
-            console.log("storage event", e)
             if (e.key === 'darkMode' && this.fireflies.length > 0) {
-                console.log("darkmode changed")
                 // Update all fireflies when dark mode changes
                 this.fireflies.forEach(firefly => {
                     firefly.isBlue = Math.random() > 0.5;
