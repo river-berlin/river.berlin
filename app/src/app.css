@@ -8,9 +8,17 @@
     font-style: normal;
 }
 
-font-inter {
+.font-inter {
     font-family: "Inter", system-ui;
     font-optical-sizing: auto;
+    font-style: normal;
+}
+
+
+.baskervville {
+    font-family: "Baskervville", serif;
+    font-optical-sizing: auto;
+    font-weight: 400;
     font-style: normal;
 }
 
@@ -20,8 +28,9 @@ html{
 
 
 .review *{
-    font-family: "Inter", system-ui;
+    font-family: "Baskervville", serif;
     font-optical-sizing: auto;
+    font-weight: 400;
     font-style: normal;
 }
 
@@ -35,13 +44,9 @@ html{
 }
 
 .code-highlight-wrapper {
-    font-family: 'Courier New', Courier, monospace !important;
+    font-family: "Baskervville", serif !important;
 }
 
-.code-highlight-wrapper pre{
-    font-family: 'Courier New', Courier, monospace !important;
-}
-
-.code-highlight-wrapper pre *{
-    font-family: 'Courier New', Courier, monospace !important;
+.code-highlight-wrapper * {
+    font-family: "Baskervville", serif !important;
 }
