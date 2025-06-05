@@ -5,7 +5,6 @@ dated: 2025-06-05
 title: A good development environment is likely much more about soft-skills than anything else
 icon: icon.jpg
 url: good-dev-env
-hidden: true
 ---
 
 ## A good development environment is likely much more about soft-skills than anything else
