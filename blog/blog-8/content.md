@@ -4,6 +4,7 @@ author: River / Aditya Shankar
 dated: 2025-06-05
 title: A good development environment is likely much more about soft-skills than anything else
 icon: icon.jpg
+icon_v2: true
 url: good-dev-env
 ---
 
