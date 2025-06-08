@@ -119,9 +119,9 @@
   <h2 class="text-2xl font-bold text-center text-gray-900 dark:text-white mb-8">Work Experience</h2>
   
   <!-- Desktop layout (two-part) -->
-  <div class="hidden lg:flex gap-8 bg-white/30 dark:bg-black/30 rounded-xl p-4 border border-gray-100 dark:border-gray-800">
+  <div class="hidden lg:flex gap-8 rounded-xl p-4">
     <!-- Left side: Companies list -->
-    <div class="w-1/3 border-r border-gray-200 dark:border-gray-800 pr-6 space-y-4">
+    <div class="w-1/3 border-r border-gray-200 dark:border-white pr-6 space-y-4">
       {#each experiences as experience, index}
         <button 
           class="flex items-center gap-4 w-full p-3 rounded-lg text-left transition-all
@@ -141,7 +141,7 @@
     </div>
     
     <!-- Right side: Selected company details -->
-    <div class="w-2/3 pl-4">
+    <div class="w-2/3 pl-4 h-[400px]">
       {#if selectedCompany}
         <div class="space-y-4">
           <h3 class="font-bold text-xl text-gray-900 dark:text-white">{selectedCompany.title}</h3>

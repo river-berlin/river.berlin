@@ -4,6 +4,7 @@ author: River / Aditya Shankar
 dated: 2025-05-24
 title: Why I like Svelte more than React (it's store management)
 icon: icon.jpg
+icon_v2: true
 url: why-i-like-svelte-more-than-react
 ---
 

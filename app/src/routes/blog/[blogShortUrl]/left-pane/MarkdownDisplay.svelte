@@ -12,12 +12,14 @@
                 <span class="take-away font-medium text-primary-700 dark:text-primary-400">Blog #{blogNum}</span>
                 <span class="font-medium mt-1">{metadata.title}</span>
             </div>
-            <div class="absolute bottom-0 left-0 w-[calc(100%-40px)] h-[1px] bg-gray-200 dark:bg-gray-700"></div>
         </a>
     </div>
     
-    <div class="flex justify-center w-full">
-        <img src="{icon}" alt="" width="200" class="my-5" >
+    <div class="flex flex-col items-center justify-center w-full mb-10">
+        <img src="{icon}" alt="" width="200" class="my-5 rounded-lg transition-all duration-1000 ease-in-out" >
+        {#if metadata.iconCredit}
+            <p class="text-xs text-black dark:text-white">Illustration by <a href="{metadata.iconCreditUrl}" target="_blank" class="underline">{metadata.iconCredit}</a></p>
+        {/if}
     </div>
 
     <div class="prose prose-lg dark:prose-invert max-w-none code-highlight-wrapper">

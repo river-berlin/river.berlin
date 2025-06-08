@@ -5,21 +5,37 @@
     
     let headings : any[] = [];
     
+    // Function to handle smooth scrolling
+    function handleLinkClick(e: Event, id: string): void {
+        e.preventDefault();
+        const element = document.getElementById(id);
+        if (element) {
+            window.scrollTo({
+                top: element.offsetTop - 20, // Adding a small offset for better visibility
+                behavior: 'smooth'
+            });
+            // Update URL hash without jumping
+            history.pushState(null, '', `#${id}`);
+        }
+    }
+    
     onMount(() => {
         // Use a timeout to ensure the DOM is fully rendered
         setTimeout(() => {
             // Get all headings from the article
-            const articleHeadings = document.querySelectorAll('.prose h2, .prose h3');
+            const articleHeadings = document.querySelectorAll('.prose h1, .prose h2, .prose h3');
             
             headings = Array.from(articleHeadings).map(heading => {
                 // Create an id if it doesn't exist
                 if (!heading.id) {
                     heading.id = heading.textContent?.toLowerCase().replace(/\s+/g, '-') || '';
                 }
+
+                console.log("found heading", heading, "level", parseInt(heading.tagName.substring(1)), heading.tagName)
                 
                 return {
                     id: heading.id,
-                    title: heading.textContent,
+                    title: heading.textContent || '',
                     level: parseInt(heading.tagName.substring(1)) // Get heading level (2 for h2, 3 for h3)
                 };
             });
@@ -28,12 +44,12 @@
 </script>
 
 <div class="toc-container !mb-0 !pb-0">
-    <h2 class="text-lg font-bold mb-4 text-gray-900 dark:text-gray-100">Contents</h2>
+    <h2 class="text-lg mb-4 text-gray-900 dark:text-gray-100">Contents</h2>
     <nav class="toc-nav">
         <ul class="toc-list">
             {#each headings as heading}
-                <li class="toc-item" style="margin-left: {(heading.level - 2) * 16}px">
-                    <a href="#{heading.id}" class="toc-link">
+                <li class="toc-item" style="margin-left: {(heading.level - 1) * 16}px">
+                    <a href="#{heading.id}" class="toc-link" on:click={(e) => handleLinkClick(e, heading.id)}>
                         {heading.title}
                     </a>
                 </li>
@@ -44,16 +60,13 @@
 
 <style>
     .toc-container {
-        background-color: rgba(240, 240, 240, 0.1);
         border-radius: 0.5rem;
         padding: 1rem;
         margin-bottom: 2rem;
-        border: 1px solid rgba(200, 200, 200, 0.1);
     }
     
-    :global(.dark) .toc-container {
-        background-color: rgba(30, 30, 30, 0.1);
-        border: 1px solid rgba(70, 70, 70, 0.2);
+    .toc-link {
+        transition: color 0.2s ease;
     }
     
     .toc-list {

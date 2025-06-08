@@ -25,7 +25,7 @@
     });
 </script>
 
-<div class="min-h-screen bg-white dark:bg-black text-gray-900 dark:text-white transition-colors duration-200">
+<div class="min-h-screen bg-white dark:bg-[#08324c] text-gray-900 dark:text-white transition-colors duration-200">
     <div id="fireflies-container" class="fixed inset-0 pointer-events-none z-10"></div>
     <Header />
     <main class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pb-12">
