@@ -2,6 +2,8 @@
     import image from "$lib/images/meditating-enby.svg"
     import { page } from '$app/stores';
     import { onMount } from 'svelte';
+    import { faBluesky, faDiscord } from '@fortawesome/free-brands-svg-icons';
+    import { FontAwesomeIcon } from '@fortawesome/svelte-fontawesome';
 
     /**
      * checks if we're accessing something in the feed page
@@ -71,18 +73,47 @@
     
     /* Dark mode button styles */
     .theme-toggle {
-        @apply p-2 rounded-full hover:bg-primary-100 dark:hover:bg-primary-800 transition-colors;
+        @apply p-2 rounded-full hover:bg-primary-100 dark:hover:bg-gray-900 transition-colors;
     }
 </style>
 
-<div class="w-full flex justify-center px-6 pt-8 mb-8 bg-white dark:bg-black transition-colors duration-200">
+<div class="w-full flex justify-center px-6 pt-8 mb-8  transition-colors duration-200">
     <div class="flex flex-col md:flex-row justify-between items-center w-full max-w-[700px] gap-4">
-        <a class="header-link" href="/">
-            <div class="flex items-center">
-                <img src="{image}" alt="a meditating non-binary person" height="80" class="h-20">
-                <h1 class="ml-5 text-4xl font-['Reenie_Beanie'] text-primary-700 dark:text-primary-400">River's webstuff</h1>
+        <div class="flex items-center">
+            <img src="{image}" alt="a meditating non-binary person" height="80" class="h-20">
+            <div class="flex flex-col ml-5">
+                <a class="header-link" href="/">
+                    <h1 class="text-4xl font-['Reenie_Beanie'] text-primary-700 dark:text-primary-400">River's webstuff</h1>
+                </a>
+                <div class="flex flex-row gap-1 mt-0.5 justify-start">
+                    <a 
+                        href="https://bsky.app/profile/riverofberlin.bsky.social" 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        class="flex items-center gap-1 text-xs text-gray-700 transition-colors"
+                        aria-label="Visit my Bluesky profile"
+                    >
+                        <div class="rounded-full p-2 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-800 dark:text-gray-200 flex items-center justify-center h-5 p-0.5">
+                            <FontAwesomeIcon icon={faBluesky} class="h-2.5 w-2.5 text-primary-600" />
+                            <span class="font-['Sofia_Sans'] ml-1">Bluesky</span>
+                        </div>
+                    </a>
+                    
+                    <a 
+                        href="https://discord.gg/Zh2h2UB7AZ" 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        class="flex items-center gap-1 text-xs text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors"
+                        aria-label="Join my Discord server"
+                    >
+                        <div class="rounded-full p-2 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-800 dark:text-gray-200 flex items-center justify-center h-5 p-0.5">
+                            <FontAwesomeIcon icon={faDiscord} class="h-2.5 w-2.5 text-primary-600" />
+                            <span class="font-['Sofia_Sans'] ml-1">Discord</span>
+                        </div>
+                    </a>
+                </div>
             </div>
-        </a>
+        </div>
 
         <div class="flex items-center gap-4">
             <div class="font-['Sofia_Sans']">
@@ -97,10 +128,9 @@
                 </div>
             </div>
             
-            <!-- Dark mode toggle button -->
             <button 
                 aria-label="Toggle dark mode" 
-                class="theme-toggle bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200" 
+                class="theme-toggle bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200 rounded-full aspect-square flex items-center justify-center" 
                 on:click={toggleDarkMode}
             >
                 {#if isDarkMode}
@@ -113,6 +143,8 @@
                     </svg>
                 {/if}
             </button>
+            
+
         </div>
     </div>
 </div>

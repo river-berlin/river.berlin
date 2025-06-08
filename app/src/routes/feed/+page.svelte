@@ -73,6 +73,13 @@
     background-size: 100px 12px;
   }
   
+  /* Curly underline for date hover effect */
+  .curly-underline {
+    background-image: url("data:image/svg+xml,%3Csvg width='100' height='6' viewBox='0 0 100 6' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0,3 C12.5,0 12.5,6 25,3 C37.5,0 37.5,6 50,3 C62.5,0 62.5,6 75,3 C87.5,0 87.5,6 100,3' stroke='%2389e6ff' fill='none' stroke-width='1' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat: repeat-x;
+    background-size: 50px 6px;
+  }
+  
   /* Animation for the underline hover effect */
   @keyframes underline-color-change {
     100% {background-color: #89e6ff;}
@@ -131,17 +138,28 @@
     {#if activeFilter === 'all' || activeFilter === 'blogs'}
     <div class="flex flex-col w-full max-w-[600px] mx-auto">
         {#each data.blogs as blog }
-            <div class="relative mb-4 w-full">
-                <a href="/blog/{blog.metadata.url}" class="relative flex flex-col sm:flex-row p-1.5 mb-5 no-underline text-gray-900 dark:text-gray-100 group animate-underline">
-                    <div class="flex items-center mb-1 sm:mb-0">
-                        <img src="/scroll.svg" alt="" width="15" class="mr-3 transition-all duration-2000 group-hover:hue-rotate-[151deg]">
-                        <span class="font-medium text-primary-700 dark:text-primary-400 ml-1.5">Blog #{blog.num}</span>
-                        <span class="mx-1 sm:inline">:</span>
+            <div class="relative mb-4 w-full backdrop-blur-md bg-white/30 dark:bg-[#08324c]/30">
+                <a href="/blog/{blog.metadata.url}" class="relative flex flex-col p-1.5 mb-5 no-underline text-gray-900 dark:text-gray-100 group animate-underline">
+                    <div class="flex flex-row items-left ml-[28px]">
+                        {#if blog.metadata.icon_v2}
+                            <img src="/blog/blog-{blog.num}/icon.jpg" alt="" width="100" class="mr-3 transition-all duration-2000 group-hover:hue-rotate-[151deg] rounded-xl">
+                        {/if}
+
+                        <div class="flex flex-col h-[100px]">
+                            <div>
+                                <div class="font-medium">{blog.metadata.title}</div>
+                                <p class="text-xs text-gray-500 dark:text-gray-400 relative pb-2">
+                                    {formatDate(blog.metadata.dated)}
+                                    <span class="absolute bottom-0 left-0 w-[200px] h-1.5 curly-underline opacity-0 group-hover:opacity-100 transition-opacity duration-300"></span>
+                                </p>
+                            </div>
+                            <div class="flex mt-3">
+                                <span class="text-sm font-medium text-primary-700 dark:text-primary-400 whitespace-nowrap">Blog #{blog.num}</span>
+                                <img src="/scroll.svg" alt="" width="15" class="ml-3 transition-all duration-2000 group-hover:hue-rotate-[151deg]">
+                            </div>
+                        </div>
                     </div>
-                    <div class="pl-0 sm:pl-3">{blog.metadata.title}</div>
-                    <span class="absolute bottom-0 left-0 sm:left-10 w-full sm:w-[calc(100%-2.5rem)] h-0.5 bg-amber-100 dark:bg-amber-900/50 group-hover:bg-sky-300 dark:group-hover:bg-sky-700 transition-colors duration-1000"></span>
                 </a>
-                <p class="absolute left-0 sm:left-10 bottom-0 text-xs text-gray-500 dark:text-gray-400">{formatDate(blog.metadata.dated)}</p>
             </div>
         {/each}
     </div>

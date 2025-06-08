@@ -4,6 +4,10 @@ author: River / Aditya Shankar
 dated: 2025-05-29
 title: Smaller orgs and more emotional happiness
 icon: icon.jpg
+icon_v2: true
+iconCredit: Cecilia Miraldi
+iconCreditUrl: https://unsplash.com/illustrations/a-girl-holding-a-teddy-bear-next-to-a-boy-1ympzCM0nIc
+
 url: smaller-orgs-and-more-emotional-happiness
 ---
 

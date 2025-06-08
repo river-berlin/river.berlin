@@ -14,21 +14,17 @@
     font-style: normal;
 }
 
-
-.baskervville {
-    font-family: "Baskervville", serif;
-    font-optical-sizing: auto;
-    font-weight: 400;
-    font-style: normal;
-}
-
 html{
     margin: 0;
 }
 
+code {
+    font-weight: 400 !important;
+}
+
 
 .review *{
-    font-family: "Baskervville", serif;
+    font-family: "Quicksand", sans-serif;
     font-optical-sizing: auto;
     font-weight: 400;
     font-style: normal;
@@ -44,9 +40,68 @@ html{
 }
 
 .code-highlight-wrapper {
-    font-family: "Baskervville", serif !important;
+    font-family: "Quicksand", sans-serif;
 }
 
 .code-highlight-wrapper * {
-    font-family: "Baskervville", serif !important;
+    font-family: "Quicksand", sans-serif;
+}
+
+.code-highlight-wrapper ol, .code-highlight-wrapper ul{
+    margin: 10px 0;
+    padding-left: 42px;
+    margin-bottom: 45px;
+}
+
+.code-highlight-wrapper li{
+    margin: 0 !important;
+}
+
+.code-highlight-wrapper h1{
+    font-size: 1.8rem !important;
+}
+
+.code-highlight-wrapper p{
+    margin: 15px 0 !important;
+    line-height: 1.3 !important;
+}
+
+.code-highlight-wrapper img{
+    margin: 30px auto !important;
+    border-radius: 10px !important;
+    padding: 5px;
+    border: 1px solid #d1d1d1 !important;
+}
+
+pre {
+    border: 1px solid #d1d1d1 !important;
+    background: rgb(51, 52, 52) !important;
+    font-family: "Anonymous Pro", monospace !important;
+    
+    /* Target code elements inside pre */
+    & code {
+        font-family: "Anonymous Pro", monospace !important;
+        font-weight: 400 !important;
+    }
+    
+    /* Target any element inside pre with language class */
+    &[class*="language-"] * {
+        font-family: "Anonymous Pro", monospace !important;
+        font-weight: 400 !important;
+    }
+}
+
+html.dark pre {
+    border: 1px solid #4a4a4a !important;
+    background: rgba(255, 255, 255, 0.05) !important;
+    
+    /* Target code elements inside pre in dark mode */
+    & code {
+        font-family: "Anonymous Pro", monospace !important;
+    }
+    
+    /* Target any element inside pre with language class in dark mode */
+    &[class*="language-"] * {
+        font-family: "Anonymous Pro", monospace !important;
+    }
 }

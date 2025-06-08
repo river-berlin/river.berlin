@@ -3,7 +3,8 @@
         title: string;
         dated: string | Date;
         shortPath?: string;
-        // Add other metadata properties as needed
+        icon_v2?: boolean;
+        url?: string;
     }
     
     interface BlogItem {
@@ -50,9 +51,16 @@
                     class="related-blog-link block w-full text-left"
                     data-sveltekit-reload
                 >
-                    <div class="related-blog">
-                        <h3 class="text-md font-medium text-gray-900 dark:text-gray-100">{blog.metadata.title}</h3>
-                        <p class="text-xs text-gray-400 dark:text-gray-500">{formatDate(blog.metadata.dated)}</p>
+                    <div class="related-blog flex flex-col">
+                        {#if blog.metadata.icon_v2}
+                            <div class="min-w-[100px] mr-3 mb-2">
+                                <img src="/blog/blog-{blog.num}/icon.jpg" alt="" class="rounded-lg w-[100px] h-[100px] object-cover">
+                            </div>
+                        {/if}
+                        <div class="flex flex-col">
+                            <h3 class="text-md font-medium text-gray-900 dark:text-gray-100">{blog.metadata.title}</h3>
+                            <p class="text-xs text-gray-400 dark:text-gray-500">{formatDate(blog.metadata.dated)}</p>
+                        </div>
                     </div>
                 </a>
             {/each}
@@ -64,15 +72,7 @@
 
 <style>
     .related-container {
-        background-color: rgba(240, 240, 240, 0.1);
-        border-radius: 0.5rem;
         padding: 1rem;
-        border: 1px solid rgba(200, 200, 200, 0.1);
-    }
-    
-    :global(.dark) .related-container {
-        background-color: rgba(30, 30, 30, 0.1);
-        border: 1px solid rgba(70, 70, 70, 0.2);
     }
     
     .related-blogs {
@@ -82,13 +82,8 @@
     }
     
     .related-blog {
-        border-left: 2px solid #4896b0;
-        padding-left: 0.75rem;
-        transition: all 0.2s;
-    }
-    
-    :global(.dark) .related-blog {
-        border-left: 2px solid #5bcde9;
+        transition: all 0.5s;
+        margin-bottom: 1rem;
     }
     
     .related-blog-link {
@@ -97,13 +92,13 @@
     }
     
     .related-blog-link:hover .related-blog {
-        border-left-color: #366d80;
-        background-color: rgba(0, 0, 0, 0.03);
+        border-left-color: #000000;
+        border-left-width: 1px;
+        padding-left: 1rem;
         transform: translateX(2px);
     }
     
     :global(.dark) .related-blog-link:hover .related-blog {
-        border-left-color: #89e6ff;
-        background-color: rgba(255, 255, 255, 0.03);
+        border-left-color: #ffffff;
     }
 </style>

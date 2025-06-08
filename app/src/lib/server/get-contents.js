@@ -14,6 +14,11 @@ async function getMarkdownFiles(thingsPath, markdownOf) {
         files = glob.sync(`${thingsPath}/book-takeaways/book-*/content.md`);
     } else if (markdownOf == "blog"){
         files = glob.sync(`${thingsPath}/blog/blog-*/content.md`);
+        // Also include blog folders with any naming pattern
+        const additionalBlogFiles = glob.sync(`${thingsPath}/blog/**/content.md`, {
+            ignore: `${thingsPath}/blog/blog-*/content.md`
+        });
+        files = [...files, ...additionalBlogFiles];
     }
 
     // Read the content of each file
