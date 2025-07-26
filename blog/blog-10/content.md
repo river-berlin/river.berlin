@@ -5,9 +5,9 @@ dated: 2025-07-25
 title: There is always hope
 icon: icon.jpg
 icon_v2: true
-iconCredit: Ghariza Mahavira
-iconCreditUrl: https://unsplash.com/illustrations/a-line-drawing-of-a-hand-holding-a-baseball-bat-_HMJy1YHvlo
-url: nihilism-trap
+iconCredit: ands
+iconCreditUrl: https://unsplash.com/illustrations/a-couple-stargazing-at-the-night-sky-G_XW24phTjU
+url: there-is-always-hope
 ---
 
 # There is always hope
