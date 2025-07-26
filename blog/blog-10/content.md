@@ -41,7 +41,7 @@ But that doesn't mean things are all bad, it's weird, I don't want to be dismiss
 
 His actions of systematically, [sending innocent people to prisons in foriegn nations](https://apnews.com/article/kilmar-abrego-garcia-release-jail-deportation-trial-c17d7ba538530a668e4f55358e83c0fe) is genuinely awful
 
-and it also bothers me how, well, [grok has become a full grown nazi-praising-bot](https://gizmodo.com/round-them-up-grok-praises-hitler-as-elon-musks-ai-tool-goes-full-nazi-2000626156), this comes after Elon's famous hitler-salute (also in the prior article)
+and it also bothers me how, well, [grok has become a full grown nazi-praising-bot](https://gizmodo.com/round-them-up-grok-praises-hitler-as-elon-musks-ai-tool-goes-full-nazi-2000626156), this comes after Elon's famous hitler-salute (also in the prior lined source)
 
 anyway, these events have left me with a bitter taste in my mouth, they have made me lose direction – Is anyone trustworthy?, What can I believe?
 
