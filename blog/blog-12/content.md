@@ -1,5 +1,5 @@
 ---
-shortSummary: Love comes slowly
+shortSummary: How to build a great billing system
 author: River / Aditya Shankar
 dated: 2025-06-08
 title: How to build a great billing system
