@@ -91,7 +91,7 @@ It's only when people spoke up, actively started building monuments, advocated f
 
 You'll [find these stumbling blocks (stolperstein) everywhere](https://en.wikipedia.org/wiki/Stolperstein) next to my house
 
-We've dug stones throughout europe, it many streets to remind us of what _we historically did_, Which have the names of nazi victims engraved within them
+We've dug stones throughout europe to remind us of what _we historically did_, Which have the names of nazi victims engraved within them
 
 ![](/blog/blog-13/stolperstein.png)
 
