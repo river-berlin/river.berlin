@@ -14,7 +14,7 @@ hidden: true
 
 # How to build a great billing system
 
-skip to [How to make your customers love you](#how-to-make-your-customers-love-you) for the meat of the article
+skip to [How to make your customers love you](change this link) for the meat of the article
 
 Okay, this blog post is very close to being a rant
 
@@ -47,7 +47,7 @@ And this is a very very common scenario that occurs
 
 And I find it slighty, troubling, because this is a situation, wherein – the problem has been created via bad design, and the solution is also bad design
 
-## A humanistic approach to building services
+## A humanistic approach
 
 A good service is a relationship you are providing to your users, people are paying you money to have something done
 
@@ -119,7 +119,7 @@ Actual price (after taxes)
 
 Apple, has advertised a "feeling" a brand value it provides its customers, but the moment people get an honest alternative – which builds the next device just as well, but doesn't try to make you feel bad for buying it, they will switch
 
-That beind said, the main disappointment apple's customers have had with it, has also been this [that apple devices are too expensive](<example url for this>)
+That beind said, the main disappointment apple's customers have had with it, has also been this [that apple devices are too expensive](example url for this)
 
 And you likely, are running a business with competetor - <give example of service where people switched or stopped buying due to a better alternative>
 
