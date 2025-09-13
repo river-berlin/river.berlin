@@ -1,7 +1,7 @@
 ---
 shortSummary: No one person vanishing that will fix your problems
 author: River / Aditya Shankar
-dated: 2025-06-08
+dated: 2025-09-13
 title: There are no kings without a kingdom
 icon: icon.jpg
 icon_v2: true
