@@ -60,7 +60,7 @@ A "cell sword" in this context is a soldier with a sword
 
 These people are rarely alone, Charlie Kirk has never been alone –he is supported, he has video editors on his side, body guards, social media personell, script writers, and of course and army of viewers to back him up – he doesn't get to spread his hateful bullshit without his kingdom
 
-remove all that – and if it's just a person screaming into the void with that bullshit – watching that person die would horrify me, I'd say that regardless of their views they didn't deserve to die, I would say if a person was screaming that into the void they're probably a mentally disabled person
+remove all that – and if it's just a person screaming into the void with that bullshit – watching that person die would horrify me, I'd say that regardless of their views they didn't deserve to die, I would say if a person was screaming that into the void they're probably a mentally ill person, someone horribly traumatized
 
 We like to hear narratives about <u>_killing the bad guy_</u> because it makes us feel better – getting rid of that one person eliminated all of what is bad in society
 
