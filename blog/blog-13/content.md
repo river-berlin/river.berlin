@@ -87,7 +87,7 @@ The American government soon came to view the program as ineffective and counter
 
 There's more complexity to this, and no amount that Germany can do – will ever make up for what it had done, but we try, and we really really should do so so much more
 
-It's only when people spoke up, actively started building monuments, advocated for teaching about history in schools (see [Vergangenheitsbewältigung](https://en.wikipedia.org/wiki/Vergangenheitsbew%C3%A4ltigung#After_denazification)) 
+It's only when people spoke up, actively started building monuments, advocated for teaching about history in schools (see [Vergangenheitsbewältigung](https://en.wikipedia.org/wiki/Vergangenheitsbew%C3%A4ltigung#After_denazification)) that things actually started to change - and germans started to realize what they did was really really fucking bad
 
 You'll [find these stumbling blocks (stolperstein) everywhere](https://en.wikipedia.org/wiki/Stolperstein) next to my house
 
