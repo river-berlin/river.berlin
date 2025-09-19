@@ -61,6 +61,15 @@ code {
     font-size: 1.8rem !important;
 }
 
+.code-highlight-wrapper h2{
+    font-size: 1.6rem !important;
+}
+
+.code-highlight-wrapper h3{
+    font-size: 1.4rem !important;
+}
+
+
 .code-highlight-wrapper p{
     margin: 15px 0 !important;
     line-height: 1.3 !important;
@@ -71,6 +80,10 @@ code {
     border-radius: 10px !important;
     padding: 5px;
     border: 1px solid #d1d1d1 !important;
+}
+
+.code-highlight-wrapper em{
+    font-style: italic;
 }
 
 pre {

@@ -1,5 +1,11 @@
 import adapter from '@sveltejs/adapter-static';
 import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
+import path from 'path';
+import {getBlogs, getBookTakeaways, getProjects} from './src/lib/server/get-contents.js'
+
+const currentDir = process.cwd();
+const blogs = await getBlogs(false, path.join(currentDir, "/src/things"))
+const blogUrls = blogs.map(blog => "/blog/" + blog.metadata.url)
 
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
@@ -14,6 +20,9 @@ const config = {
 		adapter: adapter(),
 		alias: {
 			'$things': 'src/things',
+		},
+		prerender: {
+			entries : ["*", ...blogUrls]
 		}
 	}
 };
