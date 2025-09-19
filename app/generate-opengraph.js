@@ -1,6 +1,7 @@
 // pen saved at https://codepen.io/thegraything/pen/WNqQmoj
 import path from 'path';
 import nodeHtmlToImage from 'node-html-to-image';
+import fs from "fs"
 import {getBlogs, getBookTakeaways, getProjects} from './src/lib/server/get-contents.js'
 
 
@@ -52,7 +53,7 @@ const style = `
   margin-top: 7px;
   margin-bottom: 0;
   width: 270px;
-  margin-left: 30px;
+  margin-left: 0;
   font-family: 'Comic Neue', cursive;
   font-weight: 300;
   font-size: 20px;
@@ -99,7 +100,7 @@ const style = `
   margin-left: 0;
 }`
 
-function generateHTML(preImageURL, topShortText, mainText, byText){
+function generateHTML(preImageURL, topShortText, mainText, byText, image){
 return `<html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -132,15 +133,29 @@ return `<html lang="en">
     .main {
       background-color: rgb(17 24 39);
     }
+
+    .content-image {
+      margin-bottom: 15px;
+      text-align: center;
+      margin-right: 20px;
+    }
+
+    .content-image img{
+      border-radius : 5px;
+    }
+
+    .scroll{
+      margin-left: 10px;
+    }
   </style>
 </head>
 <body>
   <div class="main">
     
     <div class="content-indicator">
+      ${image ? `<div class="content-image"><img src="${image}" alt="" style="max-width: 100%; max-height: 80px;"></div>` : ''}
       <div class="text-stuff">
         <div class="type-container">
-          <img src="${preImageURL}" alt="" class="scroll" width=15>
           <h4 class="type">${topShortText}</h4>
         </div>
         <h1 class="big-text">${mainText}</h1>
@@ -152,14 +167,15 @@ return `<html lang="en">
       <img class="mainimg" src="https://river.berlin/_app/immutable/assets/meditating-enby.Ddx2L9rE.svg" alt="" width=40>
       
       <div class="name-and-stuff">
-        <h1>· River's blog ·</h1>
+        <h1>·</h1> 
+        <img src="${preImageURL}" alt="" class="scroll" width=15>
+        <h1>River's blog ·</h1>
         <p>https://river.berlin</p>
       </div>
     </div>
   </div>
 </body>
 </html>`}
-
 
 const currentDir = process.cwd();
 
@@ -200,9 +216,16 @@ for(let bookTakeaway of bookTakeaways){
 }
 
 for(let blog of blogs){
+  let image = null;
+
+  if(blog.metadata.icon_v2){
+    const imagepath = fs.readFileSync(`./static/blog/blog-${blog.num}/icon.jpg`);
+    const base64Image = new Buffer.from(imagepath).toString('base64');
+    image = 'data:image/jpeg;base64,' + base64Image
+  }
   nodeHtmlToImage({
     output : path.join(currentDir, `/static/opengraph/blog/${blog.num}.png`),
-    html : generateHTML("https://river.berlin/scroll.svg", `blog #${blog.num} · ${formatDate(blog.metadata.dated)}`, blog.metadata.title, ``)
+    html : generateHTML("https://river.berlin/scroll.svg", `blog #${blog.num} · ${formatDate(blog.metadata.dated)}`, blog.metadata.title, ``, image ) // puts the icon in the image only for icon version v2
   })
 }
 
