@@ -1,5 +1,5 @@
 ---
-shortSummary: You're valueable, I'm valuable, the world is weird
+shortSummary: You're valuable, I'm valuable, the world is weird
 author: River / Aditya Shankar
 dated: 2025-11-02
 title: You're valuable, I'm valuable, the world is weird
