@@ -4,6 +4,7 @@
     import { onMount } from 'svelte'
     import FireFlies from './fireflies'
     import { page } from '$app/stores'
+    import BackgroundArtifacts from '$lib/BackgroundArtifacts.svelte'
     
     let fireflies: FireFlies | null = null;
     
@@ -25,10 +26,14 @@
     });
 </script>
 
-<div class="min-h-screen bg-white dark:bg-[#08324c] text-gray-900 dark:text-white transition-colors duration-200">
+<div class="min-h-screen page-background text-gray-900 dark:text-white transition-colors duration-200 relative">
+    <div class="absolute inset-0 pointer-events-none z-0">
+        <BackgroundArtifacts />
+    </div>
     <div id="fireflies-container" class="fixed inset-0 pointer-events-none z-10"></div>
     <Header />
     <main class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pb-12">
         <slot />
     </main>
 </div>
+

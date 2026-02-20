@@ -18,6 +18,14 @@ html{
     margin: 0;
 }
 
+.page-background {
+    background-color: #ffffff;
+}
+
+html.dark .page-background {
+    background-color: #08324c;
+}
+
 code {
     font-weight: 400 !important;
 }
