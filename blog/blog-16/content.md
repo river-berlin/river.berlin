@@ -92,11 +92,11 @@ Realistically we are going to have throughput issues, and people are going to us
 
 I guess the per person costs come down to how much people use it, and when and where they use it.
 
-For ChatGPT per user usage levels, we have about 14k tokens/user/day which sustains (very optimistically) 857 users - this obviously doesn't account for the networking/system administration/proper system costs to actually sustain all of this, but that comes to about 1.7€/month. This calculation however, is misleading, as a [significant amount of ChatGPT users are "free" users](https://www.theregister.com/software/2025/10/15/chatgpt-so-popular-hardly-anyone-will-pay-for-it/1106309), and around 5% of users actually pay for the product.
+For ChatGPT per user usage levels, we have about 14k tokens/user/day which sustains (very optimistically) 857 users - this obviously doesn't account for the networking/system administration/proper system costs to actually sustain all of this, but that comes to about (1474/857 users) 1.7€/month/user. This calculation however, is misleading, as a [significant amount of ChatGPT users are "free" users](https://www.theregister.com/software/2025/10/15/chatgpt-so-popular-hardly-anyone-will-pay-for-it/1106309), and around 5% of users actually pay for the product.
 
-At a hyper optimistic workload for developers of 100k tokens/user/day one can sustainably have a 120 people use it simultaneously - getting to 1474/120 or 12.28€/user/month.
+At a hyper optimistic workload for developers of 100k tokens/user/day one can sustainably have a 120 people use it simultaneously - getting to 1474/120 or **12.28€/user/month**.
 
-At a million tokens per user per day, we can have 12 people run it simultaneously, getting to 122.8€/month.
+At a million tokens per user per day, we can have 12 people run it simultaneously, getting to **122.8€/month**.
 
 But for "proper" agentic AI, this is plain unsustainable, given the assumption of 15 million tokens per day per developer with agentic AI, this comes to more than our assumed pessimistic 12 million tokens per day as throughput we could realistically get from the entire system. Further, if we use the hyper-optimistic 60 million tokens per day number, we get to a maximum of about 4 users per day or about 1474/4 = 368.5€/user/month.
 
