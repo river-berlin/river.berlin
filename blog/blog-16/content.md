@@ -108,6 +108,6 @@ The cost of collective hosting (or maybe just buying the ASIC for yourself), rad
 
 2. If the GPU does not depreciate that fast in terms of cost
 
-Then the bulk of the monthly hosting costs reduce from 1312€/month to 437.34€/month, which also does significantly reduce the pre-user costs. (to about 40€/month when divided among 12 people)
+Then the bulk of the monthly hosting costs reduce from 1312€/month to 437.34€/month, which also does significantly reduce the per-user costs. (to about 40€/month when divided among 12 people)
 
 I heard Hank Green talk about how he thinks these investments are going to help smaller companies in the future more that bigger companies. I think I agree with that assumption – and I think these are the early signs that we are probably getting closer to that assumption coming true. 
