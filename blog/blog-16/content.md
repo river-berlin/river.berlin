@@ -1,8 +1,8 @@
 ---
-shortSummary: 'Napkin Math: The collective ownership costs for diffusiongemma'
+shortSummary: Napkin Math - The collective ownership costs for diffusiongemma
 author: River / Aditya Shankar
 dated: 2026-06-20
-title: 'The collective ownership costs for LLMs - 2026 June'
+title: The collective ownership costs for LLMs - 2026 June
 icon: icon.jpg
 icon_v2: true
 iconCredit: Joel Mott
