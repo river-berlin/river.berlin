@@ -96,9 +96,9 @@ For ChatGPT per user usage levels, we have about 14k tokens/user/day which susta
 
 At a hyper optimistic workload for developers of 100k tokens/user/day one can sustainably have a 120 people use it simultaneously - getting to 1474/120 or **12.28€/user/month**.
 
-At a million tokens per user per day, we can have 12 people run it simultaneously, getting to **122.8€/month**.
+At a million tokens per user per day, we can have 12 people run it simultaneously, getting to **122.8€/user/month**.
 
-But for "proper" agentic AI, this is plain unsustainable, given the assumption of 15 million tokens per day per developer with agentic AI, this comes to more than our assumed pessimistic 12 million tokens per day as throughput we could realistically get from the entire system. Further, if we use the hyper-optimistic 60 million tokens per day number, we get to a maximum of about 4 users per day or about 1474/4 = 368.5€/user/month.
+But for "proper" agentic AI, this is plain unsustainable, given the assumption of 15 million tokens per day per developer with agentic AI, this comes to more than our assumed pessimistic 12 million tokens per day as throughput we could realistically get from the entire system. Further, if we use the hyper-optimistic 60 million tokens per day number, we get to a maximum of about 4 users per day or about 1474/4 = **368.5€/user/month**.
 
 A major assumption early on, in this article has been the 1-year depreciation rate for GPUs, I think this is a good assumption personally. However, in an ironic sense to the assumption itself, in both cases
 
