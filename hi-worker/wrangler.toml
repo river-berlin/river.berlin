@@ -1,0 +1,13 @@
+name = "hi-cards"
+main = "src/index.js"
+compatibility_date = "2024-01-01"
+
+# Required secret (set via `npx wrangler secret put ADMIN_PASSWORD`):
+#   ADMIN_PASSWORD - required for writing entries
+
+# Create the KV namespace with:
+#   npx wrangler kv namespace create CARDS
+# then paste the generated id below
+[[kv_namespaces]]
+binding = "CARDS"
+id = "REPLACE_WITH_KV_NAMESPACE_ID"
