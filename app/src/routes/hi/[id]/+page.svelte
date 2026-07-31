@@ -25,10 +25,40 @@
     <meta name="robots" content="noindex, nofollow" />
 </svelte:head>
 
+<style>
+    /* same squiggle as the feed page's date-hover underline */
+    .curly-underline {
+        background-image: url("data:image/svg+xml,%3Csvg width='100' height='12' viewBox='0 0 100 12' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0,6 C12.5,0 12.5,12 25,6 C37.5,0 37.5,12 50,6 C62.5,0 62.5,12 75,6 C87.5,0 87.5,12 100,6' stroke='%2389e6ff' fill='none' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
+        background-repeat: repeat-x;
+        background-size: 60px 12px;
+    }
+</style>
+
 {#snippet links(card)}
-    <div class="flex flex-col gap-3 mb-10">
-        <a href="/feed" class="underline decoration-sky-400 hover:decoration-sky-600">check out my blog here</a>
-        <a href="/about-me" class="underline decoration-sky-400 hover:decoration-sky-600">more about me</a>
+    <div class="flex flex-col gap-3 mb-10 w-full max-w-xs">
+        <a
+            href="/feed"
+            class="flex items-center gap-4 rounded-xl bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors no-underline text-gray-900 dark:text-gray-100 overflow-hidden"
+        >
+            <img src="/typewriter.jpg" alt="" class="w-24 h-24 object-cover flex-shrink-0" />
+            <div class="text-left pr-4">
+                <span class="block font-medium">check out my blog</span>
+                <span class="block text-sm text-gray-500 dark:text-gray-400 mt-0.5">robots, thoughts & other adventures</span>
+            </div>
+        </a>
+        <div>
+            <a
+                href="/about-me"
+                class="flex items-center gap-4 rounded-xl bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors no-underline text-gray-900 dark:text-gray-100 overflow-hidden"
+            >
+                <div class="text-left pl-4 flex-1">
+                    <span class="block font-medium">more about me</span>
+                    <span class="block text-sm text-gray-500 dark:text-gray-400 mt-0.5">who is this River person anyway?</span>
+                </div>
+                <img src="/me.jpg" alt="River" class="w-24 h-24 object-cover flex-shrink-0" />
+            </a>
+            <div class="curly-underline h-3 mt-4 mx-2"></div>
+        </div>
     </div>
 
     <div class="flex flex-col gap-2.5 w-full max-w-xs">
@@ -77,11 +107,11 @@
         {#if card.message}
             <p class="text-gray-700 dark:text-gray-200 mb-3 max-w-md italic">"{card.message}"</p>
         {/if}
-        <p class="text-gray-600 dark:text-gray-300 mb-8">Nice to meet you! I'm River — this is my corner of the internet.</p>
+        <p class="text-gray-600 dark:text-gray-300 mb-8">Nice to meet you! I'm River ! this is my corner of the internet.</p>
         {@render links(card)}
     {:catch}
         <h1 class="text-3xl font-medium mb-3">hello there 👋</h1>
-        <p class="text-gray-600 dark:text-gray-300 mb-8">Nice to meet you! I'm River — this is my corner of the internet.</p>
+        <p class="text-gray-600 dark:text-gray-300 mb-8">Nice to meet you! I'm River ! this is my corner of the internet.</p>
         {@render links(null)}
     {/await}
 </div>
