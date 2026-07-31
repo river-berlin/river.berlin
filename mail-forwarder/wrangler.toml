@@ -1,0 +1,12 @@
+# Deploys as "emailer" so it replaces the existing worker at
+# https://emailer.theadityashankar.workers.dev (same URL the contact form uses)
+name = "emailer"
+main = "src/index.js"
+compatibility_date = "2024-01-01"
+
+# Required secrets (set via `npx wrangler secret put <NAME>`):
+#   SENDER_EMAIL       - an address on your Email Routing domain (me@river.berlin)
+#   DESTINATION_EMAIL  - where contact form messages get delivered (me@river.berlin)
+
+[[send_email]]
+name = "EMAIL"

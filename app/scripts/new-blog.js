@@ -66,8 +66,7 @@ icon: ${icon}
 icon_v2: true
 iconCredit: ${iconCredit}
 iconCreditUrl: ${iconUrl}
-url: ${url}
-hidden: ${hidden}
+url: ${url}${hidden === "true" ? "\nhidden: true" : ""}
 ---`;
 
   // write to content.md

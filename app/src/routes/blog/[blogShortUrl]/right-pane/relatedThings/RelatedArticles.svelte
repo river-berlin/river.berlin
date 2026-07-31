@@ -18,7 +18,7 @@
     // Calculate related blogs (excluding current)
     $: relatedBlogs = allBlogs
         .filter(blog => blog.num !== currentBlogNum)
-        .filter(blog => !blog.metadata.hidden) // don't show hidden blogs
+        .filter(blog => blog.metadata.hidden !== "true" && blog.metadata.hidden !== true) // don't show hidden blogs ("false" string must not count as hidden)
         .sort((a, b) => {
             // Sort by date, newest first
             const dateA = new Date(a.metadata.dated);

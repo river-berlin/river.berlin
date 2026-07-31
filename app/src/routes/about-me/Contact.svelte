@@ -56,7 +56,7 @@
         },
         body: JSON.stringify({
           name,
-          email: 'me@river.berlin', // Destination email
+          email, // the visitor's email - used as Reply-To by the worker
           body,
           honeypot: ''
         })
