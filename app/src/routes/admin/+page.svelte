@@ -1,5 +1,6 @@
 <script>
     import { onMount, onDestroy } from 'svelte';
+    import jsQR from 'jsqr';
 
     const WORKER_URL = 'https://hi-cards.theadityashankar.workers.dev';
 
@@ -7,7 +8,7 @@
     let scanning = false;
     let stream = null;
     let scanInterval = null;
-    let barcodeSupported = true;
+    let scanCanvas = null; // offscreen canvas reused between frames
 
     let cardId = '';
     let name = '';
@@ -21,7 +22,6 @@
     let checkingPassword = false;
 
     onMount(() => {
-        barcodeSupported = 'BarcodeDetector' in window;
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.register('/admin-sw.js', { scope: '/admin' }).catch(() => {});
         }
@@ -90,17 +90,22 @@
             await video.play();
             scanning = true;
 
-            const detector = new BarcodeDetector({ formats: ['qr_code'] });
-            scanInterval = setInterval(async () => {
+            scanInterval = setInterval(() => {
                 try {
-                    const codes = await detector.detect(video);
-                    for (const code of codes) {
-                        const id = extractId(code.rawValue);
+                    if (!video.videoWidth) return; // camera not delivering frames yet
+                    if (!scanCanvas) scanCanvas = document.createElement('canvas');
+                    scanCanvas.width = video.videoWidth;
+                    scanCanvas.height = video.videoHeight;
+                    const ctx = scanCanvas.getContext('2d', { willReadFrequently: true });
+                    ctx.drawImage(video, 0, 0);
+                    const imageData = ctx.getImageData(0, 0, scanCanvas.width, scanCanvas.height);
+                    const code = jsQR(imageData.data, imageData.width, imageData.height);
+                    if (code) {
+                        const id = extractId(code.data);
                         if (id) {
                             cardId = id;
                             stopScan();
                             lookupExisting(id);
-                            return;
                         }
                     }
                 } catch {}
@@ -199,18 +204,12 @@
     ></video>
 
     {#if !scanning}
-        {#if barcodeSupported}
-            <button
-                on:click={startScan}
-                class="w-full py-3 mb-4 rounded-lg bg-sky-600 text-white hover:bg-sky-700 transition-colors"
-            >
-                Scan a card's QR code
-            </button>
-        {:else}
-            <p class="text-sm text-amber-600 dark:text-amber-400 mb-4">
-                QR scanning isn't supported in this browser — enter the id manually below.
-            </p>
-        {/if}
+        <button
+            on:click={startScan}
+            class="w-full py-3 mb-4 rounded-lg bg-sky-600 text-white hover:bg-sky-700 transition-colors"
+        >
+            Scan a card's QR code
+        </button>
     {:else}
         <button
             on:click={stopScan}
