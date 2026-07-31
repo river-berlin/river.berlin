@@ -3,7 +3,7 @@
     import { page } from '$app/stores';
     import { onMount } from 'svelte';
     import { fade } from 'svelte/transition';
-    import { faBluesky, faDiscord } from '@fortawesome/free-brands-svg-icons';
+    import { faBluesky, faDiscord, faLinkedin } from '@fortawesome/free-brands-svg-icons';
     import { FontAwesomeIcon } from '@fortawesome/svelte-fontawesome';
 
     /**
@@ -174,6 +174,19 @@
                         <div class="rounded-full p-2 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-800 dark:text-gray-200 flex items-center justify-center h-5 p-0.5">
                             <FontAwesomeIcon icon={faDiscord} class="h-2.5 w-2.5 text-primary-600" />
                             <span class="font-['Sofia_Sans'] ml-1">Discord</span>
+                        </div>
+                    </a>
+
+                    <a
+                        href="https://www.linkedin.com/in/aditya-shankar-338641252/"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="flex items-center gap-1 text-xs text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors"
+                        aria-label="Visit my LinkedIn profile"
+                    >
+                        <div class="rounded-full p-2 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-800 dark:text-gray-200 flex items-center justify-center h-5 p-0.5">
+                            <FontAwesomeIcon icon={faLinkedin} class="h-2.5 w-2.5 text-primary-600" />
+                            <span class="font-['Sofia_Sans'] ml-1">LinkedIn</span>
                         </div>
                     </a>
                 </div>

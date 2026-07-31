@@ -12,10 +12,40 @@
 
     let cardId = '';
     let name = '';
+    let message = '';
+    let location = '';
     let password = '';
     let status = '';
     let statusIsError = false;
     let existing = null; // currently stored JSON for the scanned id, if any
+
+    let allCards = [];
+    let loadingCards = false;
+
+    async function loadAllCards() {
+        loadingCards = true;
+        try {
+            const res = await fetch(`${WORKER_URL}/cards`, {
+                headers: { 'X-Admin-Password': password }
+            });
+            if (res.ok) {
+                const data = await res.json();
+                allCards = data.cards.sort((a, b) => (b.addedAt || '').localeCompare(a.addedAt || ''));
+            }
+        } catch {}
+        loadingCards = false;
+    }
+
+    function editCard(card) {
+        cardId = card.id;
+        existing = { ...card };
+        delete existing.id;
+        name = card.name || '';
+        message = card.message || '';
+        location = card.location || '';
+        status = '';
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
 
     let unlocked = false;
     let unlockError = '';
@@ -43,6 +73,7 @@
             if (res.ok) {
                 unlocked = true;
                 localStorage.setItem('cardAdminPassword', password);
+                loadAllCards();
             } else {
                 unlockError = 'Wrong password';
                 localStorage.removeItem('cardAdminPassword');
@@ -73,11 +104,16 @@
 
     async function lookupExisting(id) {
         existing = null;
+        name = '';
+        message = '';
+        location = '';
         try {
             const res = await fetch(`${WORKER_URL}/card/${id}`);
             if (res.ok) {
                 existing = await res.json();
                 if (existing.name) name = existing.name;
+                if (existing.message) message = existing.message;
+                if (existing.location) location = existing.location;
             }
         } catch {}
     }
@@ -134,8 +170,12 @@
             return;
         }
         try {
-            // keep any existing fields, only update name - the JSON will grow later
+            // keep any existing fields, update the editable ones
             const payload = { ...(existing || {}), name: name.trim() };
+            if (message.trim()) payload.message = message.trim();
+            else delete payload.message;
+            if (location.trim()) payload.location = location.trim();
+            else delete payload.location;
             const res = await fetch(`${WORKER_URL}/card/${cardId}`, {
                 method: 'PUT',
                 headers: {
@@ -148,7 +188,8 @@
             if (res.ok) {
                 status = `Saved! ${cardId} -> ${name.trim()}`;
                 statusIsError = false;
-                existing = payload;
+                existing = data.saved || payload;
+                loadAllCards();
             } else {
                 status = data.error || 'Failed to save';
                 statusIsError = true;
@@ -244,6 +285,25 @@
         />
     </label>
 
+    <label class="w-full mb-3">
+        <span class="block mb-1 text-sm font-medium">Personal message <span class="text-gray-400">(optional, shown on their hi page)</span></span>
+        <textarea
+            bind:value={message}
+            rows="2"
+            placeholder="lovely meeting you at ..."
+            class="w-full py-2 px-3 rounded-lg border border-gray-300 dark:border-gray-700 bg-transparent outline-none focus:border-sky-500 resize-y"
+        ></textarea>
+    </label>
+
+    <label class="w-full mb-5">
+        <span class="block mb-1 text-sm font-medium">Where we met <span class="text-gray-400">(optional, just for me)</span></span>
+        <input
+            bind:value={location}
+            placeholder="e.g. robotics meetup Berlin"
+            class="w-full py-2 px-3 rounded-lg border border-gray-300 dark:border-gray-700 bg-transparent outline-none focus:border-sky-500"
+        />
+    </label>
+
     <button
         on:click={save}
         class="w-full py-3 rounded-lg bg-emerald-600 text-white hover:bg-emerald-700 transition-colors"
@@ -256,5 +316,34 @@
             {status}
         </p>
     {/if}
+
+    <div class="w-full mt-10">
+        <div class="flex items-center justify-between mb-3">
+            <h2 class="text-lg font-medium">Assigned cards</h2>
+            <button on:click={loadAllCards} class="text-sm text-gray-500 dark:text-gray-400 underline">refresh</button>
+        </div>
+        {#if loadingCards}
+            <p class="text-sm text-gray-500 dark:text-gray-400">loading...</p>
+        {:else if allCards.length === 0}
+            <p class="text-sm text-gray-500 dark:text-gray-400">no cards assigned yet</p>
+        {:else}
+            <ul class="divide-y divide-gray-200 dark:divide-gray-800">
+                {#each allCards as card (card.id)}
+                    <li>
+                        <button
+                            on:click={() => editCard(card)}
+                            class="w-full py-2.5 text-left hover:bg-gray-50 dark:hover:bg-gray-900 rounded px-2 transition-colors"
+                        >
+                            <span class="font-medium">{card.name || '(no name)'}</span>
+                            <span class="text-gray-400 text-sm ml-2">{card.id}</span>
+                            <span class="block text-xs text-gray-500 dark:text-gray-400">
+                                {#if card.location}{card.location} · {/if}{card.addedAt ? new Date(card.addedAt).toLocaleDateString() : ''}
+                            </span>
+                        </button>
+                    </li>
+                {/each}
+            </ul>
+        {/if}
+    </div>
 </div>
 {/if}

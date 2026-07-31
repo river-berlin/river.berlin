@@ -8,6 +8,11 @@ const CORS = {
   'Content-Type': 'application/json',
 };
 
+function isAuthed(request, env) {
+  const password = request.headers.get('X-Admin-Password') || '';
+  return Boolean(env.ADMIN_PASSWORD) && safeEqual(password, env.ADMIN_PASSWORD);
+}
+
 function json(data, status = 200) {
   return new Response(JSON.stringify(data), { status, headers: CORS });
 }
@@ -33,11 +38,24 @@ export default {
 
     // lets the admin PWA check the password without writing anything
     if (url.pathname === '/auth' && request.method === 'GET') {
-      const password = request.headers.get('X-Admin-Password') || '';
-      if (!env.ADMIN_PASSWORD || !safeEqual(password, env.ADMIN_PASSWORD)) {
-        return json({ error: 'Wrong password' }, 401);
-      }
+      if (!isAuthed(request, env)) return json({ error: 'Wrong password' }, 401);
       return json({ success: true });
+    }
+
+    // list every stored card with its JSON (admin only)
+    if (url.pathname === '/cards' && request.method === 'GET') {
+      if (!isAuthed(request, env)) return json({ error: 'Wrong password' }, 401);
+      const list = await env.CARDS.list({ limit: 1000 });
+      const cards = await Promise.all(
+        list.keys.map(async ({ name: key }) => {
+          try {
+            return { id: key, ...JSON.parse(await env.CARDS.get(key)) };
+          } catch {
+            return { id: key };
+          }
+        })
+      );
+      return json({ cards });
     }
 
     const match = url.pathname.match(/^\/card\/([A-Za-z0-9_-]{1,64})$/);
@@ -53,10 +71,7 @@ export default {
     }
 
     if (request.method === 'PUT') {
-      const password = request.headers.get('X-Admin-Password') || '';
-      if (!env.ADMIN_PASSWORD || !safeEqual(password, env.ADMIN_PASSWORD)) {
-        return json({ error: 'Wrong password' }, 401);
-      }
+      if (!isAuthed(request, env)) return json({ error: 'Wrong password' }, 401);
 
       let data;
       try {
@@ -67,6 +82,17 @@ export default {
       if (typeof data !== 'object' || data === null || typeof data.name !== 'string' || !data.name.trim()) {
         return json({ error: 'JSON body must at least contain a non-empty "name" string' }, 400);
       }
+
+      // server-side timestamps: addedAt survives edits, updatedAt always moves
+      const previous = await env.CARDS.get(id);
+      let addedAt = new Date().toISOString();
+      if (previous) {
+        try {
+          addedAt = JSON.parse(previous).addedAt || addedAt;
+        } catch {}
+      }
+      data.addedAt = addedAt;
+      data.updatedAt = new Date().toISOString();
 
       await env.CARDS.put(id, JSON.stringify(data));
       return json({ success: true, id, saved: data });
