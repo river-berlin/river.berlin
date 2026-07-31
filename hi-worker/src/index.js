@@ -67,7 +67,25 @@ export default {
     if (request.method === 'GET') {
       const value = await env.CARDS.get(id);
       if (value === null) return json({ error: 'No such id' }, 404);
-      return new Response(value, { status: 200, headers: CORS });
+
+      let card;
+      try {
+        card = JSON.parse(value);
+      } catch {
+        return json({ error: 'Corrupt entry' }, 500);
+      }
+
+      // phone-related contact details live only in the PHONE_NUMBER secret and
+      // are revealed solely on a valid card id - never in the site's code
+      if (env.PHONE_NUMBER) {
+        const digits = env.PHONE_NUMBER.replace(/[^0-9]/g, '');
+        card.contact = {
+          whatsapp: `https://wa.me/${digits}`,
+          signal: `https://signal.me/#p/+${digits}`,
+        };
+      }
+
+      return json(card);
     }
 
     if (request.method === 'PUT') {

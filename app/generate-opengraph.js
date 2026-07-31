@@ -100,6 +100,10 @@ const style = `
   margin-left: 0;
 }`
 
+// inlined so the generated images never depend on the deployed site's hashed asset URLs
+const meditatingEnbyDataURI = 'data:image/svg+xml;base64,' +
+  fs.readFileSync('./src/lib/images/meditating-enby.svg').toString('base64');
+
 function generateHTML(preImageURL, topShortText, mainText, byText, image){
 return `<html lang="en">
 <head>
@@ -164,7 +168,7 @@ return `<html lang="en">
     </div>
     
     <div class="bottom-thingy">
-      <img class="mainimg" src="https://river.berlin/_app/immutable/assets/meditating-enby.Ddx2L9rE.svg" alt="" width=40>
+      <img class="mainimg" src="${meditatingEnbyDataURI}" alt="" width=40>
       
       <div class="name-and-stuff">
         <h1>·</h1> 

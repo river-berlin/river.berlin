@@ -2,8 +2,10 @@ name = "hi-cards"
 main = "src/index.js"
 compatibility_date = "2024-01-01"
 
-# Required secret (set via `npx wrangler secret put ADMIN_PASSWORD`):
+# Required secrets (set via `npx wrangler secret put <NAME>`):
 #   ADMIN_PASSWORD - required for writing entries
+#   PHONE_NUMBER   - your phone number in international format (+49...); when set,
+#                    valid card lookups include WhatsApp/Signal links.
 
 # Create the KV namespace with:
 #   npx wrangler kv namespace create CARDS
