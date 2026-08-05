@@ -3,6 +3,7 @@
     import jsQR from 'jsqr';
 
     const WORKER_URL = 'https://hi-cards.theadityashankar.workers.dev';
+    const MEET_WORKER_URL = 'https://meet.theadityashankar.workers.dev';
 
     let video;
     let scanning = false;
@@ -21,6 +22,65 @@
 
     let allCards = [];
     let loadingCards = false;
+
+    // ---- meeting-slot blocking ----
+    let meetDate = '';
+    let meetSlots = [];
+    let loadingMeetSlots = false;
+    let meetError = '';
+
+    const meetDays = [];
+    {
+        const d = new Date();
+        while (meetDays.length < 14) {
+            d.setDate(d.getDate() + 1);
+            const dow = d.getDay();
+            if (dow !== 0 && dow !== 6) {
+                meetDays.push({
+                    iso: d.toISOString().slice(0, 10),
+                    label: d.toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' })
+                });
+            }
+        }
+    }
+
+    async function loadMeetDay(iso) {
+        meetDate = iso;
+        meetError = '';
+        loadingMeetSlots = true;
+        meetSlots = [];
+        try {
+            const res = await fetch(`${MEET_WORKER_URL}/day?date=${iso}`, {
+                headers: { 'X-Admin-Password': password }
+            });
+            const data = await res.json();
+            if (res.ok) meetSlots = data.slots;
+            else meetError = data.error || 'Could not load day';
+        } catch {
+            meetError = 'Network error loading day';
+        }
+        loadingMeetSlots = false;
+    }
+
+    async function toggleBlock(slot) {
+        if (slot.status === 'booked') return;
+        const blocked = slot.status === 'free';
+        try {
+            const res = await fetch(`${MEET_WORKER_URL}/block`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'X-Admin-Password': password },
+                body: JSON.stringify({ date: meetDate, time: slot.time, blocked })
+            });
+            const data = await res.json();
+            if (res.ok) {
+                meetSlots = meetSlots.map((s) => (s.time === slot.time ? { ...s, status: blocked ? 'blocked' : 'free' } : s));
+            } else {
+                meetError = data.error || 'Could not update slot';
+            }
+        } catch {
+            meetError = 'Network error updating slot';
+        }
+    }
 
     async function loadAllCards() {
         loadingCards = true;
@@ -316,6 +376,43 @@
             {status}
         </p>
     {/if}
+
+    <div class="w-full mt-10">
+        <h2 class="text-lg font-medium mb-3">Meeting times</h2>
+        <p class="text-xs text-gray-500 dark:text-gray-400 mb-3">Tap a free slot to block it, tap a blocked slot to free it. Times are Berlin time. Booked slots show the person's name.</p>
+        <div class="flex flex-wrap gap-2 mb-4">
+            {#each meetDays as day}
+                <button
+                    on:click={() => loadMeetDay(day.iso)}
+                    class="py-1 px-2.5 rounded-lg text-xs border transition-colors {meetDate === day.iso ? 'bg-sky-600 text-white border-sky-600' : 'border-gray-300 dark:border-gray-700 hover:border-sky-400'}"
+                >
+                    {day.label}
+                </button>
+            {/each}
+        </div>
+        {#if loadingMeetSlots}
+            <p class="text-sm text-gray-500 dark:text-gray-400">loading day...</p>
+        {:else if meetSlots.length > 0}
+            <div class="flex flex-wrap gap-2 mb-2">
+                {#each meetSlots as slot}
+                    <button
+                        on:click={() => toggleBlock(slot)}
+                        disabled={slot.status === 'booked'}
+                        title={slot.status === 'booked' ? `booked: ${slot.name}` : slot.status}
+                        class="py-1 px-2.5 rounded-lg text-xs border transition-colors
+                            {slot.status === 'free' ? 'border-gray-300 dark:border-gray-700 hover:border-red-400' : ''}
+                            {slot.status === 'blocked' ? 'bg-red-600/80 text-white border-red-600' : ''}
+                            {slot.status === 'booked' ? 'bg-emerald-700 text-white border-emerald-700 cursor-default' : ''}"
+                    >
+                        {slot.time}{slot.status === 'booked' ? ` · ${slot.name}` : ''}
+                    </button>
+                {/each}
+            </div>
+        {/if}
+        {#if meetError}
+            <p class="text-sm text-red-500">{meetError}</p>
+        {/if}
+    </div>
 
     <div class="w-full mt-10">
         <div class="flex items-center justify-between mb-3">

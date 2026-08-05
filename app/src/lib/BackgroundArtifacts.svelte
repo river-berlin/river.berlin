@@ -1,6 +1,7 @@
 <script lang="ts">
     import { onMount } from 'svelte';
     import { browser } from '$app/environment';
+    import { afterNavigate } from '$app/navigation';
 
     let canvas: HTMLCanvasElement;
     let ctx: CanvasRenderingContext2D | null;
@@ -94,6 +95,13 @@
         generateDots(width, height);
         draw();
     }
+
+    // the canvas keeps its explicit height across client-side navigation, so a
+    // tall page (e.g. the feed) would leave phantom scroll space on shorter
+    // pages - re-measure once the new page has rendered
+    afterNavigate(() => {
+        requestAnimationFrame(resize);
+    });
 
     onMount(() => {
         if (!browser) return;

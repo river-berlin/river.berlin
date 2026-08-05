@@ -1,0 +1,28 @@
+name = "meet"
+account_id = "5429a1a92a69095def4f8f60134c70ac"
+main = "src/index.js"
+compatibility_date = "2024-01-01"
+
+# Required secret (set via `npx wrangler secret put RESEND_API_KEY`):
+#   RESEND_API_KEY - api key from resend.com, used for all reminder/confirmation emails
+
+# check for reminders that are due every 15 minutes
+[triggers]
+crons = ["*/15 * * * *"]
+
+[vars]
+TIMEZONE = "Europe/Berlin"
+# availability: weekdays (1=Mon .. 5=Fri), slots between these hours, Berlin time
+START_HOUR = "10"
+END_HOUR = "18"
+SLOT_MINUTES = "30"
+# how far ahead people can book, in days
+MAX_DAYS_AHEAD = "30"
+MY_EMAIL = "me@river.berlin"
+# must be an address on a domain verified in the Resend dashboard
+FROM_EMAIL = "River <meet@emails.river.berlin>"
+
+# created with: npx wrangler kv namespace create MEETINGS
+[[kv_namespaces]]
+binding = "MEETINGS"
+id = "d5f472b78f0b4219bfd86af095c8e9b4"

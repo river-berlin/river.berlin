@@ -1,8 +1,8 @@
 <script>
   import { library } from '@fortawesome/fontawesome-svg-core';
-  import { faPenToSquare } from '@fortawesome/free-solid-svg-icons';
+  import { faPenToSquare, faCalendarDays } from '@fortawesome/free-solid-svg-icons';
   import { FontAwesomeIcon } from '@fortawesome/svelte-fontawesome';
-  
+
   library.add(faPenToSquare);
   
   export let scrollToContact;
@@ -27,10 +27,16 @@
 
 <div class="flex flex-col sm:flex-row items-center justify-center gap-3 -mt-4">
   <p class="text-lg font-medium">Want to hire me?</p>
-  <button 
+  <button
     on:click={scrollToContact}
     class="group flex items-center gap-3 px-5 py-2.5 bg-blue-600 dark:bg-transparent text-white dark:text-blue-400 rounded-lg hover:bg-blue-700 dark:hover:bg-blue-900/50 hover:border-black dark:hover:text-white dark:hover:border-white border-0 dark:border dark:border-blue-400 transition-all duration-700">
     <span>Contact me</span>
     <FontAwesomeIcon icon={faPenToSquare} class="h-4 w-4" />
   </button>
+  <a
+    href="/meet"
+    class="group flex items-center gap-3 px-5 py-2.5 bg-emerald-600 dark:bg-transparent text-white dark:text-emerald-400 rounded-lg hover:bg-emerald-700 dark:hover:bg-emerald-900/50 hover:border-black dark:hover:text-white dark:hover:border-white border-0 dark:border dark:border-emerald-400 transition-all duration-700 no-underline">
+    <span>Book a meeting with me</span>
+    <FontAwesomeIcon icon={faCalendarDays} class="h-4 w-4" />
+  </a>
 </div>
