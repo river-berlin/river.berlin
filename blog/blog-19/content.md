@@ -8,7 +8,6 @@ icon_v2: true
 iconCredit: Cash Macanaya
 iconCreditUrl: https://unsplash.com/de/fotos/roboter-und-menschenhande-die-sich-gegenseitig-entgegenstrecken-X9Cemmq4YjM
 url: runpod-with-lerobot
-hidden: true
 ---
 
 ![the SO101 arm picking up a wooden cube, driven by molmoact2](/blog/blog-19/robot_demo.gif)
