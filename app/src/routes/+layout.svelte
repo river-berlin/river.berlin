@@ -31,9 +31,12 @@
         <BackgroundArtifacts />
     </div>
     <div id="fireflies-container" class="fixed inset-0 pointer-events-none z-10"></div>
-    <Header />
-    <main class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pb-12">
-        <slot />
-    </main>
+    <!-- relative z-20 keeps all page content painting above the background canvas -->
+    <div class="relative z-20">
+        <Header />
+        <main class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pb-12">
+            <slot />
+        </main>
+    </div>
 </div>
 

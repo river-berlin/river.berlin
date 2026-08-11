@@ -126,3 +126,23 @@ html.dark pre {
         font-family: "Anonymous Pro", monospace !important;
     }
 }
+
+/* DB Delay Explorer: highlighted SQL block (spans injected at runtime).
+   A LIGHT panel in both themes (dark text on light background). The global
+   `pre { background: ... !important }` blog styling above forces all pres
+   dark, so these need !important + higher specificity to win. */
+pre.sql-block,
+html.dark pre.sql-block {
+    background: #eceff4 !important;
+    border: 1px solid #d1d1d1 !important;
+    color: #2e3440;
+}
+.sql-block .hljs-keyword  { color: #1d4ed8; }
+.sql-block .hljs-string   { color: #047857; }
+.sql-block .hljs-number   { color: #b45309; }
+.sql-block .hljs-literal  { color: #b45309; }
+.sql-block .hljs-operator { color: #6b7280; }
+.sql-block .hljs-comment  { color: #78808f; font-style: italic; }
+.sql-block .hljs-built_in,
+.sql-block .hljs-title,
+.sql-block .hljs-type     { color: #0e7490; }

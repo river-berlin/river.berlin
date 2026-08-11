@@ -1,0 +1,26 @@
+[
+ {
+  "zone": "inside the Ring",
+  "stations": 29,
+  "n": 4555854,
+  "avg_delay": 1.92,
+  "punctual_pct": 93.6,
+  "cancel_pct": 6.21
+ },
+ {
+  "zone": "on the Ring",
+  "stations": 30,
+  "n": 5059484,
+  "avg_delay": 1.5,
+  "punctual_pct": 95.1,
+  "cancel_pct": 8.24
+ },
+ {
+  "zone": "outside the Ring",
+  "stations": 94,
+  "n": 7167214,
+  "avg_delay": 1.42,
+  "punctual_pct": 95.8,
+  "cancel_pct": 6.11
+ }
+]

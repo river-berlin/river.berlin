@@ -1,0 +1,12 @@
+[
+	{"train_type":"OE","line_number":"RE1","rides":965509,"avg_delay_at_berlin":4.18,"punctual_pct":78.6,"cancel_pct":3.9,"p90_delay":13},
+	{"train_type":"RE","line_number":"RE7","rides":152678,"avg_delay_at_berlin":5.53,"punctual_pct":70.2,"cancel_pct":12.45,"p90_delay":16},
+	{"train_type":"RE","line_number":"1","rides":56762,"avg_delay_at_berlin":5.22,"punctual_pct":71.4,"cancel_pct":2.88,"p90_delay":14},
+	{"train_type":"RB","line_number":"RB23","rides":54897,"avg_delay_at_berlin":1.54,"punctual_pct":94.2,"cancel_pct":8.32,"p90_delay":4},
+	{"train_type":"IC","line_number":null,"rides":25069,"avg_delay_at_berlin":12.64,"punctual_pct":48.4,"cancel_pct":29.23,"p90_delay":34},
+	{"train_type":"RB","line_number":"23","rides":15060,"avg_delay_at_berlin":1.51,"punctual_pct":94.4,"cancel_pct":7.84,"p90_delay":4},
+	{"train_type":"RSM","line_number":"HBX","rides":10546,"avg_delay_at_berlin":1.99,"punctual_pct":81.7,"cancel_pct":0.0,"p90_delay":11},
+	{"train_type":"ICE","line_number":null,"rides":7586,"avg_delay_at_berlin":38.27,"punctual_pct":19.3,"cancel_pct":12.42,"p90_delay":83},
+	{"train_type":"SMD","line_number":"HBX","rides":304,"avg_delay_at_berlin":3.68,"punctual_pct":84.9,"cancel_pct":0.0,"p90_delay":20},
+	{"train_type":"RB","line_number":"RB21","rides":160,"avg_delay_at_berlin":0.0,"punctual_pct":100.0,"cancel_pct":0.0,"p90_delay":0}
+]

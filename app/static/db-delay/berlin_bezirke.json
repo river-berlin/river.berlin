@@ -1,0 +1,98 @@
+[
+ {
+  "bezirk": "Reinickendorf",
+  "stations": 12,
+  "n": 690951,
+  "avg_delay": 1.27,
+  "punctual_pct": 97.1,
+  "cancel_pct": 6.07
+ },
+ {
+  "bezirk": "Pankow",
+  "stations": 12,
+  "n": 1623143,
+  "avg_delay": 1.2,
+  "punctual_pct": 96.6,
+  "cancel_pct": 6.73
+ },
+ {
+  "bezirk": "Treptow-Köpenick",
+  "stations": 18,
+  "n": 1722541,
+  "avg_delay": 1.32,
+  "punctual_pct": 95.8,
+  "cancel_pct": 5.02
+ },
+ {
+  "bezirk": "Marzahn-Hellersdorf",
+  "stations": 12,
+  "n": 876083,
+  "avg_delay": 1.21,
+  "punctual_pct": 95.8,
+  "cancel_pct": 7.6
+ },
+ {
+  "bezirk": "Steglitz-Zehlendorf",
+  "stations": 17,
+  "n": 1178815,
+  "avg_delay": 1.6,
+  "punctual_pct": 95.6,
+  "cancel_pct": 6.83
+ },
+ {
+  "bezirk": "Neukölln",
+  "stations": 4,
+  "n": 563400,
+  "avg_delay": 1.42,
+  "punctual_pct": 95.6,
+  "cancel_pct": 8.43
+ },
+ {
+  "bezirk": "Lichtenberg",
+  "stations": 10,
+  "n": 845782,
+  "avg_delay": 1.47,
+  "punctual_pct": 95.3,
+  "cancel_pct": 6.6
+ },
+ {
+  "bezirk": "Tempelhof-Schöneberg",
+  "stations": 15,
+  "n": 1700881,
+  "avg_delay": 1.68,
+  "punctual_pct": 95.1,
+  "cancel_pct": 7.22
+ },
+ {
+  "bezirk": "Charlottenburg-Wilmersdorf",
+  "stations": 19,
+  "n": 2272262,
+  "avg_delay": 1.44,
+  "punctual_pct": 95.0,
+  "cancel_pct": 7.44
+ },
+ {
+  "bezirk": "Friedrichshain-Kreuzberg",
+  "stations": 7,
+  "n": 1501861,
+  "avg_delay": 1.74,
+  "punctual_pct": 94.0,
+  "cancel_pct": 7.34
+ },
+ {
+  "bezirk": "Mitte",
+  "stations": 22,
+  "n": 3559152,
+  "avg_delay": 1.9,
+  "punctual_pct": 93.7,
+  "cancel_pct": 6.61
+ },
+ {
+  "bezirk": "Spandau",
+  "stations": 5,
+  "n": 247681,
+  "avg_delay": 3.66,
+  "punctual_pct": 86.2,
+  "cancel_pct": 4.96
+ }
+]

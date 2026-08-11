@@ -1,8 +1,36 @@
 <script>
+    import { onMount } from 'svelte';
+
     export let markdownHTML;
     export let blogNum;
     export let metadata;
     export let icon;
+
+    let proseEl;
+
+    onMount(() => {
+        function handleClick(e) {
+            const btn = e.target.closest('.code-copy-btn');
+            if (!btn) return;
+            const pre = btn.closest('.code-block')?.querySelector('pre');
+            if (!pre) return;
+
+            const label = btn.querySelector('.code-copy-label');
+
+            navigator.clipboard.writeText(pre.innerText).then(() => {
+                const original = label ? label.textContent : '';
+                if (label) label.textContent = 'Copied!';
+                btn.classList.add('copied');
+                setTimeout(() => {
+                    if (label) label.textContent = original;
+                    btn.classList.remove('copied');
+                }, 1500);
+            });
+        }
+
+        proseEl.addEventListener('click', handleClick);
+        return () => proseEl.removeEventListener('click', handleClick);
+    });
 </script>
 
 <div class="markdown-container">
@@ -22,7 +50,7 @@
         {/if}
     </div>
 
-    <div class="prose prose-lg dark:prose-invert max-w-none code-highlight-wrapper">
+    <div class="prose prose-lg dark:prose-invert max-w-none code-highlight-wrapper" bind:this={proseEl}>
         {@html markdownHTML}
     </div>
     
@@ -50,6 +78,97 @@
         margin: 1.5rem 0;
         overflow-x: auto;
         box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    }
+
+    /* Numbered header + copy-button footer wrapped around each code block */
+    :global(.code-block) {
+        position: relative;
+        margin: 1.5rem 0;
+        border-radius: 0.375rem;
+        overflow: hidden;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    }
+
+    :global(.code-block pre) {
+        margin: 0 !important;
+        border-radius: 0 !important;
+        box-shadow: none !important;
+    }
+
+    :global(.code-block-header),
+    :global(.code-block-footer) {
+        display: flex;
+        align-items: center;
+        padding: 0.35rem 0.75rem;
+        background: rgba(0, 0, 0, 0.35);
+    }
+
+    :global(.code-block-header) {
+        justify-content: flex-start;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        font-size: 0.7rem;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        color: #9ca3af;
+    }
+
+    :global(.code-block-footer) {
+        justify-content: flex-start;
+        border-top: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    :global(.code-copy-btn) {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        font-family: inherit;
+        font-size: 0.75rem;
+        padding: 0.25rem 0.65rem;
+        border-radius: 0.25rem;
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        background: rgba(255, 255, 255, 0.06);
+        color: #d1d5db;
+        cursor: pointer;
+        transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+    }
+
+    :global(.code-copy-icon) {
+        flex-shrink: 0;
+    }
+
+    :global(.code-copy-btn:hover) {
+        background: rgba(255, 255, 255, 0.14);
+        color: #ffffff;
+    }
+
+    :global(.code-copy-btn.copied) {
+        color: #4ade80;
+        border-color: rgba(74, 222, 128, 0.4);
+    }
+
+    /* Line numbers, generated purely with a CSS counter so the gutter never
+       ends up in the copied text. */
+    :global(.code-block pre code) {
+        display: block;
+        counter-reset: code-line;
+    }
+
+    :global(.code-line) {
+        display: block;
+        position: relative;
+        padding-left: 2.75em;
+    }
+
+    :global(.code-line)::before {
+        counter-increment: code-line;
+        content: counter(code-line);
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 2.25em;
+        text-align: right;
+        color: rgba(255, 255, 255, 0.28);
+        user-select: none;
     }
 
     /* Make sure inline code looks good too */
