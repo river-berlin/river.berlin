@@ -2,7 +2,7 @@
 shortSummary: how to use lerobot with runpod
 author: River / Aditya Shankar
 dated: 2026-08-11
-title: How to use lerobot with runpod!
+title: Autonomously control robots with lerobot and runpod!
 icon: icon.jpg
 icon_v2: true
 iconCredit: Cash Macanaya
