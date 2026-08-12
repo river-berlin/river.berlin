@@ -1,0 +1,22 @@
+name = "subscribe"
+account_id = "5429a1a92a69095def4f8f60134c70ac"
+main = "src/index.js"
+compatibility_date = "2024-01-01"
+
+# Required secrets (set via `npx wrangler secret put <NAME>`):
+#   FROM_EMAIL          - a verified address on your Email Routing domain, used only for
+#                          the "someone subscribed" ping (e.g. "Subscribe <noreply@river.berlin>")
+#   NOTIFY_EMAIL         - where that ping gets sent, and the Reply-To on broadcasts (e.g. me@river.berlin)
+#   ADMIN_PASSWORD       - required for GET /admin/subscribers and POST /admin/broadcast;
+#                          use the SAME value as hi-worker/meet-worker's ADMIN_PASSWORD so
+#                          the one password on /admin unlocks everything
+#   RESEND_API_KEY       - api key from resend.com, used only for admin broadcasts
+#   BROADCAST_FROM_EMAIL - a "from" address on a domain verified in Resend (not Cloudflare
+#                          Email Routing), e.g. "River <updates@emails.river.berlin>"
+
+[[kv_namespaces]]
+binding = "SUBSCRIBERS"
+id = "afa57b7c47664fbd8934588d69bea780"
+
+[[send_email]]
+name = "EMAIL"

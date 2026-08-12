@@ -45,6 +45,7 @@ async function main() {
 
   // prompt user
   const shortSummary = await ask("Short summary of the article");
+  const summary = await ask("Summary (optional, longer than shortSummary - not used anywhere yet)");
   const author = await ask("Author", "River / Aditya Shankar");
   const dated = await ask("Date", today);
   const title = await ask("Title of the article");
@@ -58,7 +59,7 @@ async function main() {
 
   // build markdown header
   const header = `---
-shortSummary: ${shortSummary}
+shortSummary: ${shortSummary}${summary ? `\nsummary: ${summary}` : ""}
 author: ${author}
 dated: ${dated}
 title: ${title}

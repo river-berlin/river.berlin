@@ -4,6 +4,7 @@
 
     const WORKER_URL = 'https://hi-cards.theadityashankar.workers.dev';
     const MEET_WORKER_URL = 'https://meet.theadityashankar.workers.dev';
+    const SUBSCRIBE_WORKER_URL = 'https://subscribe.theadityashankar.workers.dev';
 
     let video;
     let scanning = false;
@@ -82,6 +83,110 @@
         }
     }
 
+    // ---- email subscribers (manual broadcast only, never automatic) ----
+    let subscribers = [];
+    let loadingSubscribers = false;
+    let subscribersError = '';
+
+    let broadcastBlogPosts = false;
+    let broadcastEvents = false;
+    let broadcastMisc = false;
+    let broadcastSubject = '';
+    let broadcastText = '';
+    let sending = false;
+    let broadcastStatus = '';
+    let broadcastStatusIsError = false;
+
+    $: recipientCount = subscribers.filter(
+        (s) => (broadcastBlogPosts && s.blogPosts) || (broadcastEvents && s.events) || (broadcastMisc && s.misc)
+    ).length;
+
+    async function loadSubscribers() {
+        loadingSubscribers = true;
+        subscribersError = '';
+        try {
+            const res = await fetch(`${SUBSCRIBE_WORKER_URL}/admin/subscribers`, {
+                headers: { 'X-Admin-Password': password }
+            });
+            const data = await res.json();
+            if (res.ok) {
+                subscribers = data.subscribers;
+            } else {
+                subscribersError = data.error || 'Could not load subscribers';
+            }
+        } catch {
+            subscribersError = 'Network error loading subscribers';
+        }
+        loadingSubscribers = false;
+    }
+
+    async function sendBroadcast() {
+        broadcastStatus = '';
+        if (!broadcastSubject.trim() || !broadcastText.trim()) {
+            broadcastStatus = 'Need a subject and a message';
+            broadcastStatusIsError = true;
+            return;
+        }
+        if (recipientCount === 0) {
+            broadcastStatus = 'No subscribers match the selected audience';
+            broadcastStatusIsError = true;
+            return;
+        }
+        const confirmed = confirm(`Send "${broadcastSubject.trim()}" to ${recipientCount} subscriber${recipientCount === 1 ? '' : 's'}? This cannot be undone.`);
+        if (!confirmed) return;
+
+        sending = true;
+        try {
+            const res = await fetch(`${SUBSCRIBE_WORKER_URL}/admin/broadcast`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'X-Admin-Password': password },
+                body: JSON.stringify({
+                    subject: broadcastSubject.trim(),
+                    text: broadcastText.trim(),
+                    blogPosts: broadcastBlogPosts,
+                    events: broadcastEvents,
+                    misc: broadcastMisc
+                })
+            });
+            const data = await res.json();
+            if (res.ok) {
+                broadcastStatus = `Sent to ${data.sent}/${data.total}${data.failed ? ` (${data.failed} failed)` : ''}`;
+                broadcastStatusIsError = data.failed > 0;
+            } else {
+                broadcastStatus = data.error || 'Failed to send';
+                broadcastStatusIsError = true;
+            }
+        } catch {
+            broadcastStatus = 'Network error sending broadcast';
+            broadcastStatusIsError = true;
+        }
+        sending = false;
+    }
+
+    let removingEmail = '';
+
+    async function removeSubscriber(email) {
+        const confirmed = confirm(`Remove ${email} from all subscriptions?`);
+        if (!confirmed) return;
+
+        removingEmail = email;
+        try {
+            const res = await fetch(`${SUBSCRIBE_WORKER_URL}/unsubscribe`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email })
+            });
+            if (res.ok) {
+                subscribers = subscribers.filter((s) => s.email !== email);
+            } else {
+                subscribersError = 'Could not remove subscriber';
+            }
+        } catch {
+            subscribersError = 'Network error removing subscriber';
+        }
+        removingEmail = '';
+    }
+
     async function loadAllCards() {
         loadingCards = true;
         try {
@@ -111,6 +216,8 @@
     let unlockError = '';
     let checkingPassword = false;
 
+    let activeTab = 'cards'; // 'cards' | 'meetings' | 'subscribers'
+
     onMount(() => {
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.register('/admin-sw.js', { scope: '/admin' }).catch(() => {});
@@ -134,6 +241,7 @@
                 unlocked = true;
                 localStorage.setItem('cardAdminPassword', password);
                 loadAllCards();
+                loadSubscribers();
             } else {
                 unlockError = 'Wrong password';
                 localStorage.removeItem('cardAdminPassword');
@@ -297,6 +405,28 @@
         <button on:click={lock} class="text-sm text-gray-500 dark:text-gray-400 underline">lock</button>
     </div>
 
+    <div class="w-full flex gap-2 mb-8 border-b border-gray-200 dark:border-gray-800">
+        <button
+            on:click={() => (activeTab = 'cards')}
+            class="py-2 px-3 text-sm font-medium border-b-2 -mb-px transition-colors {activeTab === 'cards' ? 'border-sky-600 text-sky-600 dark:text-sky-400' : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200'}"
+        >
+            Cards
+        </button>
+        <button
+            on:click={() => (activeTab = 'meetings')}
+            class="py-2 px-3 text-sm font-medium border-b-2 -mb-px transition-colors {activeTab === 'meetings' ? 'border-sky-600 text-sky-600 dark:text-sky-400' : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200'}"
+        >
+            Meetings
+        </button>
+        <button
+            on:click={() => (activeTab = 'subscribers')}
+            class="py-2 px-3 text-sm font-medium border-b-2 -mb-px transition-colors {activeTab === 'subscribers' ? 'border-sky-600 text-sky-600 dark:text-sky-400' : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200'}"
+        >
+            Subscribers
+        </button>
+    </div>
+
+    {#if activeTab === 'cards'}
     <!-- svelte-ignore a11y-media-has-caption -->
     <video
         bind:this={video}
@@ -378,6 +508,37 @@
     {/if}
 
     <div class="w-full mt-10">
+        <div class="flex items-center justify-between mb-3">
+            <h2 class="text-lg font-medium">Assigned cards</h2>
+            <button on:click={loadAllCards} class="text-sm text-gray-500 dark:text-gray-400 underline">refresh</button>
+        </div>
+        {#if loadingCards}
+            <p class="text-sm text-gray-500 dark:text-gray-400">loading...</p>
+        {:else if allCards.length === 0}
+            <p class="text-sm text-gray-500 dark:text-gray-400">no cards assigned yet</p>
+        {:else}
+            <ul class="divide-y divide-gray-200 dark:divide-gray-800">
+                {#each allCards as card (card.id)}
+                    <li>
+                        <button
+                            on:click={() => editCard(card)}
+                            class="w-full py-2.5 text-left hover:bg-gray-50 dark:hover:bg-gray-900 rounded px-2 transition-colors"
+                        >
+                            <span class="font-medium">{card.name || '(no name)'}</span>
+                            <span class="text-gray-400 text-sm ml-2">{card.id}</span>
+                            <span class="block text-xs text-gray-500 dark:text-gray-400">
+                                {#if card.location}{card.location} · {/if}{card.addedAt ? new Date(card.addedAt).toLocaleDateString() : ''}
+                            </span>
+                        </button>
+                    </li>
+                {/each}
+            </ul>
+        {/if}
+    </div>
+    {/if}
+
+    {#if activeTab === 'meetings'}
+    <div class="w-full">
         <h2 class="text-lg font-medium mb-3">Meeting times</h2>
         <p class="text-xs text-gray-500 dark:text-gray-400 mb-3">Tap a free slot to block it, tap a blocked slot to free it. Times are Berlin time. Booked slots show the person's name.</p>
         <div class="flex flex-wrap gap-2 mb-4">
@@ -413,34 +574,106 @@
             <p class="text-sm text-red-500">{meetError}</p>
         {/if}
     </div>
+    {/if}
+
+    {#if activeTab === 'subscribers'}
+    <div class="w-full">
+        <div class="flex items-center justify-between mb-3">
+            <h2 class="text-lg font-medium">Email subscribers</h2>
+            <button on:click={loadSubscribers} class="text-sm text-gray-500 dark:text-gray-400 underline">refresh</button>
+        </div>
+        <p class="text-xs text-gray-500 dark:text-gray-400 mb-3">
+            Nothing here sends automatically - pick an audience, write the email, and hit send yourself.
+        </p>
+
+        {#if loadingSubscribers}
+            <p class="text-sm text-gray-500 dark:text-gray-400 mb-3">loading subscribers...</p>
+        {:else if subscribersError}
+            <p class="text-sm text-red-500 mb-3">{subscribersError}</p>
+        {:else}
+            <p class="text-xs text-gray-500 dark:text-gray-400 mb-3">
+                {subscribers.length} total subscriber{subscribers.length === 1 ? '' : 's'}
+                ({subscribers.filter((s) => s.blogPosts).length} blog posts ·
+                {subscribers.filter((s) => s.events).length} events ·
+                {subscribers.filter((s) => s.misc).length} misc)
+            </p>
+        {/if}
+
+        <div class="flex flex-col gap-2 mb-3">
+            <label class="flex items-center gap-2.5 text-sm text-gray-800 dark:text-gray-200 cursor-pointer">
+                <input type="checkbox" bind:checked={broadcastBlogPosts} class="h-4 w-4 rounded accent-sky-600" />
+                Blog post subscribers
+            </label>
+            <label class="flex items-center gap-2.5 text-sm text-gray-800 dark:text-gray-200 cursor-pointer">
+                <input type="checkbox" bind:checked={broadcastEvents} class="h-4 w-4 rounded accent-sky-600" />
+                Events subscribers
+            </label>
+            <label class="flex items-center gap-2.5 text-sm text-gray-800 dark:text-gray-200 cursor-pointer">
+                <input type="checkbox" bind:checked={broadcastMisc} class="h-4 w-4 rounded accent-sky-600" />
+                Misc subscribers
+            </label>
+        </div>
+
+        <label class="w-full mb-3 block">
+            <span class="block mb-1 text-sm font-medium">Subject</span>
+            <input
+                bind:value={broadcastSubject}
+                placeholder="e.g. New post: ..."
+                class="w-full py-2 px-3 rounded-lg border border-gray-300 dark:border-gray-700 bg-transparent outline-none focus:border-sky-500"
+            />
+        </label>
+
+        <label class="w-full mb-3 block">
+            <span class="block mb-1 text-sm font-medium">Message</span>
+            <textarea
+                bind:value={broadcastText}
+                rows="5"
+                placeholder="Plain text - an unsubscribe link is added automatically"
+                class="w-full py-2 px-3 rounded-lg border border-gray-300 dark:border-gray-700 bg-transparent outline-none focus:border-sky-500 resize-y"
+            ></textarea>
+        </label>
+
+        <button
+            on:click={sendBroadcast}
+            disabled={sending}
+            class="w-full py-3 rounded-lg bg-amber-600 text-white hover:bg-amber-700 transition-colors disabled:opacity-50"
+        >
+            {sending ? 'Sending...' : `Send to ${recipientCount} subscriber${recipientCount === 1 ? '' : 's'}`}
+        </button>
+
+        {#if broadcastStatus}
+            <p class="mt-3 text-sm {broadcastStatusIsError ? 'text-red-500' : 'text-emerald-600 dark:text-emerald-400'}">
+                {broadcastStatus}
+            </p>
+        {/if}
+    </div>
 
     <div class="w-full mt-10">
-        <div class="flex items-center justify-between mb-3">
-            <h2 class="text-lg font-medium">Assigned cards</h2>
-            <button on:click={loadAllCards} class="text-sm text-gray-500 dark:text-gray-400 underline">refresh</button>
-        </div>
-        {#if loadingCards}
-            <p class="text-sm text-gray-500 dark:text-gray-400">loading...</p>
-        {:else if allCards.length === 0}
-            <p class="text-sm text-gray-500 dark:text-gray-400">no cards assigned yet</p>
-        {:else}
+        <h3 class="text-base font-medium mb-3">Manage subscribers</h3>
+        {#if !loadingSubscribers && !subscribersError && subscribers.length === 0}
+            <p class="text-sm text-gray-500 dark:text-gray-400">no subscribers yet</p>
+        {:else if !loadingSubscribers && !subscribersError}
             <ul class="divide-y divide-gray-200 dark:divide-gray-800">
-                {#each allCards as card (card.id)}
-                    <li>
-                        <button
-                            on:click={() => editCard(card)}
-                            class="w-full py-2.5 text-left hover:bg-gray-50 dark:hover:bg-gray-900 rounded px-2 transition-colors"
-                        >
-                            <span class="font-medium">{card.name || '(no name)'}</span>
-                            <span class="text-gray-400 text-sm ml-2">{card.id}</span>
+                {#each subscribers as s (s.email)}
+                    <li class="py-2.5 flex items-center justify-between gap-3">
+                        <div>
+                            <span class="text-sm">{s.email}</span>
                             <span class="block text-xs text-gray-500 dark:text-gray-400">
-                                {#if card.location}{card.location} · {/if}{card.addedAt ? new Date(card.addedAt).toLocaleDateString() : ''}
+                                {[s.blogPosts && 'blog posts', s.events && 'events', s.misc && 'misc'].filter(Boolean).join(', ') || 'no categories'}
                             </span>
+                        </div>
+                        <button
+                            on:click={() => removeSubscriber(s.email)}
+                            disabled={removingEmail === s.email}
+                            class="text-xs text-red-600 dark:text-red-400 hover:underline disabled:opacity-50 shrink-0"
+                        >
+                            {removingEmail === s.email ? 'removing...' : 'remove'}
                         </button>
                     </li>
                 {/each}
             </ul>
         {/if}
     </div>
+    {/if}
 </div>
 {/if}

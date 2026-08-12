@@ -40,10 +40,10 @@
         return `${weekday} · ${restOfDate}`;
     }
     
-    let activeFilter: 'all' | 'blogs' | 'projects' | 'books' = 'all';
-    
+    let activeFilter: 'all' | 'blogs' | 'projects' | 'books' | 'events' = 'all';
+
     // Update filter and modify URL query string
-    function setFilter(filter: 'all' | 'blogs' | 'projects' | 'books') {
+    function setFilter(filter: 'all' | 'blogs' | 'projects' | 'books' | 'events') {
         activeFilter = filter;
         
         // Update URL query parameter without refreshing the page
@@ -59,8 +59,8 @@
     // Initialize filter from URL query parameter on mount
     onMount(() => {
         const urlFilter = $page.url.searchParams.get('filter');
-        if (urlFilter && ['blogs', 'projects', 'books'].includes(urlFilter)) {
-            activeFilter = urlFilter as 'blogs' | 'projects' | 'books';
+        if (urlFilter && ['blogs', 'projects', 'books', 'events'].includes(urlFilter)) {
+            activeFilter = urlFilter as 'blogs' | 'projects' | 'books' | 'events';
         }
     });
 </script>
@@ -126,6 +126,15 @@
                     on:click={() => setFilter('books')}
                 >
                     Book Reviews
+                </button>
+            </div>
+            <div class="text-gray-400 dark:text-gray-500">/</div>
+            <div>
+                <button
+                    class="text-gray-900 dark:text-gray-100 cursor-pointer bg-transparent border-0 p-0 font-inherit outline-none hover:underline hover:decoration-gray-200 dark:hover:decoration-gray-700 {activeFilter === 'events' ? 'underline decoration-gray-700 dark:decoration-gray-400' : ''}"
+                    on:click={() => setFilter('events')}
+                >
+                    Events
                 </button>
             </div>
         </div>
@@ -215,6 +224,13 @@
                 <p class="absolute left-0 sm:left-10 bottom-0 text-xs text-gray-500 dark:text-gray-400">{formatDate(book.metadata.dated)}</p>
             </div>
         {/each}
+    </div>
+    {/if}
+
+    <!-- Events Section -->
+    {#if activeFilter === 'events'}
+    <div class="flex flex-col items-center w-full max-w-[600px] mx-auto py-10">
+        <p class="text-gray-600 dark:text-gray-400">Coming soon 🙂</p>
     </div>
     {/if}
 
