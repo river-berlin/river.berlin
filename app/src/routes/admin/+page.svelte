@@ -84,13 +84,19 @@
     }
 
     // ---- email subscribers (manual broadcast only, never automatic) ----
+    const SUBSCRIBER_CATEGORIES = [
+        { key: 'blogPosts', label: 'Blog posts' },
+        { key: 'opinionPosts', label: 'Opinion posts' },
+        { key: 'roboticsPosts', label: 'Robotics posts' },
+        { key: 'events', label: 'Events' },
+        { key: 'misc', label: 'Misc' }
+    ];
+
     let subscribers = [];
     let loadingSubscribers = false;
     let subscribersError = '';
 
-    let broadcastBlogPosts = false;
-    let broadcastEvents = false;
-    let broadcastMisc = false;
+    let broadcastAudience = Object.fromEntries(SUBSCRIBER_CATEGORIES.map((c) => [c.key, false]));
     let broadcastSubject = '';
     let broadcastText = '';
     let sending = false;
@@ -98,7 +104,7 @@
     let broadcastStatusIsError = false;
 
     $: recipientCount = subscribers.filter(
-        (s) => (broadcastBlogPosts && s.blogPosts) || (broadcastEvents && s.events) || (broadcastMisc && s.misc)
+        (s) => SUBSCRIBER_CATEGORIES.some((c) => broadcastAudience[c.key] && s[c.key])
     ).length;
 
     async function loadSubscribers() {
@@ -143,9 +149,7 @@
                 body: JSON.stringify({
                     subject: broadcastSubject.trim(),
                     text: broadcastText.trim(),
-                    blogPosts: broadcastBlogPosts,
-                    events: broadcastEvents,
-                    misc: broadcastMisc
+                    ...broadcastAudience
                 })
             });
             const data = await res.json();
@@ -593,25 +597,17 @@
         {:else}
             <p class="text-xs text-gray-500 dark:text-gray-400 mb-3">
                 {subscribers.length} total subscriber{subscribers.length === 1 ? '' : 's'}
-                ({subscribers.filter((s) => s.blogPosts).length} blog posts ·
-                {subscribers.filter((s) => s.events).length} events ·
-                {subscribers.filter((s) => s.misc).length} misc)
+                ({#each SUBSCRIBER_CATEGORIES as c, i}{subscribers.filter((s) => s[c.key]).length} {c.label.toLowerCase()}{i < SUBSCRIBER_CATEGORIES.length - 1 ? ' · ' : ''}{/each})
             </p>
         {/if}
 
         <div class="flex flex-col gap-2 mb-3">
-            <label class="flex items-center gap-2.5 text-sm text-gray-800 dark:text-gray-200 cursor-pointer">
-                <input type="checkbox" bind:checked={broadcastBlogPosts} class="h-4 w-4 rounded accent-sky-600" />
-                Blog post subscribers
-            </label>
-            <label class="flex items-center gap-2.5 text-sm text-gray-800 dark:text-gray-200 cursor-pointer">
-                <input type="checkbox" bind:checked={broadcastEvents} class="h-4 w-4 rounded accent-sky-600" />
-                Events subscribers
-            </label>
-            <label class="flex items-center gap-2.5 text-sm text-gray-800 dark:text-gray-200 cursor-pointer">
-                <input type="checkbox" bind:checked={broadcastMisc} class="h-4 w-4 rounded accent-sky-600" />
-                Misc subscribers
-            </label>
+            {#each SUBSCRIBER_CATEGORIES as c}
+                <label class="flex items-center gap-2.5 text-sm text-gray-800 dark:text-gray-200 cursor-pointer">
+                    <input type="checkbox" bind:checked={broadcastAudience[c.key]} class="h-4 w-4 rounded accent-sky-600" />
+                    {c.label} subscribers
+                </label>
+            {/each}
         </div>
 
         <label class="w-full mb-3 block">
@@ -659,7 +655,7 @@
                         <div>
                             <span class="text-sm">{s.email}</span>
                             <span class="block text-xs text-gray-500 dark:text-gray-400">
-                                {[s.blogPosts && 'blog posts', s.events && 'events', s.misc && 'misc'].filter(Boolean).join(', ') || 'no categories'}
+                                {SUBSCRIBER_CATEGORIES.filter((c) => s[c.key]).map((c) => c.label.toLowerCase()).join(', ') || 'no categories'}
                             </span>
                         </div>
                         <button

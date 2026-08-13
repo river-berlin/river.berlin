@@ -18,6 +18,27 @@ function corsHeaders(origin) {
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
+// Every subscription category, in the order shown in prose summaries.
+const CATEGORIES = [
+  { key: 'blogPosts', label: 'blog posts' },
+  { key: 'opinionPosts', label: 'opinion posts' },
+  { key: 'roboticsPosts', label: 'robotics posts' },
+  { key: 'events', label: 'events' },
+  { key: 'misc', label: 'misc' },
+];
+
+function wantsLabel(record) {
+  return CATEGORIES.filter((c) => record[c.key]).map((c) => c.label).join(', ');
+}
+
+function hasAnyCategory(payload) {
+  return CATEGORIES.some((c) => payload[c.key]);
+}
+
+function matchesAudience(subscriber, audience) {
+  return CATEGORIES.some((c) => audience[c.key] && subscriber[c.key]);
+}
+
 function jsonResponse(body, status, headers) {
   return new Response(JSON.stringify(body), { status, headers });
 }
@@ -42,11 +63,7 @@ function createMimeMessage({ from, to, subject, text }) {
 async function notifyNewSubscriber(env, record) {
   if (!env.EMAIL || !env.FROM_EMAIL || !env.NOTIFY_EMAIL) return;
 
-  const wants = [
-    record.blogPosts && 'blog posts',
-    record.events && 'events',
-    record.misc && 'misc',
-  ].filter(Boolean).join(', ');
+  const wants = wantsLabel(record);
 
   try {
     const message = createMimeMessage({
@@ -65,11 +82,7 @@ async function notifyNewSubscriber(env, record) {
 async function sendSubscriptionConfirmation(env, record, isNew) {
   if (!env.RESEND_API_KEY || !env.BROADCAST_FROM_EMAIL) return;
 
-  const wants = [
-    record.blogPosts && 'blog posts',
-    record.events && 'events',
-    record.misc && 'misc',
-  ].filter(Boolean).join(', ');
+  const wants = wantsLabel(record);
 
   const unsubscribeUrl = `https://river.berlin/unsubscribe?email=${encodeURIComponent(record.email)}`;
   const subject = isNew ? "You're subscribed!" : 'Your subscription was updated';
@@ -94,7 +107,7 @@ async function handleSubscribe(request, env, headers) {
     return jsonResponse({ error: 'Request body must be valid JSON' }, 400, headers);
   }
 
-  const { email, blogPosts, events, misc, honeypot } = payload;
+  const { email, honeypot } = payload;
 
   if (honeypot) {
     // bot filled the hidden field - pretend success
@@ -106,7 +119,7 @@ async function handleSubscribe(request, env, headers) {
     return jsonResponse({ error: 'A valid email is required' }, 400, headers);
   }
 
-  if (!blogPosts && !events && !misc) {
+  if (!hasAnyCategory(payload)) {
     return jsonResponse({ error: 'Pick at least one thing to subscribe to' }, 400, headers);
   }
 
@@ -115,9 +128,7 @@ async function handleSubscribe(request, env, headers) {
 
   const record = {
     email: normalizedEmail,
-    blogPosts: !!blogPosts,
-    events: !!events,
-    misc: !!misc,
+    ...Object.fromEntries(CATEGORIES.map((c) => [c.key, !!payload[c.key]])),
     createdAt: existing?.createdAt || new Date().toISOString(),
     updatedAt: new Date().toISOString(),
   };
@@ -202,20 +213,18 @@ async function handleAdminBroadcast(request, env, headers) {
     return jsonResponse({ error: 'Request body must be valid JSON' }, 400, headers);
   }
 
-  const { subject, text, blogPosts, events, misc } = payload;
+  const { subject, text } = payload;
 
   if (!subject || !text) {
     return jsonResponse({ error: 'Subject and message body are required' }, 400, headers);
   }
 
-  if (!blogPosts && !events && !misc) {
+  if (!hasAnyCategory(payload)) {
     return jsonResponse({ error: 'Pick at least one audience category' }, 400, headers);
   }
 
   const subscribers = await listAllSubscribers(env);
-  const recipients = subscribers.filter(
-    (s) => (blogPosts && s.blogPosts) || (events && s.events) || (misc && s.misc)
-  );
+  const recipients = subscribers.filter((s) => matchesAudience(s, payload));
 
   let sent = 0;
   let failed = 0;

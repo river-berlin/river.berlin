@@ -3,6 +3,8 @@
 
     let email = '';
     let blogPosts = true;
+    let opinionPosts = true;
+    let roboticsPosts = true;
     let events = true;
     let misc = true;
     let honeypot = '';
@@ -17,7 +19,7 @@
             return;
         }
 
-        if (!blogPosts && !events && !misc) {
+        if (!blogPosts && !opinionPosts && !roboticsPosts && !events && !misc) {
             status = 'error';
             errorMessage = 'Pick at least one thing to subscribe to';
             return;
@@ -30,7 +32,7 @@
             const res = await fetch(`${WORKER_URL}/subscribe`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email, blogPosts, events, misc, honeypot })
+                body: JSON.stringify({ email, blogPosts, opinionPosts, roboticsPosts, events, misc, honeypot })
             });
 
             const data = await res.json();
@@ -73,6 +75,24 @@
                     <input type="checkbox" bind:checked={blogPosts} class="h-4 w-4 rounded accent-sky-600" />
                     New blog posts
                 </label>
+
+                <div class="flex flex-col gap-2.5 pl-5 border-l border-gray-200 dark:border-gray-700">
+                    <label class="flex items-start gap-2.5 text-sm text-gray-800 dark:text-gray-200 cursor-pointer">
+                        <input type="checkbox" bind:checked={opinionPosts} class="h-4 w-4 rounded accent-sky-600 mt-0.5" />
+                        <span>
+                            Opinion posts
+                            <span class="block text-xs text-gray-500 dark:text-gray-400">events where I talk about my feelings and political opinions</span>
+                        </span>
+                    </label>
+                    <label class="flex items-start gap-2.5 text-sm text-gray-800 dark:text-gray-200 cursor-pointer">
+                        <input type="checkbox" bind:checked={roboticsPosts} class="h-4 w-4 rounded accent-sky-600 mt-0.5" />
+                        <span>
+                            Robotics posts
+                            <span class="block text-xs text-gray-500 dark:text-gray-400">things where I talk about robots</span>
+                        </span>
+                    </label>
+                </div>
+
                 <label class="flex items-center gap-2.5 text-sm text-gray-800 dark:text-gray-200 cursor-pointer">
                     <input type="checkbox" bind:checked={events} class="h-4 w-4 rounded accent-sky-600" />
                     New events I organize in Berlin
