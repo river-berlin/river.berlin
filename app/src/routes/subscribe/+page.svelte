@@ -70,7 +70,7 @@
         </p>
 
         <form class="w-full flex flex-col gap-4" on:submit|preventDefault={handleSubmit}>
-            <div class="flex flex-col items-center gap-3 mx-auto">
+            <div class="flex flex-col items-left gap-3 mx-auto">
                 <label class="flex items-center gap-2.5 text-sm text-gray-800 dark:text-gray-200 cursor-pointer">
                     <input type="checkbox" bind:checked={blogPosts} class="h-4 w-4 rounded accent-sky-600" />
                     New blog posts
