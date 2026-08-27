@@ -17,78 +17,62 @@
       company: "RunPod",
       logo: "/company-logos/runpod.svg",
       period: "2023 - 2025",
-      title: "Software Engineer, Expert Technical Support Executive",
-      responsibilities: [
-        "Helped RunPod grow to a customer base of 1 Million+ customers",
-        "Worked with a company that received $20M in seed funding from Intel",
-        "Developed large language models and text-to-image models",
-        "Consulted thousands of organizations on GPU-based VM deployments",
-        "Helped customers deploy and organize ML models, CUDA libraries, and diffusers",
-        "Fine-tuned and managed LLMs (Llama 3.3, Llama, T5) and image models (Stable Diffusion, Flux)",
-        "Optimized model deployment using PyTorch, Hugging Face, and raw CUDA code",
-        "Created technical blog articles on SSH authentication, AI language learning, and Docker solutions",
-        "Wrote comprehensive documentation for RunPod's Python library"
-      ],
-      location: "Berlin, Germany · Remote (Full-time, 40 hours/week)",
-      website: "https://www.runpod.io",
-      websiteLabel: "RunPod Website"
-    },
-    {
-      company: "Upwork",
-      logo: "/company-logos/upwork.png",
-      period: "2019 - 2022",
       title: "Software Engineer",
       responsibilities: [
-        "Created and managed websites for 20+ clients",
-        "Built and managed data extraction pipelines to automatically update administrators of product changes",
-        "Worked on scraping and managing real estate dealings, parsing 20,000+ real estate dealings",
-        "Optimized deal management processes, reducing manual labor from weeks to minutes",
-        "Implemented Twilio APIs to automatically email or SMS users with new information",
-        "Developed complex routing for automatic emailing pipelines",
-        "Built systems that led to millions of dollars in profit for real estate companies",
-        "Designed and implemented end-to-end solutions for data extraction and automation"
+        "A cloud provider specialized for AI services, valued at $1B with over 1 million customers on the platform. One of the first engineers hired and led a team of four.",
+        "Fine-tuned and deployed large language models and diffusion models; advised 1,200 organizations and customers on deploying, optimizing, and productionizing GPU-based VM deployments.",
+        "Worked with PyTorch and Hugging Face Transformers as well as native CUDA code to optimize model deployment.",
+        "Optimized S3 connections, network storage, and Hugging Face model caching across thousands of machines.",
+        "Wrote numerous technical blog articles for RunPod as well as large parts of the developer documentation for RunPod's Python library."
       ],
-      location: "Contract - Full time (40 hours/week)",
-      website: "https://www.upwork.com/freelancers/~01743d8599b93d48c7",
-      websiteLabel: "Upwork Profile"
-    },
-    {
-      company: "Auditional",
-      logo: "/company-logos/auditional.svg",
-      period: "Jan 2022 - Jan 2023",
-      title: "Data Extraction Engineer & Bot Developer",
-      responsibilities: [
-        "Increased actor performance and scheduling rates by 4x through automated systems",
-        "Designed and implemented sophisticated data extraction pipelines for talent management",
-        "Built intelligent scheduling bots that significantly reduced booking times",
-        "Developed APIs to connect various platforms in the talent management ecosystem",
-        "Created automated notification systems for casting opportunities",
-        "Optimized backend processes resulting in faster talent discovery and placement",
-        "Integrated AI-based recommendation systems for matching talents with opportunities"
-      ],
-      location: "Remote (Contract)",
-      website: "https://www.auditional.com",
-      websiteLabel: "Auditional Website"
+      location: "Berlin, Germany · Remote (Full-time 2023–2024, 20 h/week alongside B.Sc. 2024–2025)",
+      website: "https://www.runpod.io",
+      websiteLabel: "RunPod Website"
     },
     {
       company: "Repunzel",
       logo: "/company-logos/repunzel.svg",
       period: "2020 - 2023",
-      title: "Full Stack Web Developer",
+      title: "Full-Stack Developer",
       responsibilities: [
-        "Reduced actor hiring time by 300% for LA-based actors via optimized agent listings and submissions",
-        "Worked on creating an interface to email 1000+ agents and actors",
-        "Built both frontend and backend with Svelte, Python, Flask, and Cloudflare",
-        "Designed CI/CD pipelines to ensure non-failing and resilient architecture, decreasing mis-emailed agents by 200%",
-        "Created automated email testing and tracking mechanisms to aggregate data for actors",
-        "Optimized systems reducing 8 hours of manual work per week to a 30-second application",
-        "Developed frontend architectures to improve user experiences and reduce unexpected emailing errors",
-        "Performed load validation to ensure system resource constraints were not exceeded",
-        "Implemented reliable scheduling and cancellation of tasks using RabbitMQ and Python"
+        "Built a submission pipeline letting actors send their portfolios to over 1,000 agencies instantly, considerably improving their chances of being hired.",
+        "Worked across frontend and backend with Svelte, TypeScript, Python, Flask, Postgres, and Firebase.",
+        "Developed CI/CD pipelines for a fail-safe, resilient architecture; automated email validation, delivery tracking, and test environments.",
+        "Built automated email testing and tracking to aggregate data for actors, reducing 8 hours of manual work per week to a 30-second application.",
+        "Designed architecture for reliable scheduling and cancellation of tasks using RabbitMQ and Python."
       ],
-      location: "Full time (40 hours/week)",
+      location: "Full-time (40 h/week)",
       website: "https://repunzel.com/",
       websiteLabel: "Repunzel Website"
+    },
+    {
+      company: "TypeCodeLearn",
+      logo: "/favicon.svg",
+      period: "2019 - 2020",
+      title: "Full-Stack Developer & Tutor",
+      responsibilities: [
+        "Taught Data Science, NumPy, Pandas, yfinance, and Python courses to students to specialize students in automated trading applications.",
+        "Replaced all manual transaction handling with automatically documented, Stripe-based online payments.",
+        "Managed OAuth, email, SMS, SendGrid, Twilio, Stripe, and Google Ads integrations.",
+        "Created and maintained Python course curriculum and content."
+      ],
+      location: "Contract, freelance",
+      website: "https://river.berlin",
+      websiteLabel: "TypeCodeLearn"
+    },
+    {
+      company: "Freelance",
+      logo: "/company-logos/upwork.png",
+      period: "2019 - 2022",
+      title: "Freelance Software Engineer",
+      responsibilities: [
+        "Built and maintained websites for over 20 clients.",
+        "Scraped and analyzed over 20,000 real-estate transactions to identify optimal deals, reducing weeks of manual work to minutes.",
+        "Served as Undergraduate Teaching Assistant at Arizona State University for 2 semesters."
+      ],
+      location: "Contract · upwork.com",
+      website: "https://www.upwork.com/freelancers/~01743d8599b93d48c7",
+      websiteLabel: "Upwork Profile"
     }
   ];
   

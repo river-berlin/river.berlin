@@ -3,6 +3,7 @@
   import type { 
     StorySession, 
     Question, 
+    DifficultyLevel,
     OpenRouterConfig 
   } from './lib/types';
   import { DEMO_STORY_SESSION } from './lib/demoData';
@@ -30,6 +31,7 @@
   let isApiKeyVerified = false;
   let isVerifyingKey = false;
   let modalErrorMessage: string | null = null;
+  let selectedLevel: DifficultyLevel = 'C1';
 
   // Application session state
   let session: StorySession = DEMO_STORY_SESSION;
@@ -75,6 +77,7 @@
         if (parsed && parsed.chapters && parsed.chapters.length > 0) {
           session = parsed;
           activeChapterIndex = parsed.currentChapterIndex || 0;
+          selectedLevel = parsed.difficulty || parsed.chapters[0]?.chapter?.cefrLevel || 'C1';
         }
       } catch (e) {
         console.warn('Fehler beim Laden der Sitzung:', e);
@@ -84,6 +87,11 @@
       session = JSON.parse(JSON.stringify(DEMO_STORY_SESSION));
     }
   });
+
+  function handleLevelChange() {
+    session.difficulty = selectedLevel;
+    persistSession();
+  }
 
   async function handleSaveAndVerifyApiKey() {
     modalErrorMessage = null;
@@ -118,6 +126,7 @@
   function persistSession() {
     session.updatedAt = Date.now();
     session.currentChapterIndex = activeChapterIndex;
+    session.difficulty = selectedLevel;
     localStorage.setItem(STORAGE_KEY_SESSION, JSON.stringify(session));
   }
 
@@ -141,15 +150,15 @@
     isGeneratingStory = true;
 
     try {
-      const newChapter = await generateNewStory(getOpenRouterConfig());
+      const newChapter = await generateNewStory(getOpenRouterConfig(), selectedLevel);
 
       session = {
         id: `session-${Date.now()}`,
         title: newChapter.titleGerman,
         createdAt: Date.now(),
         updatedAt: Date.now(),
-        difficulty: 'C1',
-        genre: 'Literarisch & Philosophie',
+        difficulty: selectedLevel,
+        genre: 'Literarisch & Alltagskultur',
         chapters: [
           {
             chapter: newChapter,
@@ -191,7 +200,8 @@
         getOpenRouterConfig(),
         storyContext,
         question,
-        question.userDraftAnswer
+        question.userDraftAnswer,
+        currentChapter.cefrLevel || selectedLevel
       );
 
       question.lastEvaluation = evalResult;
@@ -228,7 +238,8 @@
       const continuationEval = await evaluateContinuation(
         getOpenRouterConfig(),
         storyContext,
-        currentChapterItem.userContinuation
+        currentChapterItem.userContinuation,
+        currentChapter.cefrLevel || selectedLevel
       );
 
       currentChapterItem.continuationEvaluation = continuationEval;
@@ -268,7 +279,8 @@
         getOpenRouterConfig(),
         storyHistoryText,
         currentChapterItem.userContinuation,
-        nextChapterNum
+        nextChapterNum,
+        currentChapter.cefrLevel || selectedLevel
       );
 
       session.chapters.push({
@@ -295,13 +307,41 @@
 
 <div class="max-w-4xl mx-auto space-y-8 py-6 px-2 sm:px-4">
   <!-- Header with White Background -->
-  <header class="rounded-2xl bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 p-5 sm:p-6 shadow-sm border border-slate-200 dark:border-slate-800 flex items-center justify-between gap-4">
-    <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight">
-      German Learning Helper
-    </h1>
+  <header class="rounded-2xl bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 p-5 sm:p-6 shadow-sm border border-slate-200 dark:border-slate-800 flex flex-wrap items-center justify-between gap-4">
+    <div class="flex items-center gap-3 flex-wrap">
+      <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight">
+        German Learning Helper
+      </h1>
 
-    <!-- Only API Key Button in Header -->
-    <div class="flex items-center gap-2">
+      {#if isApiKeyVerified}
+        <span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800">
+          {currentChapter.cefrLevel || selectedLevel}
+        </span>
+      {/if}
+    </div>
+
+    <!-- Header Controls -->
+    <div class="flex items-center gap-2.5 flex-wrap">
+      <!-- Niveau Selector (A2, B1, B2, C1, C2) -->
+      {#if isApiKeyVerified}
+        <div class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-semibold text-slate-700 dark:text-slate-200">
+          <span class="text-slate-400 dark:text-slate-500 font-normal">Niveau:</span>
+          <select
+            bind:value={selectedLevel}
+            on:change={handleLevelChange}
+            class="bg-transparent font-bold text-indigo-600 dark:text-indigo-400 focus:outline-none cursor-pointer"
+            title="Sprachniveau wählen"
+          >
+            <option value="A2">A2 (Grundstufe)</option>
+            <option value="B1">B1 (Mittelstufe)</option>
+            <option value="B2">B2 (Gute Mittelstufe)</option>
+            <option value="C1">C1 (Fortgeschritten)</option>
+            <option value="C2">C2 (Exzellent)</option>
+          </select>
+        </div>
+      {/if}
+
+      <!-- API Key Button -->
       <button
         type="button"
         class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 active:scale-95 text-slate-800 dark:text-slate-100 text-xs sm:text-sm font-semibold border border-slate-300 dark:border-slate-700 transition-all"
@@ -316,20 +356,22 @@
       {#if isApiKeyVerified}
         <button
           type="button"
-          class="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 text-xs font-semibold border border-slate-200 dark:border-slate-700 transition-all disabled:opacity-50"
+          class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-indigo-50 hover:bg-indigo-100 dark:bg-indigo-950/60 dark:hover:bg-indigo-900/60 text-indigo-700 dark:text-indigo-300 text-xs font-bold border border-indigo-200 dark:border-indigo-800 transition-all disabled:opacity-50 active:scale-95"
           on:click={handleCreateNewStory}
           disabled={isGeneratingStory}
           title="Neue Geschichte generieren"
         >
           {#if isGeneratingStory}
-            <svg class="animate-spin h-4 w-4 text-slate-700 dark:text-slate-200" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <svg class="animate-spin h-4 w-4 text-indigo-600 dark:text-indigo-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
               <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
               <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
             </svg>
+            <span>Generiere...</span>
           {:else}
             <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
             </svg>
+            <span>Neue Geschichte</span>
           {/if}
         </button>
       {/if}

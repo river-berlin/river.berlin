@@ -215,24 +215,34 @@ async function callOpenRouter(config: OpenRouterConfig, messages: Array<{ role: 
 }
 
 /**
- * Generates a new C1/C2 advanced German short story with 3 comprehension questions (all in German).
+ * Generates a new German short story at the selected CEFR level (A2, B1, B2, C1, C2) with 3 comprehension questions.
  */
-export async function generateNewStory(config: OpenRouterConfig): Promise<StoryChapter> {
-  const systemPrompt = `Du bist ein renommierter deutschsprachiger Schriftsteller und Dozent für Deutsch als Fremdsprache (C1/C2).
-Deine Aufgabe ist es, eine anspruchsvolle, faszinierende Kurzgeschichte auf gehobenem C1/C2-Niveau in fehlerfreiem, ausdrucksstarkem Deutsch zu verfassen.
+export async function generateNewStory(config: OpenRouterConfig, cefrLevel: DifficultyLevel = 'C1'): Promise<StoryChapter> {
+  const levelDescriptions: Record<DifficultyLevel, string> = {
+    A2: 'Niveau A2 (elementare deutsche Grammatik, klare Hauptsätze, Alltagsvokabular, ca. 130-180 Wörter)',
+    B1: 'Niveau B1 (selbstständige Sprachverwendung, gängige Nebensätze mit weil/dass/obwohl, Perfekt & Präteritum, ca. 160-220 Wörter)',
+    B2: 'Niveau B2 (gehobene Mittelstufe, differenzierter Wortschatz, Konjunktiv II, Passiv, ca. 200-260 Wörter)',
+    C1: 'Niveau C1 (fortgeschrittenes Niveau, eleganter Satzbau, gehobener Wortschatz, Partizipialstrukturen, ca. 220-320 Wörter)',
+    C2: 'Niveau C2 (exzellentes muttersprachliches Niveau, stilistische Brillanz, idiomatische Nuancen, ca. 250-350 Wörter)'
+  };
 
-Wähle ein intellektuell anregendes Thema (z.B. historische Spurensuche, philosophische Dilemmata, psychologische Geheimnisse oder Berliner Stadtkultur).
+  const currentLevelDesc = levelDescriptions[cefrLevel] || levelDescriptions['C1'];
+
+  const systemPrompt = `Du bist ein renommierter deutschsprachiger Autor und Dozent für Deutsch als Fremdsprache.
+Deine Aufgabe ist es, eine spannende, lehrreiche Kurzgeschichte auf dem Sprachniveau **${cefrLevel}** zu verfassen.
+
+Anforderungen für dieses Niveau:
+${currentLevelDesc}
 
 Kriterien:
-- Niveau: C1/C2 (anspruchsvoller Satzbau, eleganter Stil, differenzierter Wortschatz, Konjunktiv, Nuancen).
-- Länge: 220 - 350 Wörter in 3 gut strukturierten Absätzen.
-- 4-6 anspruchsvolle Vokabeln/Wendungen mit deutscher Erklärung.
-- Genau 3 tiefgründige Verständnisfragen auf Deutsch zum Text.
-- KEINE englischen Übersetzungen oder englischen Erklärungen verwenden – alles ausschließlich auf Deutsch!
+- Genau 3 Absätze auf Deutsch.
+- 4-6 dem Niveau ${cefrLevel} entsprechende Vokabeln mit deutscher Begriffserklärung.
+- Genau 3 verständliche Fragen auf Deutsch zum Textinhalt.
+- KEINE englischen Übersetzungen verwenden – alles ausschließlich auf Deutsch!
 
 Antworte strikt im gültigen JSON-Format gemäß diesem Schema:
 {
-  "titleGerman": "String (Titel der Geschichte ohne 'Kapitel'-Präfix)",
+  "titleGerman": "String (Titel der Geschichte)",
   "storyGerman": "String (Der vollständige Text auf Deutsch, Absätze durch doppelte Zeilenumbrüche getrennt)",
   "vocabulary": [
     {
@@ -245,7 +255,7 @@ Antworte strikt im gültigen JSON-Format gemäß diesem Schema:
   "questions": [
     {
       "questionGerman": "String (Verständnisfrage 1 auf Deutsch)",
-      "targetConcept": "String (z.B. 'Textverständnis & Kausalität')"
+      "targetConcept": "String (z.B. 'Kausale Zusammenhänge')"
     },
     {
       "questionGerman": "String (Verständnisfrage 2 auf Deutsch)",
@@ -258,7 +268,7 @@ Antworte strikt im gültigen JSON-Format gemäß diesem Schema:
   ]
 }`;
 
-  const userPrompt = `Verfasse eine neue anspruchsvolle deutsche Geschichte auf C1/C2 Niveau mit 3 Fragen. Antworte nur mit JSON.`;
+  const userPrompt = `Verfasse eine neue deutsche Geschichte auf Niveau ${cefrLevel} mit 3 Fragen. Antworte nur mit JSON.`;
 
   const rawJson = await callOpenRouter(config, [
     { role: 'system', content: systemPrompt },
@@ -277,8 +287,8 @@ Antworte strikt im gültigen JSON-Format gemäß diesem Schema:
     chapterNumber: 1,
     titleGerman: parsed.titleGerman || 'Die Geschichte',
     storyGerman: parsed.storyGerman,
-    cefrLevel: 'C1',
-    genre: 'Literarisch & Philosophie',
+    cefrLevel,
+    genre: 'Literarisch & Alltagskultur',
     vocabulary: parsed.vocabulary || [],
     questions: (parsed.questions || []).map((q, idx) => ({
       id: `q-${Date.now()}-${idx + 1}`,
@@ -297,9 +307,10 @@ export async function evaluateQuestionAnswer(
   config: OpenRouterConfig,
   storyContext: string,
   question: Question,
-  userAnswer: string
+  userAnswer: string,
+  cefrLevel: DifficultyLevel = 'C1'
 ): Promise<EvaluationResult> {
-  const systemPrompt = `Du bist ein erfahrener Deutschlehrer für Fortgeschrittene (C1/C2).
+  const systemPrompt = `Du bist ein erfahrener Deutschlehrer (Niveau ${cefrLevel}).
 Bewerte die Antwort eines Lernenden auf eine Verständnisfrage.
 
 Textkontext:
@@ -318,24 +329,25 @@ ${userAnswer}
 WICHTIGE PÄDAGOGISCHE REGELN:
 1. Alles ausschließlich auf Deutsch verfassen (kein Englisch).
 2. Akzeptiere Standard-Transliterationen (ae für ä, oe für ö, ue für ü, ss für ß) als vollkommen korrekt.
-3. Gib dem Lernenden NIEMALS die perfekte fertige Lösung vor. Verwende die sokratische Methode mit Denkanstößen, grammatischen Prinzipien und konkreten Hinweisen, damit der Lernende die Antwort selbstständig korrigieren und erneut einreichen kann.
-4. Markiere fehlerhafte Textstellen für die farbige Unterstreichung:
-   - "spelling": Rechtschreibfehler, Groß-/Kleinschreibung von Substantiven.
-   - "grammar": Kasusfehler, Deklination, Konjugation, Konjunktiv.
-   - "word_choice": Stil, falsche Wortwahl, unpassendes Register.
-   - "word_order": Wortstellung (Verbzweitstellung im Hauptsatz, Verbletztstellung im Nebensatz).
+3. Passe deine Erwartungen an Grammatik, Satzbau und Wortwahl an das Zielniveau **${cefrLevel}** an.
+4. Gib dem Lernenden NIEMALS die perfekte fertige Lösung vor. Verwende die sokratische Methode mit Denkanstößen und grammatischen Regeln, damit der Lernende die Antwort selbstständig korrigieren kann.
+5. Markiere fehlerhafte Textstellen für die farbige Unterstreichung:
+   - "spelling": Rechtschreibfehler, Groß-/Kleinschreibung.
+   - "grammar": Kasusfehler, Deklination, Konjugation, Endungen.
+   - "word_choice": Stil, unpassende Wortwahl, falsche Freunde.
+   - "word_order": Wortstellung (Verbzweitstellung, Nebensatz-Verbletztstellung).
    - "content_logic": Inhaltliche Unstimmigkeit bezüglich des Textes.
 
-5. Lobe ausdrücklich gelungene Aspekte.
+6. Lobe ausdrücklich gelungene Aspekte.
 
 Antworte strikt im gültigen JSON-Format:
 {
   "overallVerdict": "excellent" | "good" | "partially_correct" | "needs_revision",
   "verdictLabel": "String (z.B. 'Ausgezeichnet!', 'Guter Ansatz!', 'Fast perfekt!', 'Noch überarbeiten')",
-  "germanProficiencyComment": "String (1-2 Sätze auf Deutsch zur sprachlichen Qualität)",
-  "comprehensionComment": "String (Wurde die Frage inhaltlich bezüglich des Textes richtig erfasst?)",
-  "praise": "String (Was ist sprachlich oder inhaltlich besonders gut gelungen)",
-  "socraticGuidance": "String (Sokratischer Denkanstoß/Tipp zur eigenständigen Verbesserung)",
+  "germanProficiencyComment": "String (1-2 Sätze auf Deutsch zur sprachlichen Qualität auf Niveau ${cefrLevel})",
+  "comprehensionComment": "String (Wurde die Frage inhaltlich richtig beantwortet?)",
+  "praise": "String (Was ist besonders gut gelungen)",
+  "socraticGuidance": "String (Sokratischer Tipp zur eigenständigen Verbesserung)",
   "annotations": [
     {
       "originalText": "Exakter Textausschnitt aus der Antwort des Lernenden",
@@ -346,7 +358,7 @@ Antworte strikt im gültigen JSON-Format:
   ]
 }`;
 
-  const userPrompt = `Bewerte die Antwort auf Deutsch. Antworte nur mit JSON.`;
+  const userPrompt = `Bewerte die Antwort auf Deutsch für Niveau ${cefrLevel}. Antworte nur mit JSON.`;
 
   const rawJson = await callOpenRouter(config, [
     { role: 'system', content: systemPrompt },
@@ -374,9 +386,10 @@ Antworte strikt im gültigen JSON-Format:
 export async function evaluateContinuation(
   config: OpenRouterConfig,
   fullStoryContext: string,
-  userContinuation: string
+  userContinuation: string,
+  cefrLevel: DifficultyLevel = 'C1'
 ): Promise<ContinuationEvaluation> {
-  const systemPrompt = `Du bist ein Literaturdozent und Mentor für kreatives Schreiben auf Deutsch (C1/C2).
+  const systemPrompt = `Du bist ein Deutschdozent für kreatives Schreiben (Niveau ${cefrLevel}).
 Bewerte die Fortsetzung einer Geschichte durch einen Lernenden.
 
 Bisherige Handlung:
@@ -392,7 +405,8 @@ ${userContinuation}
 Regeln:
 1. Alles ausschließlich auf Deutsch (kein Englisch).
 2. Akzeptiere ae, oe, ue, ss als gültig.
-3. Gib sokratische Denkanstöße zur sprachlichen Verfeinerung und logischen Handlungsführung, ohne den Text vorzuschreiben.
+3. Passe deine Maßstäbe an Niveau **${cefrLevel}** an.
+4. Gib sokratische Denkanstöße zur sprachlichen Verfeinerung und Handlungslogik.
 
 Antworte strikt im gültigen JSON-Format:
 {
@@ -412,7 +426,7 @@ Antworte strikt im gültigen JSON-Format:
   ]
 }`;
 
-  const userPrompt = `Bewerte die Fortsetzung auf Deutsch. Antworte nur mit JSON.`;
+  const userPrompt = `Bewerte die Fortsetzung auf Deutsch für Niveau ${cefrLevel}. Antworte nur mit JSON.`;
 
   const rawJson = await callOpenRouter(config, [
     { role: 'system', content: systemPrompt },
@@ -441,9 +455,10 @@ export async function continueStoryWithAI(
   config: OpenRouterConfig,
   storyHistoryText: string,
   userContinuation: string,
-  nextChapterNum: number
+  nextChapterNum: number,
+  cefrLevel: DifficultyLevel = 'C1'
 ): Promise<StoryChapter> {
-  const systemPrompt = `Du bist ein deutschsprachiger Autor und führst eine literarische Geschichte auf C1/C2-Niveau fort.
+  const systemPrompt = `Du bist ein deutschsprachiger Autor und führst eine Geschichte auf Sprachniveau **${cefrLevel}** fort.
 
 Bisheriger Kontext:
 """
@@ -456,7 +471,7 @@ ${userContinuation}
 """
 
 Aufgabe:
-1. Knüpfe an den Beitrag des Lernenden an und schreibe den nächsten Abschnitt auf Deutsch (200 - 320 Wörter in 2-3 Absätzen).
+1. Knüpfe an den Beitrag des Lernenden an und schreibe den nächsten Abschnitt auf Deutsch (Passend zu Niveau ${cefrLevel}, ca. 180-280 Wörter in 2-3 Absätzen).
 2. Füge 4-6 Vokabeln mit deutscher Begriffserklärung hinzu.
 3. Formuliere 3 neue Verständnisfragen auf Deutsch.
 4. Verwende KEIN Englisch.
@@ -489,7 +504,7 @@ Antworte strikt im gültigen JSON-Format:
   ]
 }`;
 
-  const userPrompt = `Führe die Geschichte auf Deutsch fort. Antworte nur mit JSON.`;
+  const userPrompt = `Führe die Geschichte auf Deutsch (Niveau ${cefrLevel}) fort. Antworte nur mit JSON.`;
 
   const rawJson = await callOpenRouter(config, [
     { role: 'system', content: systemPrompt },
@@ -508,8 +523,8 @@ Antworte strikt im gültigen JSON-Format:
     chapterNumber: nextChapterNum,
     titleGerman: parsed.titleGerman || 'Fortsetzung',
     storyGerman: parsed.storyGerman,
-    cefrLevel: 'C1',
-    genre: 'Literarisch & Philosophie',
+    cefrLevel,
+    genre: 'Literarisch & Reflexion',
     vocabulary: parsed.vocabulary || [],
     questions: (parsed.questions || []).map((q, idx) => ({
       id: `q-${Date.now()}-${idx + 1}`,
