@@ -126,6 +126,34 @@
   resolved "https://registry.npmjs.org/@fortawesome/svelte-fontawesome/-/svelte-fontawesome-0.2.3.tgz"
   integrity sha512-jWjTfZK3QqhjtKDEnexhrUWO/uPFeNVU0T71ssUCVrJD/172rk8MVqTiOJwF95sHlTMMOryXD5tcn6JLT6eAKA==
 
+"@huggingface/blake3-jit@0.0.2":
+  version "0.0.2"
+  resolved "https://registry.npmjs.org/@huggingface/blake3-jit/-/blake3-jit-0.0.2.tgz"
+  integrity sha512-Bq7B5qabyjrJfhBsl85Jd2QBtf+HzRD7h7A9GfN2lzrrsABhOa5evVPgzoCTxR7Ub0QFj7YDK1YkYRWBU25+2w==
+
+"@huggingface/hub@^2.16.1":
+  version "2.16.1"
+  resolved "https://registry.npmjs.org/@huggingface/hub/-/hub-2.16.1.tgz"
+  integrity sha512-CHJlWEL4H9Ijrm8DDr3I3b+HrL1fKN+DnIKjymvSYJswtfWrK9Cf13Te2ywNIbqAx3yDmdG8zZlNKcEfqrf9Sw==
+  dependencies:
+    "@huggingface/tasks" "^0.21.40"
+    "@huggingface/xetchunk-wasm" "^0.2.0"
+  optionalDependencies:
+    cli-progress "^3.12.0"
+
+"@huggingface/tasks@^0.21.40":
+  version "0.21.41"
+  resolved "https://registry.npmjs.org/@huggingface/tasks/-/tasks-0.21.41.tgz"
+  integrity sha512-FSkc+Mu83/4Am7G0o99HYxwPGicsPABaBzsuJTUKCbfqvmHssKdGKTaknXfZQL6Wk9s8HQV0GhZ9C/8AwXZksw==
+
+"@huggingface/xetchunk-wasm@^0.2.0":
+  version "0.2.0"
+  resolved "https://registry.npmjs.org/@huggingface/xetchunk-wasm/-/xetchunk-wasm-0.2.0.tgz"
+  integrity sha512-cmp7oAAWeCpZGrVQTP/LxDtJdzGMfpxwkEVsZsk5jZQ2FwP2njm8LnyobhnQvLpkSAcJJwUzFJC0PYS9ZsqeTg==
+  dependencies:
+    "@huggingface/blake3-jit" "0.0.2"
+    gearhash-jit "1.0.2"
+
 "@humanwhocodes/module-importer@^1.0.1":
   version "1.0.1"
   resolved "https://registry.npmjs.org/@humanwhocodes/module-importer/-/module-importer-1.0.1.tgz"
@@ -942,6 +970,13 @@ chromium-bidi@0.6.5:
     urlpattern-polyfill "10.0.0"
     zod "3.23.8"
 
+cli-progress@^3.12.0:
+  version "3.12.0"
+  resolved "https://registry.npmjs.org/cli-progress/-/cli-progress-3.12.0.tgz"
+  integrity sha512-tRkV3HJ1ASwm19THiiLIXLO7Im7wlTuKnvkYaTkyoAPefqjNg7W7DHKUlGRxy9vxDvbyCYQkQozvptuMkGCg8A==
+  dependencies:
+    string-width "^4.2.3"
+
 cliui@^8.0.1:
   version "8.0.1"
   resolved "https://registry.npmjs.org/cliui/-/cliui-8.0.1.tgz"
@@ -1732,6 +1767,11 @@ gauge@^3.0.0:
     string-width "^4.2.3"
     strip-ansi "^6.0.1"
     wide-align "^1.1.2"
+
+gearhash-jit@1.0.2:
+  version "1.0.2"
+  resolved "https://registry.npmjs.org/gearhash-jit/-/gearhash-jit-1.0.2.tgz"
+  integrity sha512-UhzJL4KXSdqAKepy/tZwmi2Rcy0YMmtiC4DQS4SURCuIWdh8ECZtnXK2ePRMLigfB61hRKdLK/Vgg2bSw73izQ==
 
 get-caller-file@^2.0.5:
   version "2.0.5"

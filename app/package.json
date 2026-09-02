@@ -57,6 +57,7 @@
 		"@fortawesome/free-regular-svg-icons": "^6.7.2",
 		"@fortawesome/free-solid-svg-icons": "^6.7.2",
 		"@fortawesome/svelte-fontawesome": "^0.2.3",
+		"@huggingface/hub": "^2.16.1",
 		"canvas": "^2.11.2",
 		"cookie": "^1.0.0",
 		"glob": "^11.0.0",

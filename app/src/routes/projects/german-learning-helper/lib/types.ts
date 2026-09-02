@@ -1,32 +1,24 @@
 export type DifficultyLevel = 'A2' | 'B1' | 'B2' | 'C1' | 'C2';
 
-export type AnnotationType = 
-  | 'spelling'     // Rechtschreibung & Groß-/Kleinschreibung (Red/Coral)
-  | 'grammar'      // Grammatik, Fälle, Konjugation, Endungen (Purple/Indigo)
-  | 'word_choice'  // Wortwahl, Falsche Freunde, Idiomatik (Amber/Orange)
-  | 'word_order'   // Satzbau, Verbposition, Nebensätze (Emerald/Teal)
-  | 'content_logic'; // Inhaltliche Logik / Textbezug (Blue/Cyan)
-
-export interface FeedbackAnnotation {
-  id?: string;
-  originalText: string;
-  type: AnnotationType;
-  hint: string;          // Sokratischer Hinweis auf Deutsch
-  explanation: string;   // Grammatische/stilistische Erklärung auf Deutsch
-  startOffset?: number;
-  endOffset?: number;
+export interface FlashcardItem {
+  id: string;
+  german: string;
+  translation: string;
+  explanation?: string;
+  contextSentence?: string;
+  addedAt: number;
+  cefrLevel?: DifficultyLevel;
 }
 
 export interface EvaluationResult {
-  overallVerdict: 'excellent' | 'good' | 'partially_correct' | 'needs_revision';
-  verdictLabel: string;
-  germanProficiencyComment: string;
-  comprehensionComment: string;
-  praise: string;
-  socraticGuidance: string;
-  annotations: FeedbackAnnotation[];
+  overallVerdict?: 'excellent' | 'good' | 'partially_correct' | 'needs_revision';
+  verdictLabel?: string;
+  feedbackText: string;             // Ausführliche Rückmeldung zur Grammatik, Wortwahl und Richtigkeit
+  betterReformulation?: string;     // Stilistisch und grammatisch verbesserte Formulierung der Antwort
+  sampleAnswer?: string;            // Ausführliche Musterantwort / Ideallösung (standardmäßig verborgen)
   userAnswerAtEvaluation: string;
   evaluatedAt: number;
+  rawStream?: string;
 }
 
 export interface Question {
@@ -36,6 +28,7 @@ export interface Question {
   userDraftAnswer: string;
   lastEvaluation?: EvaluationResult | null;
   isEvaluating?: boolean;
+  streamingFeedback?: string;       // Enthält den Text während des Live-Streamings
 }
 
 export interface VocabularyItem {
@@ -57,15 +50,13 @@ export interface StoryChapter {
 }
 
 export interface ContinuationEvaluation {
-  overallVerdict: 'excellent' | 'good' | 'needs_revision';
-  verdictLabel: string;
-  grammarFeedback: string;
-  logicFeedback: string;
-  praise: string;
-  socraticGuidance: string;
-  annotations: FeedbackAnnotation[];
+  overallVerdict?: 'excellent' | 'good' | 'needs_revision';
+  verdictLabel?: string;
+  feedbackText: string;             // Feedback zum Schreibstil, Fluss und Grammatik
+  betterReformulation?: string;     // Verbesserte Fassung der Fortsetzung
   userContinuationAtEvaluation: string;
   evaluatedAt: number;
+  rawStream?: string;
 }
 
 export interface StorySession {
@@ -80,6 +71,8 @@ export interface StorySession {
     chapter: StoryChapter;
     userContinuation: string;
     continuationEvaluation?: ContinuationEvaluation | null;
+    isEvaluatingContinuation?: boolean;
+    streamingContinuationFeedback?: string;
   }[];
   currentChapterIndex: number;
 }

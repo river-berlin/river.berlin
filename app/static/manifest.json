@@ -1,0 +1,19 @@
+{
+  "name": "German Flashcard Generator | river.berlin",
+  "short_name": "Flashcards",
+  "description": "AI German Flashcard Generator with Reword CSV and Anki export",
+  "start_url": "/projects/flashcard-generator/",
+  "scope": "/projects/flashcard-generator/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#ffffff",
+  "theme_color": "#4f46e5",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
