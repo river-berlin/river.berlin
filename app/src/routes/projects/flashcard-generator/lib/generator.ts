@@ -1,6 +1,6 @@
 import type { Flashcard, DifficultyLevel, OpenRouterConfig, GenerationMode } from './types';
 
-export const DEFAULT_MODEL = 'google/gemini-3.7-flash';
+export const DEFAULT_MODEL = 'google/gemini-3.8-flash';
 
 /**
  * Validates the OpenRouter API key against the auth/key endpoint

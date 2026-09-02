@@ -8,7 +8,7 @@ import type {
   OpenRouterConfig 
 } from './types';
 
-export const DEFAULT_MODEL = 'google/gemini-3.7-flash';
+export const DEFAULT_MODEL = 'google/gemini-3.8-flash';
 export const TRANSLATION_MODEL = 'openai/gpt-oss-120b:nitro';
 export const TTS_MODEL = 'google/gemini-3.1-flash-tts-preview';
 export const DEFAULT_TTS_VOICE = 'Kore';

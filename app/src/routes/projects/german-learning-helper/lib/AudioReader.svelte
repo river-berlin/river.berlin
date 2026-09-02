@@ -71,7 +71,7 @@
       const chunkText = chunks[chunkIdx];
       const blob = await generateSpeech({
         apiKey: apiKey.trim(),
-        model: 'google/gemini-3.7-flash',
+        model: 'google/gemini-3.8-flash',
         siteUrl: typeof window !== 'undefined' ? window.location.origin : 'https://river.berlin',
         siteName: 'river.berlin German Learning Helper'
       }, chunkText);

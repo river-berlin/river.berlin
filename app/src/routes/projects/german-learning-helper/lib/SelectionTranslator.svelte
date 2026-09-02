@@ -168,11 +168,11 @@
           }
           console.warn('gpt-oss-120b translation failed, falling back to gemini-flash:', err);
           
-          // Graceful fallback to gemini-3.7-flash
+          // Graceful fallback to gemini-3.8-flash
           try {
             const fallbackConfig: OpenRouterConfig = {
               apiKey: apiKey.trim(),
-              model: 'google/gemini-3.7-flash',
+              model: 'google/gemini-3.8-flash',
               siteUrl: typeof window !== 'undefined' ? window.location.origin : 'https://river.berlin',
               siteName: 'river.berlin German Learning Helper'
             };
