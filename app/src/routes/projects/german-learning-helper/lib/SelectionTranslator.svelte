@@ -94,6 +94,12 @@
         if (!anchor || !focus || !targetContainer.contains(anchor) || !targetContainer.contains(focus)) {
           return;
         }
+
+        // Do not trigger popup when selecting text inside an editable textarea/input
+        const anchorElement = anchor.nodeType === Node.ELEMENT_NODE ? (anchor as Element) : anchor.parentElement;
+        if (anchorElement?.closest('textarea, input')) {
+          return;
+        }
       }
 
       const range = selection.getRangeAt(0);
