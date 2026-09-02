@@ -16,6 +16,8 @@
   import { 
     downloadAndLoad10kGnad, 
     getRandomArticle, 
+    getRandomArticleWithIndex,
+    getArticleByIndex,
     deriveTitleFromArticle,
     generateQuestionsOnlyStream,
     type NewsArticle 
@@ -39,6 +41,13 @@
   let isApiKeyVerified = false;
   let isVerifyingKey = false;
   let modalErrorMessage: string | null = null;
+
+  // URL & Generation parameters
+  let selectedModel: string = DEFAULT_MODEL;
+  let currentArticleNum: number | null = null;
+  let currentSeed: number | null = null;
+  let copiedLink = false;
+  let copiedLinkTimer: any = null;
 
   // Application session state
   let session: StorySession = DEMO_STORY_SESSION;
@@ -70,9 +79,57 @@
   // In-memory cache for downloaded articles
   let loadedArticles: NewsArticle[] | null = null;
 
+  function readUrlParams(): { articleNum?: number; modelId?: string; seedVal?: number } {
+    if (typeof window === 'undefined') return {};
+    const searchParams = new URLSearchParams(window.location.search);
+    const articleParam = searchParams.get('article');
+    const modelParam = searchParams.get('model');
+    const seedParam = searchParams.get('seed');
+
+    return {
+      articleNum: articleParam ? parseInt(articleParam, 10) : undefined,
+      modelId: modelParam && modelParam.trim() ? modelParam.trim() : undefined,
+      seedVal: seedParam ? parseInt(seedParam, 10) : undefined
+    };
+  }
+
+  function updateUrlParams(articleNum: number, modelId: string, seedVal: number) {
+    if (typeof window === 'undefined') return;
+    const url = new URL(window.location.href);
+    url.searchParams.set('article', String(articleNum));
+    url.searchParams.set('model', modelId);
+    url.searchParams.set('seed', String(seedVal));
+    window.history.replaceState(window.history.state, '', url.toString());
+  }
+
+  function handleCopyShareLink() {
+    if (typeof window === 'undefined') return;
+    if (currentArticleNum && currentSeed !== null) {
+      updateUrlParams(currentArticleNum, selectedModel, currentSeed);
+    }
+    navigator.clipboard.writeText(window.location.href);
+    copiedLink = true;
+    if (copiedLinkTimer) clearTimeout(copiedLinkTimer);
+    copiedLinkTimer = setTimeout(() => {
+      copiedLink = false;
+    }, 2000);
+  }
+
   onMount(async () => {
     // Initialize flashcards
     flashcards.init();
+
+    // 1. Parse URL query parameters
+    const urlParams = readUrlParams();
+    if (urlParams.modelId) {
+      selectedModel = urlParams.modelId;
+    }
+    if (urlParams.seedVal !== undefined) {
+      currentSeed = urlParams.seedVal;
+    }
+    if (urlParams.articleNum !== undefined) {
+      currentArticleNum = urlParams.articleNum;
+    }
 
     // Load persisted API key
     const savedKey = localStorage.getItem(STORAGE_KEY_API_KEY);
@@ -110,10 +167,22 @@
       session = JSON.parse(JSON.stringify(DEMO_STORY_SESSION));
     }
 
-    // Silently pre-load 10kGNAD articles from IndexedDB cache if available
-    downloadAndLoad10kGnad().then((cached) => {
+    // Silently pre-load 10kGNAD articles from IndexedDB cache
+    downloadAndLoad10kGnad().then(async (cached) => {
       if (cached && cached.length > 0) {
         loadedArticles = cached;
+        // If an article was in URL and API key is verified, load it!
+        if (urlParams.articleNum !== undefined) {
+          if (isApiKeyVerified) {
+            await handleLoadNewsArticle(urlParams.articleNum, urlParams.seedVal, urlParams.modelId);
+          }
+        } else {
+          // If no article in URL, pre-assign random article & seed to URL so sharing is instant
+          const res = getRandomArticleWithIndex(loadedArticles);
+          currentArticleNum = res.index;
+          if (currentSeed === null) currentSeed = Math.floor(Math.random() * 1000000) + 1;
+          updateUrlParams(currentArticleNum, selectedModel, currentSeed);
+        }
       }
     }).catch(() => {});
   });
@@ -127,14 +196,15 @@
   function getOpenRouterConfig(): OpenRouterConfig {
     return {
       apiKey: apiKey.trim(),
-      model: DEFAULT_MODEL,
+      model: selectedModel || DEFAULT_MODEL,
       siteUrl: typeof window !== 'undefined' ? window.location.origin : 'https://river.berlin',
-      siteName: 'river.berlin German Learning Helper'
+      siteName: 'river.berlin German Learning Helper',
+      seed: currentSeed ?? undefined
     };
   }
 
   // Handle loading a REAL news article with INSTANT text display and separate questions stream
-  async function handleLoadNewsArticle() {
+  async function handleLoadNewsArticle(targetArticleNum?: number, targetSeed?: number, targetModel?: string) {
     if (isLoadingDataset || isStreamingQuestions) {
       handleCancelArticleGeneration();
       return;
@@ -165,9 +235,31 @@
 
       if (controller.signal.aborted) return;
 
-      // 2. Select random article
-      const randomArticle = getRandomArticle(loadedArticles);
-      const title = deriveTitleFromArticle(randomArticle);
+      // 2. Select article by target index or random
+      let selectedArticle: NewsArticle;
+      let articleIndex: number;
+
+      if (targetArticleNum !== undefined && targetArticleNum > 0) {
+        const res = getArticleByIndex(loadedArticles, targetArticleNum);
+        selectedArticle = res.article;
+        articleIndex = res.index;
+      } else {
+        const res = getRandomArticleWithIndex(loadedArticles);
+        selectedArticle = res.article;
+        articleIndex = res.index;
+      }
+
+      const seed = targetSeed !== undefined ? targetSeed : (Math.floor(Math.random() * 1000000) + 1);
+      const model = targetModel || selectedModel || DEFAULT_MODEL;
+
+      currentArticleNum = articleIndex;
+      currentSeed = seed;
+      selectedModel = model;
+
+      // Synchronize URL search params
+      updateUrlParams(currentArticleNum, selectedModel, currentSeed);
+
+      const title = deriveTitleFromArticle(selectedArticle);
 
       // 3. ZERO DELAY: Display the article immediately!
       session = {
@@ -176,17 +268,17 @@
         createdAt: Date.now(),
         updatedAt: Date.now(),
         difficulty: 'C1',
-        genre: `Journalismus (${randomArticle.category})`,
+        genre: `Journalismus (${selectedArticle.category}) • Artikel #${currentArticleNum}`,
         chapters: [
           {
             chapter: {
               chapterNumber: 1,
               titleGerman: title,
-              storyGerman: randomArticle.text,
+              storyGerman: selectedArticle.text,
               vocabulary: [], // Wortschatz removed
               questions: [],
               cefrLevel: 'C1',
-              genre: randomArticle.category
+              genre: selectedArticle.category
             },
             userContinuation: '',
             continuationEvaluation: null
@@ -199,13 +291,13 @@
       persistSession();
       session = { ...session };
 
-      // 4. Stream questions separately into the questions section
+      // 4. Stream questions separately into the questions section using the deterministic seed
       isStreamingQuestions = true;
       streamingQuestionsText = '';
 
       const generatedQuestions = await generateQuestionsOnlyStream(
         getOpenRouterConfig(),
-        randomArticle,
+        selectedArticle,
         (accumulated) => {
           if (!controller.signal.aborted) {
             streamingQuestionsText = accumulated;
@@ -509,6 +601,11 @@
       isApiKeyVerified = true;
       showApiKeyModal = false;
       pageErrorMessage = null;
+
+      // Auto-load article from URL or pre-assigned article
+      if (currentArticleNum) {
+        handleLoadNewsArticle(currentArticleNum, currentSeed ?? undefined, selectedModel);
+      }
     } else {
       modalErrorMessage = res.error || 'Ungültiger API-Schlüssel. Bitte überprüfe deine Eingabe.';
     }
@@ -582,6 +679,28 @@
               <path stroke-linecap="round" stroke-linejoin="round" d="M12 7.5h1.5m-1.5 3h1.5m-7.5 3h7.5m-7.5 3h7.5m3-9h3.375c.621 0 1.125.504 1.125 1.125V18a2.25 2.25 0 01-2.25 2.25M16.5 7.5V18a2.25 2.25 0 002.25 2.25M16.5 7.5V4.875c0-.621-.504-1.125-1.125-1.125H4.125C3.504 3.75 3 4.254 3 4.875V18a2.25 2.25 0 002.25 2.25h13.5M6 7.5h3v3H6v-3z" />
             </svg>
             <span>Neuer Zeitungsartikel</span>
+          {/if}
+        </button>
+      {/if}
+
+      <!-- Share / Link kopieren Button -->
+      {#if currentArticleNum}
+        <button
+          type="button"
+          class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 text-xs font-bold border border-slate-300 dark:border-slate-700 transition-all active:scale-95 cursor-pointer"
+          on:click={handleCopyShareLink}
+          title="Teilbaren Link (Artikel #{currentArticleNum}, Model & Seed) kopieren"
+        >
+          {#if copiedLink}
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+            </svg>
+            <span class="text-emerald-600 dark:text-emerald-400">Kopiert!</span>
+          {:else}
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 text-slate-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m13.35-.622l1.757-1.757a4.5 4.5 0 00-6.364-6.364l-4.5 4.5a4.5 4.5 0 001.242 7.244" />
+            </svg>
+            <span>Teilen</span>
           {/if}
         </button>
       {/if}
@@ -661,6 +780,16 @@
             {#if currentChapter.genre}
               <span class="text-[11px] font-semibold px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700">
                 {currentChapter.genre}
+              </span>
+            {/if}
+            {#if currentArticleNum}
+              <span class="text-[11px] font-semibold px-2 py-0.5 rounded-md bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800">
+                Artikel #{currentArticleNum}
+              </span>
+            {/if}
+            {#if currentSeed !== null}
+              <span class="text-[11px] font-mono px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700" title="Zufallssamen für deterministische Generierung">
+                Seed: {currentSeed}
               </span>
             {/if}
           </div>

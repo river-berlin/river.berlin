@@ -82,4 +82,5 @@ export interface OpenRouterConfig {
   model: string;
   siteUrl?: string;
   siteName?: string;
+  seed?: number;
 }

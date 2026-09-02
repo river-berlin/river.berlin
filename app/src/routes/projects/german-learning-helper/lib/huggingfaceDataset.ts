@@ -214,14 +214,40 @@ export async function downloadAndLoad10kGnad(
 }
 
 /**
- * Gets a random article from the dataset
+ * Gets a random article from the dataset with its 1-based index
  */
-export function getRandomArticle(articles: NewsArticle[]): NewsArticle {
+export function getRandomArticleWithIndex(articles: NewsArticle[]): { article: NewsArticle; index: number } {
   if (articles.length === 0) {
     throw new Error('Keine Artikel verfügbar.');
   }
   const randomIndex = Math.floor(Math.random() * articles.length);
-  return articles[randomIndex];
+  return {
+    article: articles[randomIndex],
+    index: randomIndex + 1
+  };
+}
+
+/**
+ * Gets a specific article by 1-based index (with bounds wrapping if out of range)
+ */
+export function getArticleByIndex(articles: NewsArticle[], articleNum: number): { article: NewsArticle; index: number } {
+  if (articles.length === 0) {
+    throw new Error('Keine Artikel verfügbar.');
+  }
+  let normalized = Math.floor(articleNum);
+  if (isNaN(normalized) || normalized < 1) normalized = 1;
+  const arrayIdx = (normalized - 1) % articles.length;
+  return {
+    article: articles[arrayIdx],
+    index: arrayIdx + 1
+  };
+}
+
+/**
+ * Gets a random article from the dataset (backwards compatibility)
+ */
+export function getRandomArticle(articles: NewsArticle[]): NewsArticle {
+  return getRandomArticleWithIndex(articles).article;
 }
 
 /**

@@ -259,6 +259,7 @@ export async function streamOpenRouter(
       messages,
       temperature,
       stream: true,
+      ...(config.seed !== undefined ? { seed: config.seed } : {}),
       ...(config.model?.includes('gpt-oss-120b') ? { provider: { order: ['Cerebras', 'Groq'] } } : {})
     })
   });
@@ -340,7 +341,8 @@ async function callOpenRouter(config: OpenRouterConfig, messages: Array<{ role: 
       model: config.model || DEFAULT_MODEL,
       messages,
       temperature,
-      response_format: { type: 'json_object' }
+      response_format: { type: 'json_object' },
+      ...(config.seed !== undefined ? { seed: config.seed } : {})
     })
   });
 
