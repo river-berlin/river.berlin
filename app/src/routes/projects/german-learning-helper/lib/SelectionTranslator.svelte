@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount, onDestroy } from 'svelte';
-  import { translateSelectionStream } from './openrouter';
+  import { translateSelectionStream, TRANSLATION_MODEL } from './openrouter';
   import { flashcards } from './flashcards';
   import type { OpenRouterConfig } from './types';
 
@@ -136,7 +136,7 @@
         try {
           const config: OpenRouterConfig = {
             apiKey: apiKey.trim(),
-            model: 'google/gemini-3.7-flash',
+            model: TRANSLATION_MODEL,
             siteUrl: typeof window !== 'undefined' ? window.location.origin : 'https://river.berlin',
             siteName: 'river.berlin German Learning Helper'
           };
@@ -166,8 +166,42 @@
           if (err.name === 'AbortError' || controller.signal.aborted) {
             return;
           }
-          console.warn('Translation lookup failed:', err);
-          translation = 'Übersetzung nicht verfügbar';
+          console.warn('gpt-oss-120b translation failed, falling back to gemini-flash:', err);
+          
+          // Graceful fallback to gemini-3.7-flash
+          try {
+            const fallbackConfig: OpenRouterConfig = {
+              apiKey: apiKey.trim(),
+              model: 'google/gemini-3.7-flash',
+              siteUrl: typeof window !== 'undefined' ? window.location.origin : 'https://river.berlin',
+              siteName: 'river.berlin German Learning Helper'
+            };
+
+            const fallbackRes = await translateSelectionStream(
+              fallbackConfig,
+              text,
+              contextSentence,
+              (partial) => {
+                if (!controller.signal.aborted) {
+                  translation = partial.translation;
+                  explanation = partial.explanation;
+                  if (partial.translation) {
+                    isLoading = false;
+                  }
+                }
+              },
+              controller.signal
+            );
+
+            if (!controller.signal.aborted) {
+              translation = fallbackRes.translation;
+              explanation = fallbackRes.explanation;
+              translationCache.set(text, fallbackRes);
+            }
+          } catch (fallbackErr: any) {
+            if (fallbackErr.name === 'AbortError' || controller.signal.aborted) return;
+            translation = 'Übersetzung nicht verfügbar';
+          }
         } finally {
           if (!controller.signal.aborted) {
             isLoading = false;
