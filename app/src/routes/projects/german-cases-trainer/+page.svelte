@@ -735,7 +735,7 @@
         <!-- Active Exercise Card (Clean, modern elevation, no harsh borders) -->
         <div class="p-6 sm:p-8 rounded-3xl bg-white dark:bg-slate-900 shadow-sm space-y-6 relative transition-all duration-200 {isCorrect ? 'ring-2 ring-emerald-500 bg-emerald-50/10' : ''}">
           
-          <!-- Top Row of Card: Tier Pill, Case Pill & Hints (Noun + Word/Determiner Pattern) -->
+          <!-- Top Row of Card: Tier Pill, Case Pill & Translation Toggle -->
           <div class="flex items-center justify-between gap-3 flex-wrap">
             <div class="flex items-center gap-2 flex-wrap">
               <!-- Tier Badge -->
@@ -745,18 +745,6 @@
 
               <span class="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider {getCaseBadgeStyle(currentExercise.case)}">
                 {currentExercise.case}
-              </span>
-              
-              <!-- Hint 1: Pure Noun (learner recalls gender from memory) -->
-              <span class="px-3 py-1.5 rounded-xl bg-slate-100/90 dark:bg-slate-800/80 text-slate-600 dark:text-slate-300 text-sm sm:text-base font-medium shadow-2xs border border-slate-200/60 dark:border-slate-700/60 flex items-baseline gap-1.5">
-                <span class="text-xs sm:text-sm text-slate-400 dark:text-slate-400 font-normal">Nomen:</span>
-                <strong class="text-slate-900 dark:text-white font-bold text-base sm:text-lg">{currentExercise.baseNoun}</strong>
-              </span>
-
-              <!-- Hint 2: Determiner / Word Pattern -->
-              <span class="px-3 py-1.5 rounded-xl bg-indigo-50/90 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 text-sm sm:text-base font-medium shadow-2xs border border-indigo-200/60 dark:border-indigo-800/60 flex items-baseline gap-1.5">
-                <span class="text-xs sm:text-sm text-indigo-400 dark:text-indigo-400 font-normal">Muster:</span>
-                <strong class="font-bold text-indigo-900 dark:text-indigo-100">{getDeterminerHint(currentExercise)}</strong>
               </span>
             </div>
 
@@ -770,6 +758,32 @@
               <span>{showTranslation ? 'Übersetzung verbergen' : 'Übersetzung anzeigen'}</span>
               <span class="text-[10px] opacity-60">[{showTranslation ? 'x' : 'Tab'}]</span>
             </button>
+          </div>
+
+          <!-- Dedicated Nomen & Muster Bar: Joint, with vertical line and top labels -->
+          <div class="flex flex-col sm:flex-row items-stretch rounded-2xl bg-slate-50 dark:bg-slate-800/70 border border-slate-200/80 dark:border-slate-700/60 shadow-2xs overflow-hidden">
+            <!-- Nomen Box -->
+            <div class="px-4 py-2.5 flex flex-col justify-center min-w-[120px] sm:min-w-[140px] bg-slate-100/50 dark:bg-slate-800/40">
+              <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-400">
+                Nomen
+              </span>
+              <span class="text-base sm:text-xl font-black text-slate-900 dark:text-white leading-tight mt-0.5">
+                {currentExercise.baseNoun}
+              </span>
+            </div>
+
+            <!-- Vertical Separator Line -->
+            <div class="hidden sm:block w-px bg-slate-200 dark:bg-slate-700 self-stretch"></div>
+
+            <!-- Muster Box -->
+            <div class="px-4 py-2.5 flex flex-col justify-center flex-1 border-t sm:border-t-0 border-slate-200 dark:border-slate-700 bg-indigo-50/30 dark:bg-indigo-950/20">
+              <span class="text-[10px] font-bold uppercase tracking-wider text-indigo-500 dark:text-indigo-400">
+                Muster
+              </span>
+              <span class="text-sm sm:text-base font-semibold text-slate-800 dark:text-indigo-100 leading-tight mt-0.5">
+                {getDeterminerHint(currentExercise)}
+              </span>
+            </div>
           </div>
 
           <!-- Sentence Prompt with Inline Gap -->
