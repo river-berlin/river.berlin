@@ -538,9 +538,9 @@
 
 <svelte:window on:keydown={handleKeydown} />
 
-<div class="min-h-screen bg-transparent text-slate-900 dark:text-slate-100 py-6 px-3 sm:px-6 font-sans transition-colors duration-200 flex flex-col justify-between select-none">
+<div class="min-h-screen bg-transparent text-slate-900 dark:text-slate-100 pt-2 pb-6 px-2.5 sm:pt-6 sm:px-6 font-sans transition-colors duration-200 flex flex-col justify-between select-none">
   
-  <div class="max-w-3xl w-full mx-auto space-y-6">
+  <div class="max-w-3xl w-full mx-auto space-y-2.5 sm:space-y-5">
 
     <!-- Top Header & Minimal Navigation -->
     <header class="flex items-center justify-between gap-3 flex-wrap">
@@ -593,10 +593,10 @@
     </header>
 
     <!-- Mode Tabs: "Neue Wörter" vs "Wiederholen" (Minimalist, no borders, no emojis) -->
-    <nav class="flex items-center justify-center p-1.5 bg-slate-100 dark:bg-slate-800/70 rounded-2xl max-w-xl mx-auto shadow-2xs gap-1">
+    <nav class="flex items-center justify-center p-1 sm:p-1.5 bg-slate-100 dark:bg-slate-800/70 rounded-xl sm:rounded-2xl max-w-xl mx-auto shadow-2xs gap-1">
       <button
         type="button"
-        class="flex-1 py-2 px-4 rounded-xl text-xs sm:text-sm font-semibold transition-all flex items-center justify-center gap-2 cursor-pointer {activeTab === 'new' 
+        class="flex-1 py-1.5 px-3 sm:py-2 sm:px-4 rounded-lg sm:rounded-xl text-xs sm:text-sm font-semibold transition-all flex items-center justify-center gap-2 cursor-pointer {activeTab === 'new' 
           ? 'bg-white dark:bg-slate-900 text-indigo-600 dark:text-indigo-400 shadow-xs' 
           : 'text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white'}"
         on:click={() => switchTab('new')}
@@ -609,7 +609,7 @@
 
       <button
         type="button"
-        class="flex-1 py-2 px-4 rounded-xl text-xs sm:text-sm font-semibold transition-all flex items-center justify-center gap-2 cursor-pointer {activeTab === 'review' 
+        class="flex-1 py-1.5 px-3 sm:py-2 sm:px-4 rounded-lg sm:rounded-xl text-xs sm:text-sm font-semibold transition-all flex items-center justify-center gap-2 cursor-pointer {activeTab === 'review' 
           ? 'bg-white dark:bg-slate-900 text-amber-600 dark:text-amber-400 shadow-xs' 
           : 'text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white'}"
         on:click={() => switchTab('review')}
@@ -628,7 +628,7 @@
     </nav>
 
     <!-- Prominent Progress Bar & Daily Motivation Card -->
-    <section class="p-4 sm:p-5 rounded-2xl bg-white dark:bg-slate-900/90 shadow-xs space-y-3">
+    <section class="p-3 sm:p-5 rounded-xl sm:rounded-2xl bg-white dark:bg-slate-900/90 shadow-xs space-y-2.5 sm:space-y-3">
       {#if activeTab === 'new'}
         <!-- TAB 1: Neue Wörter (2 Progress Bars: Sätze & Wörter) -->
         <div class="space-y-3.5">
@@ -802,17 +802,17 @@
 
       {:else}
         <!-- Active Exercise Card (Clean, modern elevation, no harsh borders) -->
-        <div class="p-6 sm:p-8 rounded-3xl bg-white dark:bg-slate-900 shadow-sm space-y-6 relative transition-all duration-200 {isCorrect ? 'ring-2 ring-emerald-500 bg-emerald-50/10' : ''}">
+        <div class="p-3.5 sm:p-7 rounded-2xl sm:rounded-3xl bg-white dark:bg-slate-900 shadow-sm space-y-2.5 sm:space-y-5 relative transition-all duration-200 {isCorrect ? 'ring-2 ring-emerald-500 bg-emerald-50/10' : ''}">
           
           <!-- Top Row of Card: Tier Pill, Case Pill & Translation Toggle -->
-          <div class="flex items-center justify-between gap-3 flex-wrap">
-            <div class="flex items-center gap-2 flex-wrap">
+          <div class="flex items-center justify-between gap-2">
+            <div class="flex items-center gap-1.5">
               <!-- Tier Badge -->
-              <span class="px-2 py-0.5 rounded-md text-[11px] font-bold tracking-tight {getTierBadgeStyle(currentExercise.category)}">
+              <span class="px-2 py-0.5 rounded-md text-[10px] sm:text-[11px] font-bold tracking-tight {getTierBadgeStyle(currentExercise.category)}">
                 {formatTierName(currentExercise.category)}
               </span>
 
-              <span class="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider {getCaseBadgeStyle(currentExercise.case)}">
+              <span class="px-2.5 py-0.5 rounded-full text-[10px] sm:text-xs font-bold uppercase tracking-wider {getCaseBadgeStyle(currentExercise.case)}">
                 {currentExercise.case}
               </span>
             </div>
@@ -820,59 +820,59 @@
             <!-- Optional Translation Toggle -->
             <button
               type="button"
-              class="text-xs text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition-colors flex items-center gap-1 cursor-pointer"
+              class="text-[11px] sm:text-xs text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition-colors flex items-center gap-1 cursor-pointer"
               on:click={() => showTranslation = !showTranslation}
               title="Englische Übersetzung einblenden (Tab-Taste)"
             >
               <span>{showTranslation ? 'Übersetzung verbergen' : 'Übersetzung anzeigen'}</span>
-              <span class="text-[10px] opacity-60">[{showTranslation ? 'x' : 'Tab'}]</span>
+              <span class="text-[9px] sm:text-[10px] opacity-60">[{showTranslation ? 'x' : 'Tab'}]</span>
             </button>
           </div>
 
-          <!-- Dedicated Nomen & Muster Bar: Joint, with vertical line and top labels -->
-          <div class="flex flex-col sm:flex-row items-stretch rounded-2xl bg-slate-50 dark:bg-slate-800/70 border border-slate-200/80 dark:border-slate-700/60 shadow-2xs overflow-hidden">
+          <!-- Dedicated Nomen & Muster Bar: Single horizontal row on mobile, joint with vertical separator -->
+          <div class="flex flex-row items-stretch rounded-xl sm:rounded-2xl bg-slate-50 dark:bg-slate-800/70 border border-slate-200/80 dark:border-slate-700/60 shadow-2xs overflow-hidden">
             <!-- Nomen Box -->
-            <div class="px-4 py-2.5 flex flex-col justify-center min-w-[120px] sm:min-w-[140px] bg-slate-100/50 dark:bg-slate-800/40">
-              <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-400">
+            <div class="px-2.5 py-1.5 sm:px-4 sm:py-2.5 flex flex-col justify-center min-w-[85px] sm:min-w-[140px] bg-slate-100/60 dark:bg-slate-800/50">
+              <span class="text-[9px] sm:text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-400">
                 Nomen
               </span>
-              <span class="text-base sm:text-xl font-black text-slate-900 dark:text-white leading-tight mt-0.5">
+              <span class="text-sm sm:text-lg font-black text-slate-900 dark:text-white leading-tight mt-0.5">
                 {currentExercise.baseNoun}
               </span>
             </div>
 
             <!-- Vertical Separator Line -->
-            <div class="hidden sm:block w-px bg-slate-200 dark:bg-slate-700 self-stretch"></div>
+            <div class="w-px bg-slate-200 dark:bg-slate-700 self-stretch"></div>
 
             <!-- Muster Box -->
-            <div class="px-4 py-2.5 flex flex-col justify-center flex-1 border-t sm:border-t-0 border-slate-200 dark:border-slate-700 bg-indigo-50/30 dark:bg-indigo-950/20">
-              <span class="text-[10px] font-bold uppercase tracking-wider text-indigo-500 dark:text-indigo-400">
+            <div class="px-2.5 py-1.5 sm:px-4 sm:py-2.5 flex flex-col justify-center flex-1 bg-indigo-50/30 dark:bg-indigo-950/20 min-w-0">
+              <span class="text-[9px] sm:text-[10px] font-bold uppercase tracking-wider text-indigo-500 dark:text-indigo-400">
                 Muster
               </span>
-              <span class="text-sm sm:text-base font-semibold text-slate-800 dark:text-indigo-100 leading-tight mt-0.5">
+              <span class="text-xs sm:text-sm font-semibold text-slate-800 dark:text-indigo-100 leading-tight mt-0.5 truncate sm:whitespace-normal">
                 {getDeterminerHint(currentExercise)}
               </span>
             </div>
           </div>
 
           <!-- Sentence Prompt with Inline Gap -->
-          <div class="space-y-4 py-2">
-            <div class="text-xl sm:text-2xl font-bold leading-relaxed text-slate-900 dark:text-white flex flex-wrap items-baseline gap-2 select-text">
+          <div class="space-y-1 sm:space-y-3 py-1 sm:py-2">
+            <div class="text-base sm:text-xl font-bold leading-snug sm:leading-relaxed text-slate-900 dark:text-white flex flex-wrap items-baseline gap-1.5 sm:gap-2 select-text">
               {#if currentExercise.sentenceStart}
                 <span>{currentExercise.sentenceStart}</span>
               {/if}
               
               <!-- Dynamic Gap Visualizer -->
               {#if isRevealed}
-                <span class="text-rose-600 dark:text-rose-400 font-bold bg-rose-50 dark:bg-rose-950/60 px-2 py-0.5 rounded-lg animate-in fade-in">
+                <span class="text-rose-600 dark:text-rose-400 font-bold bg-rose-50 dark:bg-rose-950/60 px-1.5 py-0.2 rounded-md sm:rounded-lg animate-in fade-in">
                   {currentExercise.targetAnswer}
                 </span>
               {:else if isCorrect}
-                <span class="text-emerald-600 dark:text-emerald-400 font-bold bg-emerald-50 dark:bg-emerald-950/60 px-2 py-0.5 rounded-lg animate-in fade-in">
+                <span class="text-emerald-600 dark:text-emerald-400 font-bold bg-emerald-50 dark:bg-emerald-950/60 px-1.5 py-0.2 rounded-md sm:rounded-lg animate-in fade-in">
                   {currentExercise.targetAnswer} ✓
                 </span>
               {:else}
-                <span class="text-indigo-600 dark:text-indigo-400 font-bold bg-indigo-50 dark:bg-indigo-950/60 px-2.5 py-0.5 rounded-lg tracking-wider">
+                <span class="text-indigo-600 dark:text-indigo-400 font-bold bg-indigo-50 dark:bg-indigo-950/60 px-2 py-0.2 rounded-md sm:rounded-lg tracking-wider">
                   ________
                 </span>
               {/if}
@@ -884,14 +884,14 @@
 
             <!-- Optional English translation if toggled -->
             {#if showTranslation && currentExercise.translation}
-              <p class="text-xs sm:text-sm text-slate-400 dark:text-slate-500 italic">
+              <p class="text-[11px] sm:text-sm text-slate-400 dark:text-slate-500 italic">
                 „{currentExercise.translation}“
               </p>
             {/if}
           </div>
 
           <!-- Active Text Input Field: For full sentence typing -->
-          <div class="space-y-2">
+          <div class="space-y-1">
             <div class="relative">
               <input
                 bind:this={inputRef}
@@ -900,7 +900,7 @@
                 on:input={handleInput}
                 readonly={isCorrect || isAutoAdvancing}
                 placeholder="Ganzen Satz hier tippen..."
-                class="w-full text-base sm:text-lg px-4 py-3.5 rounded-2xl bg-slate-100/90 dark:bg-slate-800/80 border-0 transition-all text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 shadow-2xs select-text {isCorrect 
+                class="w-full text-base sm:text-lg px-3.5 py-2.5 sm:px-4 sm:py-3.5 rounded-xl sm:rounded-2xl bg-slate-100/90 dark:bg-slate-800/80 border-0 transition-all text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 shadow-2xs select-text {isCorrect 
                   ? 'ring-2 ring-emerald-500 bg-emerald-50/20 text-emerald-800 dark:text-emerald-200' 
                   : isRevealed 
                   ? 'ring-2 ring-rose-400 bg-rose-50/20 text-rose-800 dark:text-rose-200' 
@@ -972,7 +972,7 @@
           {/if}
 
           <!-- Card Bottom Action Bar -->
-          <div class="pt-3 flex items-center justify-between gap-2 flex-wrap text-xs">
+          <div class="pt-1.5 sm:pt-3 flex items-center justify-between gap-2 flex-wrap text-xs">
             
             <!-- Left: "Ich weiß das nicht" button / Hotkey info -->
             <div>
