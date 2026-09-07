@@ -287,12 +287,17 @@
     isRevealed = false;
     showTranslation = false;
     isAutoAdvancing = false;
+    if (inputRef) {
+      inputRef.value = '';
+    }
     tick().then(focusInput);
   }
 
   function focusInput() {
     if (inputRef) {
-      inputRef.focus();
+      try {
+        inputRef.focus();
+      } catch (_) {}
     }
   }
 
@@ -858,14 +863,16 @@
                 type="text"
                 bind:value={userInput}
                 on:input={handleInput}
-                disabled={isCorrect || isRevealed || isAutoAdvancing}
+                readonly={isCorrect || isAutoAdvancing}
                 placeholder="Ganzen Satz hier tippen..."
-                class="w-full text-base sm:text-lg px-4 py-3.5 rounded-2xl bg-slate-100/90 dark:bg-slate-800/80 border-0 transition-all text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 shadow-2xs {isCorrect 
+                class="w-full text-base sm:text-lg px-4 py-3.5 rounded-2xl bg-slate-100/90 dark:bg-slate-800/80 border-0 transition-all text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 shadow-2xs select-text {isCorrect 
                   ? 'ring-2 ring-emerald-500 bg-emerald-50/20 text-emerald-800 dark:text-emerald-200' 
                   : isRevealed 
                   ? 'ring-2 ring-rose-400 bg-rose-50/20 text-rose-800 dark:text-rose-200' 
                   : ''}"
+                style="-webkit-user-select: text; user-select: text;"
                 autocomplete="off"
+                autocorrect="off"
                 autocapitalize="none"
                 spellcheck="false"
               />
@@ -899,9 +906,21 @@
                 <span>📖 Grammatik-Regel & Erklärung</span>
               </div>
               
-              <div class="space-y-1.5 border-l-2 pl-3 {isCorrect ? 'border-emerald-400 dark:border-emerald-600' : 'border-indigo-400 dark:border-indigo-500'}">
+              <div class="space-y-2 border-l-2 pl-3 {isCorrect ? 'border-emerald-400 dark:border-emerald-600' : 'border-indigo-400 dark:border-indigo-500'}">
                 <div class="font-semibold text-slate-900 dark:text-white">{grammarBreakdown.genderLine}</div>
                 <div class="text-slate-600 dark:text-slate-300">{grammarBreakdown.caseLine}</div>
+
+                {#if grammarBreakdown.whyCaseReason}
+                  <div class="mt-1 p-2.5 rounded-xl {isCorrect ? 'bg-emerald-100/60 dark:bg-emerald-900/30 text-emerald-900 dark:text-emerald-200 border border-emerald-200/60 dark:border-emerald-800/40' : 'bg-indigo-50/90 dark:bg-indigo-950/50 text-indigo-900 dark:text-indigo-200 border border-indigo-100 dark:border-indigo-900/40'} text-xs leading-relaxed">
+                    <div class="font-bold flex items-center gap-1.5 {isCorrect ? 'text-emerald-800 dark:text-emerald-300' : 'text-indigo-700 dark:text-indigo-300'}">
+                      <span>💡</span>
+                      <span>Warum {grammarBreakdown.caseName}?</span>
+                    </div>
+                    <div class="mt-0.5 opacity-95">
+                      {grammarBreakdown.whyCaseReason}
+                    </div>
+                  </div>
+                {/if}
               </div>
 
               {#if grammarBreakdown.patternTitle}
