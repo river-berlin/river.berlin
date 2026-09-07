@@ -7,6 +7,7 @@
 
   // Settings & modal state
   let showSettingsModal = false;
+  let showInfoModal = false;
   let showResetConfirm = false;
   let resetSuccessToast = false;
 
@@ -16,6 +17,9 @@
   let cardsMap: Record<string, FSRSCard> = {};
   let userStats: UserStats = {
     todayCompleted: 0,
+    todayWordIds: [],
+    todaySentencesCompleted: 0,
+    todaySentenceIds: [],
     dailyGoal: 25,
     streakDays: 1,
     lastActiveDate: '',
@@ -55,7 +59,10 @@
 
   $: grammarBreakdown = currentExercise ? getDetailedGrammarExplanation(currentExercise) : null;
 
-  $: progressPercent = Math.min(100, Math.round((userStats.todayCompleted / userStats.dailyGoal) * 100));
+  $: dailySentencesGoal = Math.max(1, userStats.dailyGoal * (selectedCaseFilter === 'all' ? 3 : 1));
+  $: wordsPercent = Math.min(100, Math.round((userStats.todayCompleted / userStats.dailyGoal) * 100));
+  $: sentencesPercent = Math.min(100, Math.round(((userStats.todaySentencesCompleted || 0) / dailySentencesGoal) * 100));
+  $: progressPercent = wordsPercent;
 
   function expandContractions(text: string): string {
     return text
@@ -281,6 +288,16 @@
     }
   }
 
+  function recordSentenceCompletion(exerciseId: string) {
+    if (!userStats.todaySentenceIds) {
+      userStats.todaySentenceIds = [];
+    }
+    if (!userStats.todaySentenceIds.includes(exerciseId)) {
+      userStats.todaySentenceIds = [...userStats.todaySentenceIds, exerciseId];
+      userStats.todaySentencesCompleted = userStats.todaySentenceIds.length;
+    }
+  }
+
   function resetCardState() {
     userInput = '';
     isCorrect = false;
@@ -336,6 +353,7 @@
     // Update user stats
     userStats.totalReviews += 1;
     userStats.correctAnswersCount += 1;
+    recordSentenceCompletion(currentExercise.id);
     checkAndRecordWordCompletion(currentExercise.wordId);
     saveUserStats(userStats);
 
@@ -366,6 +384,7 @@
     saveCardsMap(cardsMap);
 
     userStats.totalMastered += 1;
+    recordSentenceCompletion(currentExercise.id);
     checkAndRecordWordCompletion(currentExercise.wordId);
     saveUserStats(userStats);
 
@@ -611,25 +630,62 @@
     <!-- Prominent Progress Bar & Daily Motivation Card -->
     <section class="p-4 sm:p-5 rounded-2xl bg-white dark:bg-slate-900/90 shadow-xs space-y-3">
       {#if activeTab === 'new'}
-        <!-- TAB 1: Neue Wörter (25 Wörter Ziel) -->
-        <div class="flex items-center justify-between text-xs sm:text-sm gap-2">
-          <div class="flex items-center gap-2">
-            <span class="font-bold text-slate-800 dark:text-slate-200">Tagesziel</span>
-            <span class="px-2 py-0.5 rounded-full text-[11px] font-bold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">
-              {userStats.todayCompleted} / {userStats.dailyGoal} Wörter
-            </span>
+        <!-- TAB 1: Neue Wörter (2 Progress Bars: Sätze & Wörter) -->
+        <div class="space-y-3.5">
+          <!-- 1. Progress Bar: Sätze geübt (Sofortiges Feedback nach jedem Satz) -->
+          <div class="space-y-1.5">
+            <div class="flex items-center justify-between text-xs">
+              <div class="flex items-center gap-1.5 sm:gap-2">
+                <span class="font-bold text-slate-800 dark:text-slate-200">Sätze geübt</span>
+                <span class="px-2 py-0.5 rounded-full text-[10px] sm:text-[11px] font-bold bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300">
+                  {userStats.todaySentencesCompleted || 0} / {dailySentencesGoal} Sätze
+                </span>
+                <button
+                  type="button"
+                  class="text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 cursor-pointer transition-colors p-0.5"
+                  on:click={() => showInfoModal = true}
+                  title="Wie funktioniert das Zielsystem?"
+                  aria-label="Info anzeigen"
+                >
+                  <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </button>
+              </div>
+              <div class="text-xs font-bold {sentencesPercent >= 100 ? 'text-emerald-600 dark:text-emerald-400' : 'text-indigo-600 dark:text-indigo-400'}">
+                {sentencesPercent}%
+              </div>
+            </div>
+            <!-- Progress Bar: Sätze -->
+            <div class="w-full h-2 rounded-full bg-slate-100 dark:bg-slate-800 overflow-hidden relative">
+              <div 
+                class="h-full rounded-full transition-all duration-300 ease-out {sentencesPercent >= 100 ? 'bg-emerald-500' : 'bg-indigo-600 dark:bg-indigo-500'}"
+                style="width: {sentencesPercent}%;"
+              ></div>
+            </div>
           </div>
-          <div class="text-xs font-bold {progressPercent >= 100 ? 'text-emerald-600 dark:text-emerald-400' : 'text-indigo-600 dark:text-indigo-400'}">
-            {progressPercent}%
-          </div>
-        </div>
 
-        <!-- Animated Progress Bar for New Words -->
-        <div class="w-full h-2.5 rounded-full bg-slate-100 dark:bg-slate-800 overflow-hidden relative">
-          <div 
-            class="h-full rounded-full transition-all duration-500 ease-out {progressPercent >= 100 ? 'bg-emerald-500' : 'bg-indigo-600 dark:bg-indigo-500'}"
-            style="width: {progressPercent}%;"
-          ></div>
+          <!-- 2. Progress Bar: Ganze Wörter abgeschlossen (Alle Fälle gemeistert) -->
+          <div class="space-y-1.5 pt-0.5">
+            <div class="flex items-center justify-between text-xs">
+              <div class="flex items-center gap-2">
+                <span class="font-bold text-slate-800 dark:text-slate-200">Wörter komplett</span>
+                <span class="px-2 py-0.5 rounded-full text-[10px] sm:text-[11px] font-bold bg-purple-50 dark:bg-purple-950/60 text-purple-700 dark:text-purple-300">
+                  {userStats.todayCompleted} / {userStats.dailyGoal} Wörter
+                </span>
+              </div>
+              <div class="text-xs font-bold {wordsPercent >= 100 ? 'text-emerald-600 dark:text-emerald-400' : 'text-purple-600 dark:text-purple-400'}">
+                {wordsPercent}%
+              </div>
+            </div>
+            <!-- Progress Bar: Wörter -->
+            <div class="w-full h-2 rounded-full bg-slate-100 dark:bg-slate-800 overflow-hidden relative">
+              <div 
+                class="h-full rounded-full transition-all duration-500 ease-out {wordsPercent >= 100 ? 'bg-emerald-500' : 'bg-purple-600 dark:bg-purple-500'}"
+                style="width: {wordsPercent}%;"
+              ></div>
+            </div>
+          </div>
         </div>
       {:else}
         <!-- TAB 2: Wiederholen (Unbegrenzt) -->
@@ -662,39 +718,18 @@
           <span>Gemeistert: <strong class="text-slate-700 dark:text-slate-300">{userStats.totalMastered}</strong></span>
         </div>
 
-        <!-- Filter Selectors -->
-        <div class="flex items-center gap-2 flex-wrap">
-          <!-- Tier Filter -->
-          <div class="flex items-center gap-1">
-            <span class="text-[10px] uppercase font-semibold text-slate-400">Stufe:</span>
-            <select 
-              bind:value={selectedTierFilter} 
-              on:change={applyFilterAndRebuildQueue}
-              class="bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-[11px] font-semibold px-2 py-0.5 rounded cursor-pointer focus:outline-none"
-            >
-              <option value="all">Alle Stufen</option>
-              <option value="top1000">Top 1000</option>
-              <option value="top2000">Top 2000</option>
-              <option value="top3000">Top 3000</option>
-              <option value="top4000">Top 4000</option>
-            </select>
-          </div>
-
-          <!-- Kasus Filter -->
-          <div class="flex items-center gap-1">
-            <span class="text-[10px] uppercase font-semibold text-slate-400">Kasus:</span>
-            <select 
-              bind:value={selectedCaseFilter} 
-              on:change={applyFilterAndRebuildQueue}
-              class="bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-[11px] font-semibold px-2 py-0.5 rounded cursor-pointer focus:outline-none"
-            >
-              <option value="all">Alle Kasus</option>
-              <option value="nominativ">Nominativ</option>
-              <option value="akkusativ">Akkusativ</option>
-              <option value="dativ">Dativ</option>
-            </select>
-          </div>
-        </div>
+        <!-- Info button on the right (Replaced Stufe & Kasus dropdowns) -->
+        <button
+          type="button"
+          class="flex items-center gap-1.5 px-2 py-1 rounded-lg text-slate-500 hover:text-indigo-600 dark:text-slate-400 dark:hover:text-indigo-400 hover:bg-slate-100 dark:hover:bg-slate-800/80 transition-all cursor-pointer font-medium"
+          on:click={() => showInfoModal = true}
+          title="Wie funktioniert das Zielsystem?"
+        >
+          <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <span>Wie es funktioniert</span>
+        </button>
       </div>
     </section>
 
@@ -993,6 +1028,90 @@
   </footer>
 
 </div>
+
+<!-- Information Popup Modal ("Wie es funktioniert") -->
+{#if showInfoModal}
+  <div 
+    class="fixed inset-0 bg-slate-950/60 backdrop-blur-xs flex items-center justify-center p-4 z-50 animate-in fade-in"
+    role="presentation"
+    on:click|self={() => showInfoModal = false}
+  >
+    <div 
+      class="bg-white dark:bg-slate-900 rounded-3xl p-6 sm:p-7 max-w-md w-full shadow-2xl space-y-4 animate-in zoom-in-95 duration-150 border border-slate-100 dark:border-slate-800"
+      role="dialog"
+      aria-modal="true"
+    >
+      <!-- Modal Header -->
+      <div class="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
+        <div class="flex items-center gap-2.5">
+          <div class="w-8 h-8 rounded-full bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 flex items-center justify-center font-bold text-sm">
+            💡
+          </div>
+          <div>
+            <h3 class="text-sm font-bold text-slate-900 dark:text-white leading-snug">
+              Wie funktioniert das Zielsystem?
+            </h3>
+            <p class="text-[11px] text-slate-400">Erklärung zu Sätzen, Wörtern & Wiederholungen</p>
+          </div>
+        </div>
+        <button
+          type="button"
+          class="p-1 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors cursor-pointer"
+          on:click={() => showInfoModal = false}
+        >
+          ✕
+        </button>
+      </div>
+
+      <!-- Explanation Cards -->
+      <div class="space-y-3 text-xs leading-relaxed text-slate-600 dark:text-slate-300">
+        <!-- 1. Sätze geübt -->
+        <div class="p-3 rounded-2xl bg-indigo-50/70 dark:bg-indigo-950/40 border border-indigo-100/80 dark:border-indigo-900/40 space-y-1">
+          <div class="font-bold text-indigo-900 dark:text-indigo-200 flex items-center gap-1.5">
+            <span class="text-xs">✍️</span>
+            <span>1. Sätze geübt (Sofortiger Fortschritt)</span>
+          </div>
+          <p class="text-[11px] text-slate-600 dark:text-slate-300">
+            Jeder Satz, den du richtig abtippst, zählt direkt hier. So siehst du bei jedem getippten Satz sofort deinen Fortschritt und bleibst im Fluss.
+          </p>
+        </div>
+
+        <!-- 2. Wörter komplett -->
+        <div class="p-3 rounded-2xl bg-purple-50/70 dark:bg-purple-950/40 border border-purple-100/80 dark:border-purple-900/40 space-y-1">
+          <div class="font-bold text-purple-900 dark:text-purple-200 flex items-center gap-1.5">
+            <span class="text-xs">🎯</span>
+            <span>2. Wörter komplett (Alle Kasus gemeistert)</span>
+          </div>
+          <p class="text-[11px] text-slate-600 dark:text-slate-300">
+            Ein deutsches Nomen hat mehrere Kasus (Nominativ, Akkusativ, Dativ & Genitiv). Erst wenn alle Kasus-Übungen zu diesem Nomen gemeistert sind, gilt das Wort als abgeschlossen für dein Tagesziel.
+          </p>
+        </div>
+
+        <!-- 3. Wiederholen (FSRS) -->
+        <div class="p-3 rounded-2xl bg-amber-50/70 dark:bg-amber-950/40 border border-amber-100/80 dark:border-amber-900/40 space-y-1">
+          <div class="font-bold text-amber-900 dark:text-amber-200 flex items-center gap-1.5">
+            <span class="text-xs">🧠</span>
+            <span>3. Spaced Repetition (FSRS-Algorithmus)</span>
+          </div>
+          <p class="text-[11px] text-slate-600 dark:text-slate-300">
+            Einfache Sätze werden in immer größeren Abständen wiederholt. Schwierige Sätze oder Fehler landen automatisch im Tab <em>„Wiederholen“</em>, damit du sie fest im Langzeitgedächtnis verankerst.
+          </p>
+        </div>
+      </div>
+
+      <!-- Close Action -->
+      <div class="pt-1">
+        <button
+          type="button"
+          class="w-full py-2.5 px-4 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-xs transition-all cursor-pointer shadow-xs active:scale-98"
+          on:click={() => showInfoModal = false}
+        >
+          Alles klar, weiterlernen!
+        </button>
+      </div>
+    </div>
+  </div>
+{/if}
 
 <!-- Settings Modal Dialog -->
 {#if showSettingsModal}

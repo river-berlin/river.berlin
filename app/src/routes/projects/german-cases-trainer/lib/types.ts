@@ -40,6 +40,8 @@ export interface FSRSCard {
 export interface UserStats {
   todayCompleted: number;       // Number of unique words finished today
   todayWordIds?: number[];      // Word IDs of nouns completed today
+  todaySentencesCompleted?: number; // Number of sentences completed today
+  todaySentenceIds?: string[];  // Sentence/exercise IDs completed today
   dailyGoal: number;            // Daily goal in words (default: 25 words/day)
   streakDays: number;
   lastActiveDate: string;       // YYYY-MM-DD

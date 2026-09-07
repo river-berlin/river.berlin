@@ -16,6 +16,8 @@ export function loadUserStats(): UserStats {
   const defaultStats: UserStats = {
     todayCompleted: 0,
     todayWordIds: [],
+    todaySentencesCompleted: 0,
+    todaySentenceIds: [],
     dailyGoal: 25,
     streakDays: 1,
     lastActiveDate: getTodayDateString(),
@@ -36,6 +38,12 @@ export function loadUserStats(): UserStats {
     if (!Array.isArray(parsed.todayWordIds)) {
       parsed.todayWordIds = [];
     }
+    if (!Array.isArray(parsed.todaySentenceIds)) {
+      parsed.todaySentenceIds = [];
+    }
+    if (typeof parsed.todaySentencesCompleted !== 'number') {
+      parsed.todaySentencesCompleted = parsed.todaySentenceIds.length;
+    }
 
     // Reset today's count if new day
     if (parsed.lastActiveDate !== today) {
@@ -52,6 +60,8 @@ export function loadUserStats(): UserStats {
       }
       parsed.todayCompleted = 0;
       parsed.todayWordIds = [];
+      parsed.todaySentencesCompleted = 0;
+      parsed.todaySentenceIds = [];
       parsed.lastActiveDate = today;
       saveUserStats(parsed);
     }
