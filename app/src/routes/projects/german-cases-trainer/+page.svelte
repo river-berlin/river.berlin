@@ -78,6 +78,28 @@
     return expandContractions(cleaned);
   }
 
+  $: isTargetOnlyTyped = (() => {
+    if (!currentExercise || isCorrect || isRevealed) return false;
+    const norm = normalizeAnswer(userInput);
+    if (!norm) return false;
+    const fullNorm = normalizeAnswer(currentExercise.fullSentence);
+    if (norm === fullNorm) return false;
+
+    // Check if input matches the targetAnswer
+    const targetNorm = normalizeAnswer(currentExercise.targetAnswer);
+    if (norm === targetNorm) return true;
+
+    // Or matches one of the accepted target answers
+    if (currentExercise.acceptedAnswers?.some(a => {
+      const an = normalizeAnswer(a);
+      return an === norm && an !== fullNorm;
+    })) {
+      return true;
+    }
+
+    return false;
+  })();
+
   onMount(async () => {
     // 1. Load user progress & cards from storage
     userStats = loadUserStats();
@@ -726,13 +748,15 @@
               </span>
               
               <!-- Hint 1: Pure Noun (learner recalls gender from memory) -->
-              <span class="px-2.5 py-1 rounded-lg bg-slate-100/90 dark:bg-slate-800/80 text-slate-600 dark:text-slate-300 text-xs font-medium">
-                Nomen: <strong class="text-slate-900 dark:text-white font-semibold">{currentExercise.baseNoun}</strong>
+              <span class="px-3 py-1.5 rounded-xl bg-slate-100/90 dark:bg-slate-800/80 text-slate-600 dark:text-slate-300 text-sm sm:text-base font-medium shadow-2xs border border-slate-200/60 dark:border-slate-700/60 flex items-baseline gap-1.5">
+                <span class="text-xs sm:text-sm text-slate-400 dark:text-slate-400 font-normal">Nomen:</span>
+                <strong class="text-slate-900 dark:text-white font-bold text-base sm:text-lg">{currentExercise.baseNoun}</strong>
               </span>
 
               <!-- Hint 2: Determiner / Word Pattern -->
-              <span class="px-2.5 py-1 rounded-lg bg-indigo-50/90 dark:bg-indigo-950/50 text-indigo-700 dark:text-indigo-300 text-xs font-medium">
-                Muster: <strong class="font-semibold">{getDeterminerHint(currentExercise)}</strong>
+              <span class="px-3 py-1.5 rounded-xl bg-indigo-50/90 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 text-sm sm:text-base font-medium shadow-2xs border border-indigo-200/60 dark:border-indigo-800/60 flex items-baseline gap-1.5">
+                <span class="text-xs sm:text-sm text-indigo-400 dark:text-indigo-400 font-normal">Muster:</span>
+                <strong class="font-bold text-indigo-900 dark:text-indigo-100">{getDeterminerHint(currentExercise)}</strong>
               </span>
             </div>
 
@@ -809,6 +833,20 @@
                 </span>
               {/if}
             </div>
+
+            <!-- Signal if user typed only the missing part instead of the full sentence -->
+            {#if isTargetOnlyTyped && currentExercise}
+              <div class="p-3 rounded-2xl bg-amber-50/90 dark:bg-amber-950/40 border border-amber-200/80 dark:border-amber-800/60 text-amber-900 dark:text-amber-200 text-xs sm:text-sm flex items-center gap-2.5 animate-in fade-in slide-in-from-top-1 shadow-2xs">
+                <span class="text-base sm:text-lg flex-shrink-0">💡</span>
+                <div class="leading-snug">
+                  <span class="font-bold text-amber-800 dark:text-amber-300">Richtig erkannt!</span>
+                  <span class="opacity-90"> Bitte tippe aber den <strong>ganzen Satz</strong> zu Ende:</span>
+                  <div class="font-semibold text-slate-800 dark:text-slate-100 mt-1 select-text">
+                    „{currentExercise.fullSentence}“
+                  </div>
+                </div>
+              </div>
+            {/if}
           </div>
 
           <!-- Explanation Pill (Shows on reveal or upon correct) -->
