@@ -1,0 +1,19 @@
+{
+  "name": "Deutscher Kasus-Trainer",
+  "short_name": "Kasus Trainer",
+  "description": "Blitzschneller Kasus-Trainer für Nominativ, Akkusativ, Dativ & Genitiv mit Spaced-Repetition",
+  "start_url": "/projects/german-cases-trainer/",
+  "scope": "/projects/german-cases-trainer/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0f172a",
+  "theme_color": "#6366f1",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
