@@ -74,6 +74,12 @@ export function getDetailedGrammarExplanation(ex: CaseExercise): GrammarBreakdow
       patternDetails.push(`Im ${cName} Femininum nimmt „dies-“ die Endung „-e“ (analog zu „die“) an ➔ „diese ${noun}“.`);
     } else if (g === 'f' && c === 'dativ') {
       patternDetails.push(`Im Dativ Femininum nimmt „dies-“ die Endung „-er“ (analog zu „der“) an ➔ „dieser ${noun}“.`);
+    } else if (g === 'pl') {
+      if (c === 'dativ') {
+        patternDetails.push(`Im Dativ Plural nimmt „dies-“ die Endung „-en“ (analog zu „den“) an ➔ „diesen ${noun}“.`);
+      } else {
+        patternDetails.push(`Im ${cName} Plural nimmt „dies-“ die Endung „-e“ (analog zu „die“) an ➔ „diese ${noun}“.`);
+      }
     }
   } else if (group === 'poss') {
     patternTitle = `Possessivbegleiter „mein-“:`;
@@ -89,6 +95,12 @@ export function getDetailedGrammarExplanation(ex: CaseExercise): GrammarBreakdow
       patternDetails.push(`Im ${cName} Femininum erhält „mein“ die Endung „-e“ ➔ „meine ${noun}“.`);
     } else if (g === 'f' && c === 'dativ') {
       patternDetails.push(`Im Dativ Femininum erhält „mein“ die Endung „-er“ ➔ „meiner ${noun}“.`);
+    } else if (g === 'pl') {
+      if (c === 'dativ') {
+        patternDetails.push(`Im Dativ Plural erhält „mein-“ die Endung „-en“ ➔ „meinen ${noun}“.`);
+      } else {
+        patternDetails.push(`Im ${cName} Plural erhält „mein-“ die Endung „-e“ ➔ „meine ${noun}“.`);
+      }
     }
   } else if (group === 'kein') {
     patternTitle = `Negationsartikel „kein-“:`;
@@ -104,6 +116,12 @@ export function getDetailedGrammarExplanation(ex: CaseExercise): GrammarBreakdow
       patternDetails.push(`Im ${cName} Femininum erhält „kein“ die Endung „-e“ ➔ „keine ${noun}“.`);
     } else if (g === 'f' && c === 'dativ') {
       patternDetails.push(`Im Dativ Femininum erhält „kein“ die Endung „-er“ ➔ „keiner ${noun}“.`);
+    } else if (g === 'pl') {
+      if (c === 'dativ') {
+        patternDetails.push(`Im Dativ Plural erhält „kein-“ die Endung „-en“ ➔ „keinen ${noun}“.`);
+      } else {
+        patternDetails.push(`Im ${cName} Plural erhält „kein-“ die Endung „-e“ ➔ „keine ${noun}“.`);
+      }
     }
   } else if (group === 'def') {
     patternTitle = `Bestimmter Artikel:`;
@@ -111,8 +129,12 @@ export function getDetailedGrammarExplanation(ex: CaseExercise): GrammarBreakdow
     patternDetails.push(`Der bestimmte Artikel für ${gName} im ${cName} lautet „${targetArt}“ ➔ „${ex.targetAnswer}“.`);
   } else if (group === 'indef') {
     patternTitle = `Unbestimmter Artikel:`;
-    const targetArt = ex.targetAnswer.trim().split(/\s+/)[0];
-    patternDetails.push(`Der unbestimmte Artikel für ${gName} im ${cName} lautet „${targetArt}“ ➔ „${ex.targetAnswer}“.`);
+    if (g === 'pl') {
+      patternDetails.push(`Im Plural gibt es keinen unbestimmten Artikel („ein-“). Stattdessen steht der Nullartikel, ein Possessiv oder „einige“ ➔ „${ex.targetAnswer}“.`);
+    } else {
+      const targetArt = ex.targetAnswer.trim().split(/\s+/)[0];
+      patternDetails.push(`Der unbestimmte Artikel für ${gName} im ${cName} lautet „${targetArt}“ ➔ „${ex.targetAnswer}“.`);
+    }
   }
 
   return {
