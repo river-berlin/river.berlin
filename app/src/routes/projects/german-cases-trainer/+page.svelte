@@ -1037,16 +1037,16 @@
               {/if}
             </div>
 
-            <!-- Right: "Kenne ich bereits" button (Mark as Mastered) -->
+            <!-- Right: "Kann ich schon / Gemeistert" button (Mark as Mastered) -->
             <div>
               {#if !isCorrect}
                 <button
                   type="button"
                   class="text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition-colors flex items-center gap-1 cursor-pointer py-1 px-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800"
                   on:click={handleMastered}
-                  title="Dieses Nomen als dauerhaft gemeistert markieren (Esc-Taste)"
+                  title="Dieses Nomen dauerhaft als gemeistert markieren – wird nie wieder zur Wiederholung vorgelegt (Esc-Taste)"
                 >
-                  <span>Kenne ich bereits</span>
+                  <span>Kann ich schon / Gemeistert</span>
                   <span class="text-[10px] opacity-50">[Esc]</span>
                 </button>
               {/if}

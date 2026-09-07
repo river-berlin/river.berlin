@@ -29,8 +29,8 @@ export function scheduleCard(card: FSRSCard, rating: ReviewRating): FSRSCard {
 
   if (rating === 'mastered') {
     updated.state = 'mastered';
-    updated.stability = 365; // 1 year
-    updated.due = now + 365 * ONE_DAY_MS;
+    updated.stability = Infinity;
+    updated.due = Infinity; // Permanently mastered: never scheduled for revision again
     return updated;
   }
 
