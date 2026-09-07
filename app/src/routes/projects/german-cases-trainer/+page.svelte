@@ -97,13 +97,36 @@
     const targetNorm = normalizeAnswer(currentExercise.targetAnswer);
     if (norm === targetNorm) return true;
 
-    // Or matches one of the accepted target answers
+    // Or matches one of the accepted target answers (prevent accepting answers that drop the article)
+    const targetWords = currentExercise.targetAnswer.trim().split(/\s+/);
     if (currentExercise.acceptedAnswers?.some(a => {
+      const aWords = a.trim().split(/\s+/);
+      if (targetWords.length > 1 && aWords.length < targetWords.length) return false;
       const an = normalizeAnswer(a);
       return an === norm && an !== fullNorm;
     })) {
       return true;
     }
+
+    return false;
+  })();
+
+  $: isMissingArticle = (() => {
+    if (!currentExercise || isCorrect || isRevealed) return false;
+    const norm = normalizeAnswer(userInput);
+    if (!norm) return false;
+
+    const targetWords = currentExercise.targetAnswer.trim().split(/\s+/);
+    if (targetWords.length <= 1) return false;
+
+    const baseNounNorm = normalizeAnswer(currentExercise.baseNoun);
+
+    // 1. User typed just the base noun without article (e.g. "Raum" instead of "dem Raum")
+    if (norm === baseNounNorm) return true;
+
+    // 2. User typed the sentence with bare noun (e.g. "In Raum ist es ziemlich kalt.")
+    const sentenceWithBareNoun = (currentExercise.sentenceStart || '') + currentExercise.baseNoun + (currentExercise.sentenceEnd || '');
+    if (norm === normalizeAnswer(sentenceWithBareNoun)) return true;
 
     return false;
   })();
@@ -329,7 +352,11 @@
     const isFullMatch = normalizedInput === fullNorm;
 
     // Check variations of full sentence with accepted alternative articles/forms (e.g. "einem" vs "dem", or inverted "solch ein")
-    const matchesAcceptedFull = currentExercise.acceptedAnswers.some(a => {
+    const targetWords = currentExercise.targetAnswer.trim().split(/\s+/);
+    const matchesAcceptedFull = (currentExercise.acceptedAnswers || []).some(a => {
+      const aWords = a.trim().split(/\s+/);
+      // Strictly prevent matching if candidate dropped required article/determiner words
+      if (targetWords.length > 1 && aWords.length < targetWords.length) return false;
       const candidate = (currentExercise.sentenceStart || '') + a + (currentExercise.sentenceEnd || '');
       return normalizeAnswer(candidate) === normalizedInput;
     });
@@ -926,6 +953,17 @@
                 <div class="leading-snug">
                   <span class="font-bold text-amber-800 dark:text-amber-300">Richtig erkannt!</span>
                   <span class="opacity-90"> Bitte tippe aber den <strong>ganzen Satz</strong> zu Ende:</span>
+                  <div class="font-semibold text-slate-800 dark:text-slate-100 mt-1 select-text">
+                    „{currentExercise.fullSentence}“
+                  </div>
+                </div>
+              </div>
+            {:else if isMissingArticle && currentExercise}
+              <div class="p-3 rounded-2xl bg-amber-50/90 dark:bg-amber-950/40 border border-amber-200/80 dark:border-amber-800/60 text-amber-900 dark:text-amber-200 text-xs sm:text-sm flex items-center gap-2.5 animate-in fade-in slide-in-from-top-1 shadow-2xs">
+                <span class="text-base sm:text-lg flex-shrink-0">⚠️</span>
+                <div class="leading-snug">
+                  <span class="font-bold text-amber-800 dark:text-amber-300">Artikel fehlt!</span>
+                  <span class="opacity-90"> Bitte setze auch den passenden Begleiter ein {#if currentExercise.determinerHint}<span class="font-mono text-[11px] font-semibold bg-amber-100 dark:bg-amber-900/60 px-1.5 py-0.5 rounded">{currentExercise.determinerHint}</span>{/if}:</span>
                   <div class="font-semibold text-slate-800 dark:text-slate-100 mt-1 select-text">
                     „{currentExercise.fullSentence}“
                   </div>
