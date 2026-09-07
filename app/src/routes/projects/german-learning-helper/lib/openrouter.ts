@@ -1,6 +1,7 @@
 import type { 
   EvaluationResult, 
   ContinuationEvaluation, 
+  EvaluationErrorItem,
   StoryChapter, 
   Question,
   VocabularyItem,
@@ -367,38 +368,145 @@ async function callOpenRouter(config: OpenRouterConfig, messages: Array<{ role: 
 }
 
 /**
+ * Parses raw checklist markdown into structured EvaluationErrorItems and computes the error count
+ */
+export function parseErrorChecklist(checklistText: string): {
+  errorCount: number;
+  items: EvaluationErrorItem[];
+} {
+  const items: EvaluationErrorItem[] = [];
+  
+  // Check for explicit "0 Fehler" or "keine Fehler" / "fehlerfrei"
+  const isZeroErrors = /(?:0\s*fehler|keine\s*(?:grammatik)?fehler|fehlerfrei)/i.test(checklistText) &&
+    !/(?:\b[1-9]\d*\s*fehler)/i.test(checklistText);
+
+  // Check for explicit error count e.g. "Gefundene Fehler: 3" or "Fehleranzahl: 2"
+  const countMatch = checklistText.match(/(?:Gefundene\s+Fehler|Fehleranzahl|Fehler\s*gesamt|Anzahl\s+der\s+Fehler)\s*[:：]\s*(\d+)/i);
+  const explicitCount = countMatch ? parseInt(countMatch[1], 10) : null;
+
+  const lines = checklistText.split('\n');
+  let currentNum = 1;
+
+  for (const line of lines) {
+    const trimmed = line.trim();
+    if (!trimmed) continue;
+
+    // Matches numbered or checkbox list items:
+    // e.g. "1. [ ] ...", "1. ...", "1) ...", "- [ ] 1. ...", "- [ ] ...", "* [ ] ..."
+    const itemMatch = trimmed.match(/^(?:(\d+)[\.\)]\s*(?:\[[\s xX]\])?|[-*•]\s+\[[\s xX]\]\s*(\d+)?[\.\)]?|[-*•]\s+(\d+)[\.\)])\s*(.+)$/);
+    if (itemMatch) {
+      const numStr = itemMatch[1] || itemMatch[2] || itemMatch[3];
+      const parsedNum = numStr ? parseInt(numStr, 10) : currentNum;
+      const content = itemMatch[4].trim();
+
+      // Skip lines that are just error count declarations
+      if (/^(?:Gefundene\s+Fehler|Fehleranzahl|Fehler\s*gesamt)/i.test(content)) continue;
+
+      // Check if this single item explicitly states 0 errors
+      if (/^(?:0\s*fehler|keine\s*fehler|fehlerfrei)/i.test(content)) {
+        continue;
+      }
+
+      items.push({
+        id: `err-${items.length + 1}-${Math.random().toString(36).slice(2, 7)}`,
+        num: parsedNum,
+        text: content,
+        checked: false
+      });
+      currentNum++;
+    }
+  }
+
+  let finalCount = 0;
+  if (explicitCount !== null) {
+    finalCount = explicitCount;
+  } else if (isZeroErrors && items.length === 0) {
+    finalCount = 0;
+  } else {
+    finalCount = items.length;
+  }
+
+  return { errorCount: finalCount, items };
+}
+
+/**
  * Parses markdown stream into structured feedback sections:
- * 1. Feedback / Analysis
- * 2. Better Reformulation
- * 3. Sample / Model Answer
+ * 1. Error Checklist (Fehler-Checkliste)
+ * 2. Feedback / Content Analysis (Inhaltliche Rückmeldung)
+ * 3. Better Reformulation (Bessere Formulierung)
+ * 4. Sample / Model Answer (Musterantwort)
  */
 export function parseEvaluationSections(rawText: string): {
-  feedback: string;
+  checklist: string;
+  errorCount: number;
+  errorItems: EvaluationErrorItem[];
+  contentFeedback: string;
   betterReformulation: string;
   sampleAnswer: string;
+  feedback: string;
 } {
-  let feedback = '';
+  // Split rawText into sections by lines starting with ###
+  const sections: { title: string; body: string }[] = [];
+  const lines = rawText.split('\n');
+  let currentTitle = '';
+  let currentBody: string[] = [];
+
+  for (const line of lines) {
+    const headingMatch = line.match(/^###\s*(.+)$/);
+    if (headingMatch) {
+      if (currentTitle || currentBody.length > 0) {
+        sections.push({ title: currentTitle, body: currentBody.join('\n').trim() });
+      }
+      currentTitle = headingMatch[1].trim();
+      currentBody = [];
+    } else {
+      currentBody.push(line);
+    }
+  }
+  if (currentTitle || currentBody.length > 0) {
+    sections.push({ title: currentTitle, body: currentBody.join('\n').trim() });
+  }
+
+  let checklist = '';
+  let contentFeedback = '';
   let betterReformulation = '';
   let sampleAnswer = '';
 
-  const sampleAnswerRegex = /###\s*(?:💡\s*)?(?:Musterantwort|Musterlösung|Ideale\s+Antwort)[\s:]*/i;
-  const reformulationRegex = /###\s*(?:✨\s*)?(?:Bessere\s+Formulierung|Verbesserte\s+Formulierung|Stilistischer\s+Vorschlag|Stilistisch\s+verbesserte\s+Fortsetzung)[\s:]*/i;
-
-  const sampleParts = rawText.split(sampleAnswerRegex);
-  if (sampleParts.length > 1) {
-    sampleAnswer = sampleParts[1].trim();
+  for (const sec of sections) {
+    const t = sec.title.toLowerCase();
+    if (/checklist|fehler/i.test(t)) {
+      checklist = sec.body;
+    } else if (/inhalt|rückmeldung|korrektur|analyse/i.test(t)) {
+      contentFeedback = sec.body;
+    } else if (/formulierung|stilist/i.test(t)) {
+      betterReformulation = sec.body;
+    } else if (/muster/i.test(t)) {
+      sampleAnswer = sec.body;
+    } else if (!checklist && !contentFeedback) {
+      contentFeedback = sec.body;
+    }
   }
 
-  const beforeSample = sampleParts[0];
-  const refParts = beforeSample.split(reformulationRegex);
-  if (refParts.length > 1) {
-    feedback = refParts[0].replace(/^###\s*(?:📝\s*)?(?:Rückmeldung\s*&\s*Korrektur|Rückmeldung|Korrektur|Analyse)[\s:]*/i, '').trim();
-    betterReformulation = refParts[1].trim();
-  } else {
-    feedback = beforeSample.replace(/^###\s*(?:📝\s*)?(?:Rückmeldung\s*&\s*Korrektur|Rückmeldung|Korrektur|Analyse)[\s:]*/i, '').trim();
+  // Fallback for previous formats without ### headings
+  if (sections.length === 0) {
+    contentFeedback = rawText.trim();
   }
 
-  return { feedback, betterReformulation, sampleAnswer };
+  const { errorCount, items: errorItems } = parseErrorChecklist(checklist);
+
+  const combinedFeedback = contentFeedback
+    ? `${contentFeedback}\n\n${checklist}`.trim()
+    : checklist;
+
+  return {
+    checklist,
+    errorCount,
+    errorItems,
+    contentFeedback,
+    betterReformulation,
+    sampleAnswer,
+    feedback: combinedFeedback
+  };
 }
 
 /**
@@ -684,21 +792,35 @@ ${userAnswer}
 DEINE AUFGABEN & REGELN:
 1. Verwende ausschließlich Deutsch (kein Englisch).
 2. Akzeptiere Transliterationen (ae, oe, ue, ss) als gültig.
-3. KORRIGIERE ALLE GRAMMATIKFEHLER: Korrigiere ausnahmslos alle grammatikalischen, orthografischen und syntaktischen Fehler gründlich, präzise und konstruktiv (insbesondere Kasus, Rektion, Verbstellung im Haupt- und Nebensatz, Konjugation, Adjektivendungen und Wortwahl).
-4. TRADITIONELLES DEUTSCH: Schlage Antworten und Formulierungen so vor, wie ein traditioneller, gebildeter und stilsicherer deutscher Muttersprachler in natürlichem, idiomatischem Deutsch antworten würde.
-5. Strukturiere deine Antwort GENAU in die folgenden drei Abschnitte:
+3. INHALTLICHE RÜCKMELDUNG:
+   Bewerte zuerst kurz, ob die Frage inhaltlich richtig und vollständig beantwortet wurde.
+4. KORRIGIERE ALLE FEHLER IN EINER NUMMERIERTEN CHECKLISTE:
+   - Identifiziere präzise alle grammatikalischen, orthografischen und syntaktischen Fehler (insbesondere Kasus, Rektion, Verbstellung im Haupt- und Nebensatz, Konjugation, Adjektivendungen, Zeichensetzung und Wortwahl).
+   - Beginne den Abschnitt "### 📋 Fehler-Checkliste" immer mit der Gesamtanzahl: "**Gefundene Fehler: [Anzahl]**".
+   - Falls Fehler vorhanden sind, liste JEDEN Fehler als nummerierten Checklisten-Punkt auf:
+     1. [ ] **[Fehlerkategorie, z.B. Kasus / Verbstellung / Wortwahl]:** „[Fehlerhafter Text]“ ➔ Richtig: „[Korrektur]“ — *Erklärung:* [Kurze und präzise Begründung]
+     2. [ ] ...
+   - Falls die Antwort VOLLKOMMEN FEHLERFREI ist (0 Fehler):
+     - [x] **0 Fehler gefunden:** Hervorragend! Vollkommen fehlerfrei. Keine sprachlichen oder grammatikalischen Mängel.
+5. TRADITIONELLES DEUTSCH & MUSTERANTWORT:
+   Schlage Formulierungen so vor, wie ein stilsicherer, gebildeter deutscher Muttersprachler in natürlichem, elegantem Deutsch antworten würde.
 
-### 📝 Rückmeldung & Korrektur
-- Gib eine kurze Rückmeldung, ob die Frage inhaltlich richtig beantwortet wurde.
-- Erkläre alle grammatikalischen und sprachlichen Fehler verständlich, detailliert und präzise.
+Strukturiere deine Antwort GENAU in die folgenden vier Abschnitte mit exakt diesen Überschriften:
+
+### 📝 Inhaltliche Rückmeldung
+[Kurze Beurteilung der inhaltlichen Richtigkeit und Vollständigkeit]
+
+### 📋 Fehler-Checkliste
+**Gefundene Fehler: [Anzahl]**
+[Hier die nummerierte Checkliste der Fehler oder 0 Fehler Bestätigung]
 
 ### ✨ Bessere Formulierung
-Formuliere die Antwort so um, wie ein traditioneller deutscher Muttersprachler den Gedanken klar, elegant, idiomatisch und grammatikalisch vollkommen fehlerfrei ausdrücken würde.
+[Wie ein traditioneller Muttersprachler den Gedanken des Lernenden fehlerfrei und stilsicher ausdrücken würde]
 
 ### 💡 Musterantwort
-Formuliere eine vollständige, ideale Beispiellösung auf Deutsch, wie sie ein traditioneller deutscher Sprecher formulieren würde.`;
+[Vollständige ideale Beispiellösung auf Deutsch]`;
 
-  const userPrompt = `Bewerte die Antwort des Lernenden auf Deutsch. Korrigiere alle Grammatikfehler und zeige, wie ein traditioneller deutscher Sprecher antworten würde.`;
+  const userPrompt = `Bewerte die Antwort des Lernenden auf Deutsch. Gib zuerst die inhaltliche Rückmeldung, dann die nummerierte Fehler-Checkliste, und zeige, wie ein traditioneller deutscher Sprecher antworten würde.`;
 
   const fullStreamText = await streamOpenRouter(
     config,
@@ -717,6 +839,10 @@ Formuliere eine vollständige, ideale Beispiellösung auf Deutsch, wie sie ein t
     feedbackText: sections.feedback || fullStreamText,
     betterReformulation: sections.betterReformulation || '',
     sampleAnswer: sections.sampleAnswer || '',
+    errorCount: sections.errorCount,
+    errorItems: sections.errorItems,
+    errorChecklistText: sections.checklist,
+    contentFeedback: sections.contentFeedback,
     userAnswerAtEvaluation: userAnswer,
     evaluatedAt: Date.now(),
     rawStream: fullStreamText
@@ -751,18 +877,32 @@ ${userContinuation}
 DEINE AUFGABEN & REGELN:
 1. Alles ausschließlich auf Deutsch (kein Englisch).
 2. Akzeptiere ae, oe, ue, ss als gültig.
-3. KORRIGIERE ALLE GRAMMATIKFEHLER: Korrigiere gründlich alle grammatischen, lexikalischen und syntaktischen Fehler.
-4. TRADITIONELLES DEUTSCH: Schlage vor, wie ein traditioneller, stilsicherer deutscher Muttersprachler den Text stilistisch elegant, treffsicher und idiomatisch fortführen würde.
-5. Strukturiere deine Antwort GENAU in die folgenden zwei Abschnitte:
+3. INHALTLICHE RÜCKMELDUNG:
+   Gehe zuerst kurz auf Inhalt, Erzählfluss und Gedankenführung ein.
+4. KORRIGIERE ALLE FEHLER IN EINER NUMMERIERTEN CHECKLISTE:
+   - Identifiziere präzise alle grammatikalischen, syntaktischen, orthografischen und stilistischen Fehler.
+   - Beginne den Abschnitt "### 📋 Fehler-Checkliste" immer mit der Zeile: "**Gefundene Fehler: [Anzahl]**".
+   - Falls Fehler vorhanden sind, erstelle eine nummerierte Checkliste:
+     1. [ ] **[Fehlerart]:** „[Fehlerhafter Text]“ ➔ Richtig: „[Korrektur]“ — *Erklärung:* [Kurze Begründung]
+     2. [ ] ...
+   - Falls fehlerfrei:
+     - [x] **0 Fehler gefunden:** Hervorragend! Keine Fehler gefunden.
+5. TRADITIONELLES DEUTSCH:
+   Schlage vor, wie ein traditioneller, stilsicherer deutscher Muttersprachler den Text fortführen würde.
 
-### 📝 Rückmeldung & Korrektur
-- Korrigiere alle Grammatik-, Satzbau- und Wortwahlfehler im Detail.
-- Gehe kurz auf Inhalt und Gedankenführung ein.
+Strukturiere deine Antwort GENAU in die folgenden drei Abschnitte mit exakt diesen Überschriften:
+
+### 📝 Inhaltliche Rückmeldung
+[Feedback zu Gedankengang und Stil]
+
+### 📋 Fehler-Checkliste
+**Gefundene Fehler: [Anzahl]**
+[Hier die nummerierte Checkliste]
 
 ### ✨ Stilistisch verbesserte Fortsetzung
-Formuliere den Text so um, wie ein traditioneller deutscher Muttersprachler ihn in gepflegtem, natürlichem Deutsch formulieren würde, wobei die ursprüngliche Kernaussage erhalten bleibt.`;
+[Elegante muttersprachliche Fassung]`;
 
-  const userPrompt = `Bewerte den Text auf Deutsch. Korrigiere alle Grammatikfehler und zeige, wie ein traditioneller deutscher Sprecher den Text formulieren würde.`;
+  const userPrompt = `Bewerte den Text auf Deutsch. Gib zuerst die inhaltliche Rückmeldung, dann die nummerierte Fehler-Checkliste und zeige, wie ein traditioneller deutscher Sprecher den Text formulieren würde.`;
 
   const fullStreamText = await streamOpenRouter(
     config,
@@ -780,6 +920,10 @@ Formuliere den Text so um, wie ein traditioneller deutscher Muttersprachler ihn 
   return {
     feedbackText: sections.feedback || fullStreamText,
     betterReformulation: sections.betterReformulation || '',
+    errorCount: sections.errorCount,
+    errorItems: sections.errorItems,
+    errorChecklistText: sections.checklist,
+    contentFeedback: sections.contentFeedback,
     userContinuationAtEvaluation: userContinuation,
     evaluatedAt: Date.now(),
     rawStream: fullStreamText

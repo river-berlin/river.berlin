@@ -10,9 +10,20 @@ export interface FlashcardItem {
   cefrLevel?: DifficultyLevel;
 }
 
+export interface EvaluationErrorItem {
+  id: string;
+  num: number;
+  text: string;
+  checked?: boolean;
+}
+
 export interface EvaluationResult {
   overallVerdict?: 'excellent' | 'good' | 'partially_correct' | 'needs_revision';
   verdictLabel?: string;
+  errorCount?: number;
+  errorItems?: EvaluationErrorItem[];
+  errorChecklistText?: string;
+  contentFeedback?: string;
   feedbackText: string;             // Ausführliche Rückmeldung zur Grammatik, Wortwahl und Richtigkeit
   betterReformulation?: string;     // Stilistisch und grammatisch verbesserte Formulierung der Antwort
   sampleAnswer?: string;            // Ausführliche Musterantwort / Ideallösung (standardmäßig verborgen)
@@ -52,6 +63,10 @@ export interface StoryChapter {
 export interface ContinuationEvaluation {
   overallVerdict?: 'excellent' | 'good' | 'needs_revision';
   verdictLabel?: string;
+  errorCount?: number;
+  errorItems?: EvaluationErrorItem[];
+  errorChecklistText?: string;
+  contentFeedback?: string;
   feedbackText: string;             // Feedback zum Schreibstil, Fluss und Grammatik
   betterReformulation?: string;     // Verbesserte Fassung der Fortsetzung
   userContinuationAtEvaluation: string;

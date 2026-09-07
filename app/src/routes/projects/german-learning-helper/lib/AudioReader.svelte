@@ -284,19 +284,4 @@
       <span>Stopp</span>
     </button>
   {/if}
-
-  <!-- Tempo Selector (Default 1.0x) -->
-  <div class="inline-flex items-center gap-1 text-[11px] text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800/80 px-2 py-1 rounded-lg border border-slate-200 dark:border-slate-700">
-    <span>Tempo:</span>
-    <select
-      bind:value={rate}
-      class="bg-transparent font-medium text-slate-800 dark:text-slate-200 focus:outline-none cursor-pointer"
-      on:change={handleRateChange}
-    >
-      <option value={0.75}>0.75x</option>
-      <option value={1.0}>1.0x (Standard)</option>
-      <option value={1.25}>1.25x</option>
-      <option value={1.5}>1.5x</option>
-    </select>
-  </div>
 </div>

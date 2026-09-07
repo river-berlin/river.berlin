@@ -12,6 +12,7 @@ export interface NewsArticle {
   category: string;
   text: string;
   wordCount: number;
+  title?: string;
 }
 
 // Candidate repository URLs (user's repo first, with standard fallbacks)
@@ -167,7 +168,7 @@ export async function downloadAndLoad10kGnad(
       } else {
         // Try @huggingface/hub downloadFile first
         try {
-          const blobResponse = await downloadFile({
+          const blobResponse = await (downloadFile as any)({
             repo: candidate.repo,
             path: candidate.file,
             repoType: 'dataset'
@@ -262,6 +263,73 @@ export function deriveTitleFromArticle(article: NewsArticle): string {
     return candidate.substring(0, 85).trim() + '...';
   }
   return `Zeitungsartikel • ${article.category}`;
+}
+
+/**
+ * Gets cached or derived title for an article
+ */
+export function getArticleTitle(article: NewsArticle): string {
+  if (article.title) return article.title;
+  const derived = deriveTitleFromArticle(article);
+  article.title = derived;
+  return derived;
+}
+
+export interface ArticleSearchResult {
+  article: NewsArticle;
+  index: number;
+  title: string;
+}
+
+/**
+ * Search articles by title, category, or index
+ */
+export function searchArticlesByTitle(
+  articles: NewsArticle[],
+  query: string,
+  selectedCategory?: string,
+  limit = 50
+): ArticleSearchResult[] {
+  const cleanQuery = query.trim().toLowerCase();
+  const hasCatFilter = Boolean(selectedCategory && selectedCategory !== 'Alle');
+  const results: ArticleSearchResult[] = [];
+
+  for (let i = 0; i < articles.length; i++) {
+    const article = articles[i];
+    if (hasCatFilter && article.category.toLowerCase() !== selectedCategory!.toLowerCase()) {
+      continue;
+    }
+
+    const title = getArticleTitle(article);
+    if (!cleanQuery) {
+      results.push({
+        article,
+        index: i + 1,
+        title
+      });
+      if (results.length >= limit) break;
+      continue;
+    }
+
+    const category = article.category || '';
+    const indexStr = String(i + 1);
+
+    if (
+      title.toLowerCase().includes(cleanQuery) ||
+      category.toLowerCase().includes(cleanQuery) ||
+      indexStr === cleanQuery ||
+      article.id.toLowerCase().includes(cleanQuery)
+    ) {
+      results.push({
+        article,
+        index: i + 1,
+        title
+      });
+      if (results.length >= limit) break;
+    }
+  }
+
+  return results;
 }
 
 /**
