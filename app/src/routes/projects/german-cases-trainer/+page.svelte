@@ -42,6 +42,7 @@
   let inputRef: HTMLInputElement | null = null;
   let installPromptEvent: any = null;
   let showInstallButton = false;
+  let isStandalone = false;
   let isLoadingData = true;
 
   // Visual cues
@@ -101,18 +102,36 @@
   })();
 
   onMount(async () => {
-    // 1. Load user progress & cards from storage
+    // 1. Standalone app detection
+    if (typeof window !== 'undefined') {
+      isStandalone = window.matchMedia('(display-mode: standalone)').matches || (window.navigator as any).standalone === true;
+      showInstallButton = !isStandalone;
+    }
+
+    // 2. Service Worker registration for offline & PWA standalone caching
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/sw-german-cases.js', { scope: '/projects/german-cases-trainer/' }).catch((err) => {
+        console.warn('SW registration failed:', err);
+      });
+    }
+
+    // 3. Load user progress & cards from storage
     userStats = loadUserStats();
     cardsMap = loadCardsMap();
 
-    // 2. PWA install prompt detection
+    // 4. PWA install prompt detection
     window.addEventListener('beforeinstallprompt', (e) => {
       e.preventDefault();
       installPromptEvent = e;
       showInstallButton = true;
     });
 
-    // 3. Load generated exercises dataset
+    window.addEventListener('appinstalled', () => {
+      showInstallButton = false;
+      isStandalone = true;
+    });
+
+    // 5. Load generated exercises dataset
     await loadExercisesData();
 
     // Focus input field immediately
@@ -396,6 +415,8 @@
         showInstallButton = false;
       }
       installPromptEvent = null;
+    } else {
+      showSettingsModal = true;
     }
   }
 
@@ -481,6 +502,14 @@
   <meta name="description" content="Minimalistischer, blitzschneller Kasus-Trainer für Nominativ, Akkusativ, Dativ & Genitiv mit Spaced-Repetition und automatischer Satzvervollständigung." />
   <link rel="manifest" href="/manifest-german-cases.json" />
   <meta name="theme-color" content="#6366f1" />
+  <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
+  <link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192.png" />
+  <link rel="icon" type="image/png" sizes="512x512" href="/icons/icon-512.png" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Kasus Trainer" />
+  <meta name="application-name" content="Kasus Trainer" />
 </svelte:head>
 
 <svelte:window on:keydown={handleKeydown} />
@@ -1057,7 +1086,18 @@
               <strong>iOS (iPhone/iPad):</strong> Tippe unten auf das <strong>Teilen-Icon</strong> (Viereck mit Pfeil nach oben) und wähle <strong>„Zum Home-Bildschirm“</strong>.
             </p>
             <p class="text-slate-500 dark:text-slate-400 text-[11px] leading-relaxed">
-              <strong>macOS Safari:</strong> Klicke im oberen Menü auf <strong>Ablage</strong> → <strong>„Zum Dock hinzufügen…“</strong>.
+              <strong>macOS Safari:</strong> Klicke im oberen Menü auf <strong>Ablage</strong> → <strong>„Zum Dock hinzufügen…“</strong> (erstellt eine echte Standalone-Mac-App).
+            </p>
+          </div>
+
+          <!-- Firefox Note -->
+          <div class="p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/50 space-y-1">
+            <div class="font-semibold text-slate-800 dark:text-slate-200 flex items-center justify-between">
+              <span>Firefox Desktop Hinweis</span>
+              <span class="text-[10px] text-slate-400 font-normal">Eigenständige Fenster</span>
+            </div>
+            <p class="text-slate-600 dark:text-slate-300 text-[11px] leading-relaxed">
+              Firefox Desktop hat die native Standalone-Fenster-Unterstützung (SSB) entfernt und öffnet Web-Shortcuts im normalen Browser-Tab. Für ein <strong>echtes, rahmenloses App-Fenster</strong> öffne die Seite in <strong>Chrome, Edge oder Safari</strong> („Ablage → Zum Dock hinzufügen“) oder nutze das Firefox-Addon <em>PWAsForFirefox</em>.
             </p>
           </div>
         </div>

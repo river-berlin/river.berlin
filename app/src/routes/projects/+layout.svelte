@@ -14,9 +14,9 @@
 </script>
 
 <svelte:head>
-    <title>River's Blog: Book takeaways - {metadata.title}</title>
-    <meta name="twitter:title" content="River's Blog: Book takeaways - {metadata.title}" />
-    <meta property="og:title" content="River's Blog: Book takeaways - {metadata.title}" />
+    <title>River's Projects: {metadata.projectTitle || metadata.title}</title>
+    <meta name="twitter:title" content="River's Projects: {metadata.projectTitle || metadata.title}" />
+    <meta property="og:title" content="River's Projects: {metadata.projectTitle || metadata.title}" />
 
 
     <meta property="og:url" content="{BASE_URL}/projects/{metadata.shortPath}">
