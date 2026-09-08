@@ -1131,12 +1131,12 @@
               {#if !isCorrect}
                 <button
                   type="button"
-                  class="bg-emerald-600 hover:bg-emerald-500 active:bg-emerald-700 text-white transition-all flex items-center gap-1.5 cursor-pointer py-1.5 px-3 rounded-xl shadow-xs font-semibold text-xs sm:text-sm"
+                  class="px-3 py-1.5 rounded-xl bg-emerald-100 hover:bg-emerald-200 dark:bg-emerald-950/60 dark:hover:bg-emerald-900/60 text-emerald-800 dark:text-emerald-200 border border-emerald-300/60 dark:border-emerald-700/60 font-medium transition-all cursor-pointer active:scale-95"
                   on:click={handleMastered}
                   title="Dieses Nomen dauerhaft als gemeistert markieren – wird nie wieder zur Wiederholung vorgelegt (Esc-Taste)"
                 >
-                  <span>✓ Kann ich schon / Gemeistert</span>
-                  <span class="text-[10px] sm:text-xs opacity-75 font-mono">[Esc]</span>
+                  <span>Kann ich schon / Gemeistert</span>
+                  <span class="text-[10px] opacity-60 ml-1">[Esc]</span>
                 </button>
               {/if}
             </div>
