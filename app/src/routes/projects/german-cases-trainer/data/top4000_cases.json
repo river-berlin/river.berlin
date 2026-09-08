@@ -21955,11 +21955,11 @@
     "case": "nominativ",
     "determinerGroup": "poss",
     "determinerHint": "(mein, meiner, meinem, meine)",
-    "sentenceStart": "Ihre ",
-    "targetAnswer": "Medizin",
+    "sentenceStart": "",
+    "targetAnswer": "Ihre Medizin",
     "sentenceEnd": " hat ihm sehr geholfen.",
     "acceptedAnswers": [
-      "medizin"
+      "ihre medizin"
     ],
     "fullSentence": "Ihre Medizin hat ihm sehr geholfen.",
     "translation": "Her medicine helped him a lot.",
@@ -21975,11 +21975,11 @@
     "case": "nominativ",
     "determinerGroup": "dies",
     "determinerHint": "(dieser, diese, diesem, diesen)",
-    "sentenceStart": "Diese ",
-    "targetAnswer": "Aktie",
+    "sentenceStart": "",
+    "targetAnswer": "Diese Aktie",
     "sentenceEnd": " ist stark im Wert gestiegen.",
     "acceptedAnswers": [
-      "aktie"
+      "diese aktie"
     ],
     "fullSentence": "Diese Aktie ist stark im Wert gestiegen.",
     "translation": "This share has risen sharply in value.",
@@ -22035,11 +22035,11 @@
     "case": "nominativ",
     "determinerGroup": "kein",
     "determinerHint": "(kein, keine, keinem, keiner)",
-    "sentenceStart": "Keine ",
-    "targetAnswer": "Investition",
+    "sentenceStart": "",
+    "targetAnswer": "Keine Investition",
     "sentenceEnd": " ist ohne Risiko.",
     "acceptedAnswers": [
-      "investition"
+      "keine investition"
     ],
     "fullSentence": "Keine Investition ist ohne Risiko.",
     "translation": "No investment is without risk.",
@@ -22095,11 +22095,11 @@
     "case": "nominativ",
     "determinerGroup": "poss",
     "determinerHint": "(mein, meiner, meinem, meine)",
-    "sentenceStart": "Unsere ",
-    "targetAnswer": "Kommission",
+    "sentenceStart": "",
+    "targetAnswer": "Unsere Kommission",
     "sentenceEnd": " hat die Untersuchung abgeschlossen.",
     "acceptedAnswers": [
-      "kommission"
+      "unsere kommission"
     ],
     "fullSentence": "Unsere Kommission hat die Untersuchung abgeschlossen.",
     "translation": "Our commission has completed the investigation.",
@@ -22115,11 +22115,11 @@
     "case": "nominativ",
     "determinerGroup": "dies",
     "determinerHint": "(dieser, diese, diesem, diesen)",
-    "sentenceStart": "Dieser ",
-    "targetAnswer": "Laden",
+    "sentenceStart": "",
+    "targetAnswer": "Dieser Laden",
     "sentenceEnd": " hat heute geschlossen.",
     "acceptedAnswers": [
-      "laden"
+      "dieser laden"
     ],
     "fullSentence": "Dieser Laden hat heute geschlossen.",
     "translation": "This shop is closed today.",
@@ -22135,11 +22135,11 @@
     "case": "nominativ",
     "determinerGroup": "solch",
     "determinerHint": "(solche, solcher, solches, solchem)",
-    "sentenceStart": "Solche ",
-    "targetAnswer": "Messe",
+    "sentenceStart": "",
+    "targetAnswer": "Solche Messe",
     "sentenceEnd": " findet nur einmal im Jahr statt.",
     "acceptedAnswers": [
-      "messe"
+      "solche messe"
     ],
     "fullSentence": "Solche Messe findet nur einmal im Jahr statt.",
     "translation": "Such a fair only takes place once a year.",
@@ -26075,11 +26075,11 @@
     "case": "nominativ",
     "determinerGroup": "poss",
     "determinerHint": "(mein, meiner, meinem, meine)",
-    "sentenceStart": "Unsere geplante ",
-    "targetAnswer": "Änderung",
+    "sentenceStart": "",
+    "targetAnswer": "Unsere geplante Änderung",
     "sentenceEnd": " wurde vom Vorstand genehmigt.",
     "acceptedAnswers": [
-      "änderung"
+      "unsere geplante änderung"
     ],
     "fullSentence": "Unsere geplante Änderung wurde vom Vorstand genehmigt.",
     "translation": "Our planned change was approved by the board.",
@@ -27875,11 +27875,11 @@
     "case": "nominativ",
     "determinerGroup": "kein",
     "determinerHint": "(kein, keine, keinem, keiner)",
-    "sentenceStart": "Eine schlechte ",
-    "targetAnswer": "Haltung",
+    "sentenceStart": "",
+    "targetAnswer": "Eine schlechte Haltung",
     "sentenceEnd": " kann zu Rückenschmerzen führen.",
     "acceptedAnswers": [
-      "haltung"
+      "eine schlechte haltung"
     ],
     "fullSentence": "Eine schlechte Haltung kann zu Rückenschmerzen führen.",
     "translation": "Bad posture can lead to back pain.",
@@ -27935,11 +27935,11 @@
     "case": "nominativ",
     "determinerGroup": "poss",
     "determinerHint": "(mein, meiner, meinem, meine)",
-    "sentenceStart": "Meine ",
-    "targetAnswer": "Waffe",
+    "sentenceStart": "",
+    "targetAnswer": "Meine Waffe",
     "sentenceEnd": " ist immer geladen.",
     "acceptedAnswers": [
-      "waffe"
+      "meine waffe"
     ],
     "fullSentence": "Meine Waffe ist immer geladen.",
     "translation": "My weapon is always loaded.",
@@ -27955,11 +27955,11 @@
     "case": "nominativ",
     "determinerGroup": "dies",
     "determinerHint": "(dieser, diese, diesem, diesen)",
-    "sentenceStart": "Diese ",
-    "targetAnswer": "Ware",
+    "sentenceStart": "",
+    "targetAnswer": "Diese Ware",
     "sentenceEnd": " ist von höchster Qualität.",
     "acceptedAnswers": [
-      "ware"
+      "diese ware"
     ],
     "fullSentence": "Diese Ware ist von höchster Qualität.",
     "translation": "This merchandise is of the highest quality.",
@@ -27975,11 +27975,11 @@
     "case": "nominativ",
     "determinerGroup": "solch",
     "determinerHint": "(solche, solcher, solches, solchem)",
-    "sentenceStart": "Solche ",
-    "targetAnswer": "Ahnung",
+    "sentenceStart": "",
+    "targetAnswer": "Solche Ahnung",
     "sentenceEnd": " hatte ich nicht.",
     "acceptedAnswers": [
-      "ahnung"
+      "solche ahnung"
     ],
     "fullSentence": "Solche Ahnung hatte ich nicht.",
     "translation": "I had no such idea.",
@@ -27995,11 +27995,11 @@
     "case": "nominativ",
     "determinerGroup": "ander",
     "determinerHint": "(andere, anderer, anderes, anderem)",
-    "sentenceStart": "Eine andere ",
-    "targetAnswer": "Einführung",
+    "sentenceStart": "",
+    "targetAnswer": "Eine andere Einführung",
     "sentenceEnd": " wäre besser gewesen.",
     "acceptedAnswers": [
-      "einführung"
+      "eine andere einführung"
     ],
     "fullSentence": "Eine andere Einführung wäre besser gewesen.",
     "translation": "A different introduction would have been better.",
@@ -28015,11 +28015,11 @@
     "case": "nominativ",
     "determinerGroup": "kein",
     "determinerHint": "(kein, keine, keinem, keiner)",
-    "sentenceStart": "Keine ",
-    "targetAnswer": "Fahrt",
+    "sentenceStart": "",
+    "targetAnswer": "Keine Fahrt",
     "sentenceEnd": " ist zu weit für ihn.",
     "acceptedAnswers": [
-      "fahrt"
+      "keine fahrt"
     ],
     "fullSentence": "Keine Fahrt ist zu weit für ihn.",
     "translation": "No journey is too far for him.",
@@ -28075,11 +28075,11 @@
     "case": "nominativ",
     "determinerGroup": "poss",
     "determinerHint": "(mein, meiner, meinem, meine)",
-    "sentenceStart": "Seine ",
-    "targetAnswer": "Länge",
+    "sentenceStart": "",
+    "targetAnswer": "Seine Länge",
     "sentenceEnd": " ist beeindruckend.",
     "acceptedAnswers": [
-      "länge"
+      "seine länge"
     ],
     "fullSentence": "Seine Länge ist beeindruckend.",
     "translation": "Its length is impressive.",
@@ -28095,11 +28095,11 @@
     "case": "nominativ",
     "determinerGroup": "dies",
     "determinerHint": "(dieser, diese, diesem, diesen)",
-    "sentenceStart": "Dieses ",
-    "targetAnswer": "Loch",
+    "sentenceStart": "",
+    "targetAnswer": "Dieses Loch",
     "sentenceEnd": " muss repariert werden.",
     "acceptedAnswers": [
-      "loch"
+      "dieses loch"
     ],
     "fullSentence": "Dieses Loch muss repariert werden.",
     "translation": "This hole needs to be repaired.",
@@ -28135,11 +28135,11 @@
     "case": "nominativ",
     "determinerGroup": "ander",
     "determinerHint": "(andere, anderer, anderes, anderem)",
-    "sentenceStart": "Anderer ",
-    "targetAnswer": "Regen",
+    "sentenceStart": "",
+    "targetAnswer": "Anderer Regen",
     "sentenceEnd": " wäre jetzt besser.",
     "acceptedAnswers": [
-      "regen"
+      "anderer regen"
     ],
     "fullSentence": "Anderer Regen wäre jetzt besser.",
     "translation": "Different rain would be better now.",
@@ -28155,11 +28155,11 @@
     "case": "nominativ",
     "determinerGroup": "kein",
     "determinerHint": "(kein, keine, keinem, keiner)",
-    "sentenceStart": "Kein ",
-    "targetAnswer": "Spieler",
+    "sentenceStart": "",
+    "targetAnswer": "Kein Spieler",
     "sentenceEnd": " war so gut wie er.",
     "acceptedAnswers": [
-      "spieler"
+      "kein spieler"
     ],
     "fullSentence": "Kein Spieler war so gut wie er.",
     "translation": "No player was as good as him.",
@@ -30275,11 +30275,11 @@
     "case": "nominativ",
     "determinerGroup": "poss",
     "determinerHint": "(mein, meiner, meinem, meine)",
-    "sentenceStart": "Ihre ",
-    "targetAnswer": "Fotografie",
+    "sentenceStart": "",
+    "targetAnswer": "Ihre Fotografie",
     "sentenceEnd": " hat den Wettbewerb gewonnen.",
     "acceptedAnswers": [
-      "fotografie"
+      "ihre fotografie"
     ],
     "fullSentence": "Ihre Fotografie hat den Wettbewerb gewonnen.",
     "translation": "Her photography won the competition.",
@@ -30295,11 +30295,11 @@
     "case": "nominativ",
     "determinerGroup": "dies",
     "determinerHint": "(dieser, diese, diesem, diesen)",
-    "sentenceStart": "Dieser ",
-    "targetAnswer": "Hersteller",
+    "sentenceStart": "",
+    "targetAnswer": "Dieser Hersteller",
     "sentenceEnd": " ist bekannt für seine Qualität.",
     "acceptedAnswers": [
-      "hersteller"
+      "dieser hersteller"
     ],
     "fullSentence": "Dieser Hersteller ist bekannt für seine Qualität.",
     "translation": "This manufacturer is known for its quality.",
@@ -30315,11 +30315,11 @@
     "case": "nominativ",
     "determinerGroup": "solch",
     "determinerHint": "(solche, solcher, solches, solchem)",
-    "sentenceStart": "Solches ",
-    "targetAnswer": "Holz",
+    "sentenceStart": "",
+    "targetAnswer": "Solches Holz",
     "sentenceEnd": " ist sehr selten.",
     "acceptedAnswers": [
-      "holz"
+      "solches holz"
     ],
     "fullSentence": "Solches Holz ist sehr selten.",
     "translation": "Such wood is very rare.",
@@ -30335,11 +30335,11 @@
     "case": "nominativ",
     "determinerGroup": "ander",
     "determinerHint": "(andere, anderer, anderes, anderem)",
-    "sentenceStart": "Eine andere ",
-    "targetAnswer": "Kombination",
+    "sentenceStart": "",
+    "targetAnswer": "Eine andere Kombination",
     "sentenceEnd": " wäre vielleicht besser gewesen.",
     "acceptedAnswers": [
-      "kombination"
+      "eine andere kombination"
     ],
     "fullSentence": "Eine andere Kombination wäre vielleicht besser gewesen.",
     "translation": "Another combination might have been better.",
@@ -30355,11 +30355,11 @@
     "case": "nominativ",
     "determinerGroup": "kein",
     "determinerHint": "(kein, keine, keinem, keiner)",
-    "sentenceStart": "Keine ",
-    "targetAnswer": "Liste",
+    "sentenceStart": "",
+    "targetAnswer": "Keine Liste",
     "sentenceEnd": " ist vollständig ohne diesen Namen.",
     "acceptedAnswers": [
-      "liste"
+      "keine liste"
     ],
     "fullSentence": "Keine Liste ist vollständig ohne diesen Namen.",
     "translation": "No list is complete without this name.",
@@ -30415,11 +30415,11 @@
     "case": "nominativ",
     "determinerGroup": "poss",
     "determinerHint": "(mein, meiner, meinem, meine)",
-    "sentenceStart": "Sein ",
-    "targetAnswer": "Schicksal",
+    "sentenceStart": "",
+    "targetAnswer": "Sein Schicksal",
     "sentenceEnd": " bewegte viele Menschen.",
     "acceptedAnswers": [
-      "schicksal"
+      "sein schicksal"
     ],
     "fullSentence": "Sein Schicksal bewegte viele Menschen.",
     "translation": "His fate moved many people.",
@@ -30435,11 +30435,11 @@
     "case": "nominativ",
     "determinerGroup": "dies",
     "determinerHint": "(dieser, diese, diesem, diesen)",
-    "sentenceStart": "Diese ",
-    "targetAnswer": "Schrift",
+    "sentenceStart": "",
+    "targetAnswer": "Diese Schrift",
     "sentenceEnd": " ist schwer zu lesen.",
     "acceptedAnswers": [
-      "schrift"
+      "diese schrift"
     ],
     "fullSentence": "Diese Schrift ist schwer zu lesen.",
     "translation": "This script is hard to read.",
@@ -30475,11 +30475,11 @@
     "case": "nominativ",
     "determinerGroup": "ander",
     "determinerHint": "(andere, anderer, anderes, anderem)",
-    "sentenceStart": "Ein anderer ",
-    "targetAnswer": "Verlag",
+    "sentenceStart": "",
+    "targetAnswer": "Ein anderer Verlag",
     "sentenceEnd": " hat das Buch veröffentlicht.",
     "acceptedAnswers": [
-      "verlag"
+      "ein anderer verlag"
     ],
     "fullSentence": "Ein anderer Verlag hat das Buch veröffentlicht.",
     "translation": "Another publisher published the book.",
@@ -30495,11 +30495,11 @@
     "case": "nominativ",
     "determinerGroup": "kein",
     "determinerHint": "(kein, keine, keinem, keiner)",
-    "sentenceStart": "Kein ",
-    "targetAnswer": "Zeitraum",
+    "sentenceStart": "",
+    "targetAnswer": "Kein Zeitraum",
     "sentenceEnd": " ist zu kurz für eine gute Planung.",
     "acceptedAnswers": [
-      "zeitraum"
+      "kein zeitraum"
     ],
     "fullSentence": "Kein Zeitraum ist zu kurz für eine gute Planung.",
     "translation": "No period is too short for good planning.",
@@ -30555,11 +30555,11 @@
     "case": "nominativ",
     "determinerGroup": "poss",
     "determinerHint": "(mein, meiner, meinem, meine)",
-    "sentenceStart": "Sein ",
-    "targetAnswer": "Detail",
+    "sentenceStart": "",
+    "targetAnswer": "Sein Detail",
     "sentenceEnd": " war beeindruckend.",
     "acceptedAnswers": [
-      "detail"
+      "sein detail"
     ],
     "fullSentence": "Sein Detail war beeindruckend.",
     "translation": "His detail was impressive.",
@@ -32675,11 +32675,11 @@
     "case": "nominativ",
     "determinerGroup": "ander",
     "determinerHint": "(andere, anderer, anderes, anderem)",
-    "sentenceStart": "Eine andere ",
-    "targetAnswer": "Arbeitslosigkeit",
+    "sentenceStart": "",
+    "targetAnswer": "Eine andere Arbeitslosigkeit",
     "sentenceEnd": " ist in dieser Region kaum vorstellbar.",
     "acceptedAnswers": [
-      "arbeitslosigkeit"
+      "eine andere arbeitslosigkeit"
     ],
     "fullSentence": "Eine andere Arbeitslosigkeit ist in dieser Region kaum vorstellbar.",
     "translation": "Another unemployment rate is hardly imaginable in this region.",
@@ -32695,11 +32695,11 @@
     "case": "nominativ",
     "determinerGroup": "kein",
     "determinerHint": "(kein, keine, keinem, keiner)",
-    "sentenceStart": "Keine ",
-    "targetAnswer": "Beobachtung",
+    "sentenceStart": "",
+    "targetAnswer": "Keine Beobachtung",
     "sentenceEnd": " konnte diese Theorie bestätigen.",
     "acceptedAnswers": [
-      "beobachtung"
+      "keine beobachtung"
     ],
     "fullSentence": "Keine Beobachtung konnte diese Theorie bestätigen.",
     "translation": "No observation could confirm this theory.",
@@ -32715,11 +32715,11 @@
     "case": "nominativ",
     "determinerGroup": "def",
     "determinerHint": "(der, die, das, dem, den, des)",
-    "sentenceStart": "Der wichtigste ",
-    "targetAnswer": "Bestandteil",
+    "sentenceStart": "",
+    "targetAnswer": "Der wichtigste Bestandteil",
     "sentenceEnd": " der Lösung fehlt noch.",
     "acceptedAnswers": [
-      "bestandteil"
+      "der wichtigste bestandteil"
     ],
     "fullSentence": "Der wichtigste Bestandteil der Lösung fehlt noch.",
     "translation": "The most important component of the solution is still missing.",
@@ -32735,11 +32735,11 @@
     "case": "nominativ",
     "determinerGroup": "indef",
     "determinerHint": "(ein, einem, einer, eines)",
-    "sentenceStart": "Eine hohe ",
-    "targetAnswer": "Beteiligung",
+    "sentenceStart": "",
+    "targetAnswer": "Eine hohe Beteiligung",
     "sentenceEnd": " ist für den Erfolg entscheidend.",
     "acceptedAnswers": [
-      "beteiligung"
+      "eine hohe beteiligung"
     ],
     "fullSentence": "Eine hohe Beteiligung ist für den Erfolg entscheidend.",
     "translation": "A high participation is crucial for success.",
@@ -32755,11 +32755,11 @@
     "case": "nominativ",
     "determinerGroup": "poss",
     "determinerHint": "(mein, meiner, meinem, meine)",
-    "sentenceStart": "Ihre ",
-    "targetAnswer": "Bewertung",
+    "sentenceStart": "",
+    "targetAnswer": "Ihre Bewertung",
     "sentenceEnd": " war sehr positiv.",
     "acceptedAnswers": [
-      "bewertung"
+      "ihre bewertung"
     ],
     "fullSentence": "Ihre Bewertung war sehr positiv.",
     "translation": "Her evaluation was very positive.",
@@ -32775,11 +32775,11 @@
     "case": "nominativ",
     "determinerGroup": "dies",
     "determinerHint": "(dieser, diese, diesem, diesen)",
-    "sentenceStart": "Diese ",
-    "targetAnswer": "Bezeichnung",
+    "sentenceStart": "",
+    "targetAnswer": "Diese Bezeichnung",
     "sentenceEnd": " ist nicht mehr gebräuchlich.",
     "acceptedAnswers": [
-      "bezeichnung"
+      "diese bezeichnung"
     ],
     "fullSentence": "Diese Bezeichnung ist nicht mehr gebräuchlich.",
     "translation": "This designation is no longer common.",
@@ -32815,11 +32815,11 @@
     "case": "nominativ",
     "determinerGroup": "ander",
     "determinerHint": "(andere, anderer, anderes, anderem)",
-    "sentenceStart": "Ein anderer ",
-    "targetAnswer": "Gebrauch",
+    "sentenceStart": "",
+    "targetAnswer": "Ein anderer Gebrauch",
     "sentenceEnd": " des Werkzeugs ist nicht vorgesehen.",
     "acceptedAnswers": [
-      "gebrauch"
+      "ein anderer gebrauch"
     ],
     "fullSentence": "Ein anderer Gebrauch des Werkzeugs ist nicht vorgesehen.",
     "translation": "Another use of the tool is not intended.",
@@ -32835,11 +32835,11 @@
     "case": "nominativ",
     "determinerGroup": "kein",
     "determinerHint": "(kein, keine, keinem, keiner)",
-    "sentenceStart": "Kein ",
-    "targetAnswer": "Geschäftsführer",
+    "sentenceStart": "",
+    "targetAnswer": "Kein Geschäftsführer",
     "sentenceEnd": " würde das so entscheiden.",
     "acceptedAnswers": [
-      "geschäftsführer"
+      "kein geschäftsführer"
     ],
     "fullSentence": "Kein Geschäftsführer würde das so entscheiden.",
     "translation": "No managing director would decide that way.",
@@ -32855,11 +32855,11 @@
     "case": "nominativ",
     "determinerGroup": "def",
     "determinerHint": "(der, die, das, dem, den, des)",
-    "sentenceStart": "Der amtierende ",
-    "targetAnswer": "Ministerpräsident",
+    "sentenceStart": "",
+    "targetAnswer": "Der amtierende Ministerpräsident",
     "sentenceEnd": " hielt eine Rede.",
     "acceptedAnswers": [
-      "ministerpräsident"
+      "der amtierende ministerpräsident"
     ],
     "fullSentence": "Der amtierende Ministerpräsident hielt eine Rede.",
     "translation": "The incumbent prime minister gave a speech.",
@@ -32875,11 +32875,11 @@
     "case": "nominativ",
     "determinerGroup": "indef",
     "determinerHint": "(ein, einem, einer, eines)",
-    "sentenceStart": "Ein großer ",
-    "targetAnswer": "Nutzen",
+    "sentenceStart": "",
+    "targetAnswer": "Ein großer Nutzen",
     "sentenceEnd": " ergibt sich aus dieser Methode.",
     "acceptedAnswers": [
-      "nutzen"
+      "ein großer nutzen"
     ],
     "fullSentence": "Ein großer Nutzen ergibt sich aus dieser Methode.",
     "translation": "A great benefit results from this method.",
@@ -32895,11 +32895,11 @@
     "case": "nominativ",
     "determinerGroup": "poss",
     "determinerHint": "(mein, meiner, meinem, meine)",
-    "sentenceStart": "Sein guter ",
-    "targetAnswer": "Ruf",
+    "sentenceStart": "",
+    "targetAnswer": "Sein guter Ruf",
     "sentenceEnd": " eilt ihm voraus.",
     "acceptedAnswers": [
-      "ruf"
+      "sein guter ruf"
     ],
     "fullSentence": "Sein guter Ruf eilt ihm voraus.",
     "translation": "His good reputation precedes him.",
@@ -32915,11 +32915,11 @@
     "case": "nominativ",
     "determinerGroup": "dies",
     "determinerHint": "(dieser, diese, diesem, diesen)",
-    "sentenceStart": "Dieser ",
-    "targetAnswer": "Russe",
+    "sentenceStart": "",
+    "targetAnswer": "Dieser Russe",
     "sentenceEnd": " ist ein bekannter Wissenschaftler.",
     "acceptedAnswers": [
-      "russe"
+      "dieser russe"
     ],
     "fullSentence": "Dieser Russe ist ein bekannter Wissenschaftler.",
     "translation": "This Russian is a well-known scientist.",
@@ -32955,11 +32955,11 @@
     "case": "nominativ",
     "determinerGroup": "ander",
     "determinerHint": "(andere, anderer, anderes, anderem)",
-    "sentenceStart": "Ein anderer ",
-    "targetAnswer": "Standard",
+    "sentenceStart": "",
+    "targetAnswer": "Ein anderer Standard",
     "sentenceEnd": " ist hier nicht akzeptabel.",
     "acceptedAnswers": [
-      "standard"
+      "ein anderer standard"
     ],
     "fullSentence": "Ein anderer Standard ist hier nicht akzeptabel.",
     "translation": "Another standard is not acceptable here.",
@@ -36575,11 +36575,11 @@
     "case": "nominativ",
     "determinerGroup": "poss",
     "determinerHint": "(mein, meiner, meinem, meine)",
-    "sentenceStart": "Meine ",
-    "targetAnswer": "Kündigung",
+    "sentenceStart": "",
+    "targetAnswer": "Meine Kündigung",
     "sentenceEnd": " wurde heute Morgen eingereicht.",
     "acceptedAnswers": [
-      "kündigung"
+      "meine kündigung"
     ],
     "fullSentence": "Meine Kündigung wurde heute Morgen eingereicht.",
     "translation": "My resignation was submitted this morning.",
@@ -36595,11 +36595,11 @@
     "case": "nominativ",
     "determinerGroup": "dies",
     "determinerHint": "(dieser, diese, diesem, diesen)",
-    "sentenceStart": "Dieser ",
-    "targetAnswer": "Mut",
+    "sentenceStart": "",
+    "targetAnswer": "Dieser Mut",
     "sentenceEnd": " hat ihn weit gebracht.",
     "acceptedAnswers": [
-      "mut"
+      "dieser mut"
     ],
     "fullSentence": "Dieser Mut hat ihn weit gebracht.",
     "translation": "This courage has brought him far.",
@@ -36655,11 +36655,11 @@
     "case": "nominativ",
     "determinerGroup": "kein",
     "determinerHint": "(kein, keine, keinem, keiner)",
-    "sentenceStart": "Keine ",
-    "targetAnswer": "Ressource",
+    "sentenceStart": "",
+    "targetAnswer": "Keine Ressource",
     "sentenceEnd": " ist unendlich.",
     "acceptedAnswers": [
-      "ressource"
+      "keine ressource"
     ],
     "fullSentence": "Keine Ressource ist unendlich.",
     "translation": "No resource is infinite.",
@@ -36715,11 +36715,11 @@
     "case": "nominativ",
     "determinerGroup": "poss",
     "determinerHint": "(mein, meiner, meinem, meine)",
-    "sentenceStart": "Meine ",
-    "targetAnswer": "Scheibe",
+    "sentenceStart": "",
+    "targetAnswer": "Meine Scheibe",
     "sentenceEnd": " ist zerbrochen.",
     "acceptedAnswers": [
-      "scheibe"
+      "meine scheibe"
     ],
     "fullSentence": "Meine Scheibe ist zerbrochen.",
     "translation": "My window pane is broken.",
@@ -36735,11 +36735,11 @@
     "case": "nominativ",
     "determinerGroup": "dies",
     "determinerHint": "(dieser, diese, diesem, diesen)",
-    "sentenceStart": "Diese ",
-    "targetAnswer": "Stille",
+    "sentenceStart": "",
+    "targetAnswer": "Diese Stille",
     "sentenceEnd": " war unerträglich.",
     "acceptedAnswers": [
-      "stille"
+      "diese stille"
     ],
     "fullSentence": "Diese Stille war unerträglich.",
     "translation": "This silence was unbearable.",
@@ -36755,11 +36755,11 @@
     "case": "nominativ",
     "determinerGroup": "solch",
     "determinerHint": "(solche, solcher, solches, solchem)",
-    "sentenceStart": "Solcher ",
-    "targetAnswer": "Stress",
+    "sentenceStart": "",
+    "targetAnswer": "Solcher Stress",
     "sentenceEnd": " ist ungesund.",
     "acceptedAnswers": [
-      "stress"
+      "solcher stress"
     ],
     "fullSentence": "Solcher Stress ist ungesund.",
     "translation": "Such stress is unhealthy.",
@@ -36795,11 +36795,11 @@
     "case": "nominativ",
     "determinerGroup": "kein",
     "determinerHint": "(kein, keine, keinem, keiner)",
-    "sentenceStart": "Kein ",
-    "targetAnswer": "Transport",
+    "sentenceStart": "",
+    "targetAnswer": "Kein Transport",
     "sentenceEnd": " war möglich.",
     "acceptedAnswers": [
-      "transport"
+      "kein transport"
     ],
     "fullSentence": "Kein Transport war möglich.",
     "translation": "No transport was possible.",
@@ -36855,11 +36855,11 @@
     "case": "nominativ",
     "determinerGroup": "poss",
     "determinerHint": "(mein, meiner, meinem, meine)",
-    "sentenceStart": "Sein ",
-    "targetAnswer": "Vorgehen",
+    "sentenceStart": "",
+    "targetAnswer": "Sein Vorgehen",
     "sentenceEnd": " war sehr ungewöhnlich.",
     "acceptedAnswers": [
-      "vorgehen"
+      "sein vorgehen"
     ],
     "fullSentence": "Sein Vorgehen war sehr ungewöhnlich.",
     "translation": "His approach was very unusual.",
@@ -38675,11 +38675,11 @@
     "case": "nominativ",
     "determinerGroup": "poss",
     "determinerHint": "(mein, meiner, meinem, meine)",
-    "sentenceStart": "Mein ",
-    "targetAnswer": "Gesichtspunkt",
+    "sentenceStart": "",
+    "targetAnswer": "Mein Gesichtspunkt",
     "sentenceEnd": " ist, dass wir die Sache anders angehen sollten.",
     "acceptedAnswers": [
-      "gesichtspunkt"
+      "mein gesichtspunkt"
     ],
     "fullSentence": "Mein Gesichtspunkt ist, dass wir die Sache anders angehen sollten.",
     "translation": "My point of view is that we should approach the matter differently.",
@@ -38695,11 +38695,11 @@
     "case": "nominativ",
     "determinerGroup": "dies",
     "determinerHint": "(dieser, diese, diesem, diesen)",
-    "sentenceStart": "Diese ",
-    "targetAnswer": "Herkunft",
+    "sentenceStart": "",
+    "targetAnswer": "Diese Herkunft",
     "sentenceEnd": " ist für viele Menschen von großer Bedeutung.",
     "acceptedAnswers": [
-      "herkunft"
+      "diese herkunft"
     ],
     "fullSentence": "Diese Herkunft ist für viele Menschen von großer Bedeutung.",
     "translation": "This origin is of great importance to many people.",
@@ -38715,11 +38715,11 @@
     "case": "nominativ",
     "determinerGroup": "solch",
     "determinerHint": "(solche, solcher, solches, solchem)",
-    "sentenceStart": "Eine solche ",
-    "targetAnswer": "Hochzeit",
+    "sentenceStart": "",
+    "targetAnswer": "Eine solche Hochzeit",
     "sentenceEnd": " erlebt man nicht alle Tage.",
     "acceptedAnswers": [
-      "hochzeit"
+      "eine solche hochzeit"
     ],
     "fullSentence": "Eine solche Hochzeit erlebt man nicht alle Tage.",
     "translation": "You don't experience such a wedding every day.",
@@ -38735,11 +38735,11 @@
     "case": "nominativ",
     "determinerGroup": "ander",
     "determinerHint": "(andere, anderer, anderes, anderem)",
-    "sentenceStart": "Ein anderer ",
-    "targetAnswer": "Hunger",
+    "sentenceStart": "",
+    "targetAnswer": "Ein anderer Hunger",
     "sentenceEnd": " treibt ihn an.",
     "acceptedAnswers": [
-      "hunger"
+      "ein anderer hunger"
     ],
     "fullSentence": "Ein anderer Hunger treibt ihn an.",
     "translation": "A different kind of hunger drives him.",
@@ -38755,11 +38755,11 @@
     "case": "nominativ",
     "determinerGroup": "kein",
     "determinerHint": "(kein, keine, keinem, keiner)",
-    "sentenceStart": "Keine ",
-    "targetAnswer": "Konjunktur",
+    "sentenceStart": "",
+    "targetAnswer": "Keine Konjunktur",
     "sentenceEnd": " hält ewig an.",
     "acceptedAnswers": [
-      "konjunktur"
+      "keine konjunktur"
     ],
     "fullSentence": "Keine Konjunktur hält ewig an.",
     "translation": "No economic boom lasts forever.",
@@ -38815,11 +38815,11 @@
     "case": "nominativ",
     "determinerGroup": "poss",
     "determinerHint": "(mein, meiner, meinem, meine)",
-    "sentenceStart": "Sein ",
-    "targetAnswer": "Lebensjahr",
+    "sentenceStart": "",
+    "targetAnswer": "Sein Lebensjahr",
     "sentenceEnd": " war von vielen Veränderungen geprägt.",
     "acceptedAnswers": [
-      "lebensjahr"
+      "sein lebensjahr"
     ],
     "fullSentence": "Sein Lebensjahr war von vielen Veränderungen geprägt.",
     "translation": "His year of life was marked by many changes.",
@@ -38835,11 +38835,11 @@
     "case": "nominativ",
     "determinerGroup": "dies",
     "determinerHint": "(dieser, diese, diesem, diesen)",
-    "sentenceStart": "Dieses ",
-    "targetAnswer": "Medium",
+    "sentenceStart": "",
+    "targetAnswer": "Dieses Medium",
     "sentenceEnd": " ist sehr einflussreich.",
     "acceptedAnswers": [
-      "medium"
+      "dieses medium"
     ],
     "fullSentence": "Dieses Medium ist sehr einflussreich.",
     "translation": "This medium is very influential.",
@@ -38855,11 +38855,11 @@
     "case": "nominativ",
     "determinerGroup": "solch",
     "determinerHint": "(solche, solcher, solches, solchem)",
-    "sentenceStart": "Eine solche ",
-    "targetAnswer": "Mischung",
+    "sentenceStart": "",
+    "targetAnswer": "Eine solche Mischung",
     "sentenceEnd": " ist einzigartig.",
     "acceptedAnswers": [
-      "mischung"
+      "eine solche mischung"
     ],
     "fullSentence": "Eine solche Mischung ist einzigartig.",
     "translation": "Such a mixture is unique.",
@@ -38875,11 +38875,11 @@
     "case": "nominativ",
     "determinerGroup": "ander",
     "determinerHint": "(andere, anderer, anderes, anderem)",
-    "sentenceStart": "Ein anderes ",
-    "targetAnswer": "Muster",
+    "sentenceStart": "",
+    "targetAnswer": "Ein anderes Muster",
     "sentenceEnd": " wäre vielleicht besser gewesen.",
     "acceptedAnswers": [
-      "muster"
+      "ein anderes muster"
     ],
     "fullSentence": "Ein anderes Muster wäre vielleicht besser gewesen.",
     "translation": "A different pattern might have been better.",
@@ -38895,11 +38895,11 @@
     "case": "nominativ",
     "determinerGroup": "kein",
     "determinerHint": "(kein, keine, keinem, keiner)",
-    "sentenceStart": "Kein ",
-    "targetAnswer": "Nachfolger",
+    "sentenceStart": "",
+    "targetAnswer": "Kein Nachfolger",
     "sentenceEnd": " konnte seine Fußstapfen füllen.",
     "acceptedAnswers": [
-      "nachfolger"
+      "kein nachfolger"
     ],
     "fullSentence": "Kein Nachfolger konnte seine Fußstapfen füllen.",
     "translation": "No successor could fill his shoes.",
@@ -38955,11 +38955,11 @@
     "case": "nominativ",
     "determinerGroup": "poss",
     "determinerHint": "(mein, meiner, meinem, meine)",
-    "sentenceStart": "Sein ",
-    "targetAnswer": "Protest",
+    "sentenceStart": "",
+    "targetAnswer": "Sein Protest",
     "sentenceEnd": " blieb ungehört.",
     "acceptedAnswers": [
-      "protest"
+      "sein protest"
     ],
     "fullSentence": "Sein Protest blieb ungehört.",
     "translation": "His protest went unheard.",
@@ -42875,11 +42875,11 @@
     "case": "nominativ",
     "determinerGroup": "poss",
     "determinerHint": "(mein, meiner, meinem, meine)",
-    "sentenceStart": "Meine ",
-    "targetAnswer": "Rente",
+    "sentenceStart": "",
+    "targetAnswer": "Meine Rente",
     "sentenceEnd": " reicht kaum zum Leben.",
     "acceptedAnswers": [
-      "rente"
+      "meine rente"
     ],
     "fullSentence": "Meine Rente reicht kaum zum Leben.",
     "translation": "My pension is barely enough to live on.",
@@ -42895,11 +42895,11 @@
     "case": "nominativ",
     "determinerGroup": "dies",
     "determinerHint": "(dieser, diese, diesem, diesen)",
-    "sentenceStart": "Diese ",
-    "targetAnswer": "Show",
+    "sentenceStart": "",
+    "targetAnswer": "Diese Show",
     "sentenceEnd": " war wirklich beeindruckend.",
     "acceptedAnswers": [
-      "show"
+      "diese show"
     ],
     "fullSentence": "Diese Show war wirklich beeindruckend.",
     "translation": "This show was really impressive.",
@@ -42935,11 +42935,11 @@
     "case": "nominativ",
     "determinerGroup": "ander",
     "determinerHint": "(andere, anderer, anderes, anderem)",
-    "sentenceStart": "Eine andere ",
-    "targetAnswer": "Unterscheidung",
+    "sentenceStart": "",
+    "targetAnswer": "Eine andere Unterscheidung",
     "sentenceEnd": " ist hier nicht relevant.",
     "acceptedAnswers": [
-      "unterscheidung"
+      "eine andere unterscheidung"
     ],
     "fullSentence": "Eine andere Unterscheidung ist hier nicht relevant.",
     "translation": "Another distinction is not relevant here.",
@@ -42955,11 +42955,11 @@
     "case": "nominativ",
     "determinerGroup": "kein",
     "determinerHint": "(kein, keine, keinem, keiner)",
-    "sentenceStart": "Kein ",
-    "targetAnswer": "Wähler",
+    "sentenceStart": "",
+    "targetAnswer": "Kein Wähler",
     "sentenceEnd": " möchte betrogen werden.",
     "acceptedAnswers": [
-      "wähler"
+      "kein wähler"
     ],
     "fullSentence": "Kein Wähler möchte betrogen werden.",
     "translation": "No voter wants to be cheated.",
@@ -43015,11 +43015,11 @@
     "case": "nominativ",
     "determinerGroup": "poss",
     "determinerHint": "(mein, meiner, meinem, meine)",
-    "sentenceStart": "Mein ",
-    "targetAnswer": "Zins",
+    "sentenceStart": "",
+    "targetAnswer": "Mein Zins",
     "sentenceEnd": " ist sehr niedrig.",
     "acceptedAnswers": [
-      "zins"
+      "mein zins"
     ],
     "fullSentence": "Mein Zins ist sehr niedrig.",
     "translation": "My interest rate is very low.",
@@ -43035,11 +43035,11 @@
     "case": "nominativ",
     "determinerGroup": "dies",
     "determinerHint": "(dieser, diese, diesem, diesen)",
-    "sentenceStart": "Diese ",
-    "targetAnswer": "Zone",
+    "sentenceStart": "",
+    "targetAnswer": "Diese Zone",
     "sentenceEnd": " ist für Fußgänger reserviert.",
     "acceptedAnswers": [
-      "zone"
+      "diese zone"
     ],
     "fullSentence": "Diese Zone ist für Fußgänger reserviert.",
     "translation": "This zone is reserved for pedestrians.",
@@ -43075,11 +43075,11 @@
     "case": "nominativ",
     "determinerGroup": "ander",
     "determinerHint": "(andere, anderer, anderes, anderem)",
-    "sentenceStart": "Eine andere ",
-    "targetAnswer": "Agentur",
+    "sentenceStart": "",
+    "targetAnswer": "Eine andere Agentur",
     "sentenceEnd": " hat das Projekt übernommen.",
     "acceptedAnswers": [
-      "agentur"
+      "eine andere agentur"
     ],
     "fullSentence": "Eine andere Agentur hat das Projekt übernommen.",
     "translation": "Another agency has taken over the project.",
@@ -43095,11 +43095,11 @@
     "case": "nominativ",
     "determinerGroup": "kein",
     "determinerHint": "(kein, keine, keinem, keiner)",
-    "sentenceStart": "Keine ",
-    "targetAnswer": "Akademie",
+    "sentenceStart": "",
+    "targetAnswer": "Keine Akademie",
     "sentenceEnd": " kann dieses Wissen vermitteln.",
     "acceptedAnswers": [
-      "akademie"
+      "keine akademie"
     ],
     "fullSentence": "Keine Akademie kann dieses Wissen vermitteln.",
     "translation": "No academy can impart this knowledge.",
@@ -43155,11 +43155,11 @@
     "case": "nominativ",
     "determinerGroup": "poss",
     "determinerHint": "(mein, meiner, meinem, meine)",
-    "sentenceStart": "Meine ",
-    "targetAnswer": "Auflage",
+    "sentenceStart": "",
+    "targetAnswer": "Meine Auflage",
     "sentenceEnd": " ist, dass du pünktlich bist.",
     "acceptedAnswers": [
-      "auflage"
+      "meine auflage"
     ],
     "fullSentence": "Meine Auflage ist, dass du pünktlich bist.",
     "translation": "My condition is that you are on time.",
@@ -44975,11 +44975,11 @@
     "case": "nominativ",
     "determinerGroup": "poss",
     "determinerHint": "(mein, meiner, meinem, meine)",
-    "sentenceStart": "Meine ",
-    "targetAnswer": "Zunahme",
+    "sentenceStart": "",
+    "targetAnswer": "Meine Zunahme",
     "sentenceEnd": " an Gewicht ist besorgniserregend.",
     "acceptedAnswers": [
-      "zunahme"
+      "meine zunahme"
     ],
     "fullSentence": "Meine Zunahme an Gewicht ist besorgniserregend.",
     "translation": "My weight gain is concerning.",
@@ -44995,11 +44995,11 @@
     "case": "nominativ",
     "determinerGroup": "dies",
     "determinerHint": "(dieser, diese, diesem, diesen)",
-    "sentenceStart": "Diese ",
-    "targetAnswer": "Ablehnung",
+    "sentenceStart": "",
+    "targetAnswer": "Diese Ablehnung",
     "sentenceEnd": " hat mich sehr enttäuscht.",
     "acceptedAnswers": [
-      "ablehnung"
+      "diese ablehnung"
     ],
     "fullSentence": "Diese Ablehnung hat mich sehr enttäuscht.",
     "translation": "This rejection disappointed me greatly.",
@@ -45015,11 +45015,11 @@
     "case": "nominativ",
     "determinerGroup": "solch",
     "determinerHint": "(solche, solcher, solches, solchem)",
-    "sentenceStart": "Eine solche ",
-    "targetAnswer": "Abstimmung",
+    "sentenceStart": "",
+    "targetAnswer": "Eine solche Abstimmung",
     "sentenceEnd": " ist selten.",
     "acceptedAnswers": [
-      "abstimmung"
+      "eine solche abstimmung"
     ],
     "fullSentence": "Eine solche Abstimmung ist selten.",
     "translation": "Such a vote is rare.",
@@ -45035,11 +45035,11 @@
     "case": "nominativ",
     "determinerGroup": "ander",
     "determinerHint": "(andere, anderer, anderes, anderem)",
-    "sentenceStart": "Eine andere ",
-    "targetAnswer": "Anordnung",
+    "sentenceStart": "",
+    "targetAnswer": "Eine andere Anordnung",
     "sentenceEnd": " der Möbel wäre besser.",
     "acceptedAnswers": [
-      "anordnung"
+      "eine andere anordnung"
     ],
     "fullSentence": "Eine andere Anordnung der Möbel wäre besser.",
     "translation": "A different arrangement of the furniture would be better.",
@@ -45055,11 +45055,11 @@
     "case": "nominativ",
     "determinerGroup": "kein",
     "determinerHint": "(kein, keine, keinem, keiner)",
-    "sentenceStart": "Keine ",
-    "targetAnswer": "Anregung",
+    "sentenceStart": "",
+    "targetAnswer": "Keine Anregung",
     "sentenceEnd": " wurde angenommen.",
     "acceptedAnswers": [
-      "anregung"
+      "keine anregung"
     ],
     "fullSentence": "Keine Anregung wurde angenommen.",
     "translation": "No suggestion was accepted.",
@@ -45115,11 +45115,11 @@
     "case": "nominativ",
     "determinerGroup": "poss",
     "determinerHint": "(mein, meiner, meinem, meine)",
-    "sentenceStart": "Ihre ",
-    "targetAnswer": "Bakterie",
+    "sentenceStart": "",
+    "targetAnswer": "Ihre Bakterie",
     "sentenceEnd": " ist resistent gegen Antibiotika.",
     "acceptedAnswers": [
-      "bakterie"
+      "ihre bakterie"
     ],
     "fullSentence": "Ihre Bakterie ist resistent gegen Antibiotika.",
     "translation": "Her bacteria is resistant to antibiotics.",
@@ -45135,11 +45135,11 @@
     "case": "nominativ",
     "determinerGroup": "dies",
     "determinerHint": "(dieser, diese, diesem, diesen)",
-    "sentenceStart": "Dieser ",
-    "targetAnswer": "Befund",
+    "sentenceStart": "",
+    "targetAnswer": "Dieser Befund",
     "sentenceEnd": " ist alarmierend.",
     "acceptedAnswers": [
-      "befund"
+      "dieser befund"
     ],
     "fullSentence": "Dieser Befund ist alarmierend.",
     "translation": "This finding is alarming.",
@@ -45155,11 +45155,11 @@
     "case": "nominativ",
     "determinerGroup": "solch",
     "determinerHint": "(solche, solcher, solches, solchem)",
-    "sentenceStart": "Eine solche ",
-    "targetAnswer": "Bemühung",
+    "sentenceStart": "",
+    "targetAnswer": "Eine solche Bemühung",
     "sentenceEnd": " verdient Anerkennung.",
     "acceptedAnswers": [
-      "bemühung"
+      "eine solche bemühung"
     ],
     "fullSentence": "Eine solche Bemühung verdient Anerkennung.",
     "translation": "Such an effort deserves recognition.",
@@ -45175,11 +45175,11 @@
     "case": "nominativ",
     "determinerGroup": "ander",
     "determinerHint": "(andere, anderer, anderes, anderem)",
-    "sentenceStart": "Ein anderer ",
-    "targetAnswer": "Beobachter",
+    "sentenceStart": "",
+    "targetAnswer": "Ein anderer Beobachter",
     "sentenceEnd": " sah die Situation anders.",
     "acceptedAnswers": [
-      "beobachter"
+      "ein anderer beobachter"
     ],
     "fullSentence": "Ein anderer Beobachter sah die Situation anders.",
     "translation": "Another observer saw the situation differently.",
@@ -45195,11 +45195,11 @@
     "case": "nominativ",
     "determinerGroup": "kein",
     "determinerHint": "(kein, keine, keinem, keiner)",
-    "sentenceStart": "Kein ",
-    "targetAnswer": "Berater",
+    "sentenceStart": "",
+    "targetAnswer": "Kein Berater",
     "sentenceEnd": " konnte ihm helfen.",
     "acceptedAnswers": [
-      "berater"
+      "kein berater"
     ],
     "fullSentence": "Kein Berater konnte ihm helfen.",
     "translation": "No consultant could help him.",
@@ -45255,11 +45255,11 @@
     "case": "nominativ",
     "determinerGroup": "poss",
     "determinerHint": "(mein, meiner, meinem, meine)",
-    "sentenceStart": "Ihre ",
-    "targetAnswer": "Datenverarbeitung",
+    "sentenceStart": "",
+    "targetAnswer": "Ihre Datenverarbeitung",
     "sentenceEnd": " ist sehr effizient.",
     "acceptedAnswers": [
-      "datenverarbeitung"
+      "ihre datenverarbeitung"
     ],
     "fullSentence": "Ihre Datenverarbeitung ist sehr effizient.",
     "translation": "Their data processing is very efficient.",
@@ -47075,11 +47075,11 @@
     "case": "nominativ",
     "determinerGroup": "poss",
     "determinerHint": "(mein, meiner, meinem, meine)",
-    "sentenceStart": "Unsere ",
-    "targetAnswer": "Rezession",
+    "sentenceStart": "",
+    "targetAnswer": "Unsere Rezession",
     "sentenceEnd": " hat viele Unternehmen hart getroffen.",
     "acceptedAnswers": [
-      "rezession"
+      "unsere rezession"
     ],
     "fullSentence": "Unsere Rezession hat viele Unternehmen hart getroffen.",
     "translation": "Our recession has hit many companies hard.",
@@ -47095,11 +47095,11 @@
     "case": "nominativ",
     "determinerGroup": "dies",
     "determinerHint": "(dieser, diese, diesem, diesen)",
-    "sentenceStart": "Dieser ",
-    "targetAnswer": "Salon",
+    "sentenceStart": "",
+    "targetAnswer": "Dieser Salon",
     "sentenceEnd": " ist bekannt für seine exzellenten Haarschnitte.",
     "acceptedAnswers": [
-      "salon"
+      "dieser salon"
     ],
     "fullSentence": "Dieser Salon ist bekannt für seine exzellenten Haarschnitte.",
     "translation": "This salon is known for its excellent haircuts.",
@@ -47115,11 +47115,11 @@
     "case": "nominativ",
     "determinerGroup": "solch",
     "determinerHint": "(solche, solcher, solches, solchem)",
-    "sentenceStart": "Eine solche ",
-    "targetAnswer": "Schauspielerin",
+    "sentenceStart": "",
+    "targetAnswer": "Eine solche Schauspielerin",
     "sentenceEnd": " sieht man selten auf der Bühne.",
     "acceptedAnswers": [
-      "schauspielerin"
+      "eine solche schauspielerin"
     ],
     "fullSentence": "Eine solche Schauspielerin sieht man selten auf der Bühne.",
     "translation": "One rarely sees such an actress on stage.",
@@ -47135,11 +47135,11 @@
     "case": "nominativ",
     "determinerGroup": "ander",
     "determinerHint": "(andere, anderer, anderes, anderem)",
-    "sentenceStart": "Eine andere ",
-    "targetAnswer": "Schwangerschaft",
+    "sentenceStart": "",
+    "targetAnswer": "Eine andere Schwangerschaft",
     "sentenceEnd": " wäre jetzt nicht ideal.",
     "acceptedAnswers": [
-      "schwangerschaft"
+      "eine andere schwangerschaft"
     ],
     "fullSentence": "Eine andere Schwangerschaft wäre jetzt nicht ideal.",
     "translation": "Another pregnancy would not be ideal right now.",
@@ -47155,11 +47155,11 @@
     "case": "nominativ",
     "determinerGroup": "kein",
     "determinerHint": "(kein, keine, keinem, keiner)",
-    "sentenceStart": "Kein ",
-    "targetAnswer": "Schweiß",
+    "sentenceStart": "",
+    "targetAnswer": "Kein Schweiß",
     "sentenceEnd": " ohne Fleiß.",
     "acceptedAnswers": [
-      "schweiß"
+      "kein schweiß"
     ],
     "fullSentence": "Kein Schweiß ohne Fleiß.",
     "translation": "No pain, no gain. (Literally: No sweat without effort.)",
@@ -47215,11 +47215,11 @@
     "case": "nominativ",
     "determinerGroup": "poss",
     "determinerHint": "(mein, meiner, meinem, meine)",
-    "sentenceStart": "Sein ",
-    "targetAnswer": "Spektrum",
+    "sentenceStart": "",
+    "targetAnswer": "Sein Spektrum",
     "sentenceEnd": " an Fähigkeiten ist beeindruckend.",
     "acceptedAnswers": [
-      "spektrum"
+      "sein spektrum"
     ],
     "fullSentence": "Sein Spektrum an Fähigkeiten ist beeindruckend.",
     "translation": "His spectrum of skills is impressive.",
@@ -47235,11 +47235,11 @@
     "case": "nominativ",
     "determinerGroup": "dies",
     "determinerHint": "(dieser, diese, diesem, diesen)",
-    "sentenceStart": "Diese ",
-    "targetAnswer": "Steckdose",
+    "sentenceStart": "",
+    "targetAnswer": "Diese Steckdose",
     "sentenceEnd": " funktioniert nicht.",
     "acceptedAnswers": [
-      "steckdose"
+      "diese steckdose"
     ],
     "fullSentence": "Diese Steckdose funktioniert nicht.",
     "translation": "This outlet doesn't work.",
@@ -47255,11 +47255,11 @@
     "case": "nominativ",
     "determinerGroup": "solch",
     "determinerHint": "(solche, solcher, solches, solchem)",
-    "sentenceStart": "Eine solche ",
-    "targetAnswer": "Tafel",
+    "sentenceStart": "",
+    "targetAnswer": "Eine solche Tafel",
     "sentenceEnd": " ist ideal für Präsentationen.",
     "acceptedAnswers": [
-      "tafel"
+      "eine solche tafel"
     ],
     "fullSentence": "Eine solche Tafel ist ideal für Präsentationen.",
     "translation": "Such a board is ideal for presentations.",
@@ -47275,11 +47275,11 @@
     "case": "nominativ",
     "determinerGroup": "ander",
     "determinerHint": "(andere, anderer, anderes, anderem)",
-    "sentenceStart": "Ein anderes ",
-    "targetAnswer": "Tagebuch",
+    "sentenceStart": "",
+    "targetAnswer": "Ein anderes Tagebuch",
     "sentenceEnd": " habe ich nicht gefunden.",
     "acceptedAnswers": [
-      "tagebuch"
+      "ein anderes tagebuch"
     ],
     "fullSentence": "Ein anderes Tagebuch habe ich nicht gefunden.",
     "translation": "I didn't find another diary.",
@@ -47295,11 +47295,11 @@
     "case": "nominativ",
     "determinerGroup": "kein",
     "determinerHint": "(kein, keine, keinem, keiner)",
-    "sentenceStart": "Kein ",
-    "targetAnswer": "Talent",
+    "sentenceStart": "",
+    "targetAnswer": "Kein Talent",
     "sentenceEnd": " geht unbemerkt verloren.",
     "acceptedAnswers": [
-      "talent"
+      "kein talent"
     ],
     "fullSentence": "Kein Talent geht unbemerkt verloren.",
     "translation": "No talent is lost unnoticed.",
@@ -47355,11 +47355,11 @@
     "case": "nominativ",
     "determinerGroup": "poss",
     "determinerHint": "(mein, meiner, meinem, meine)",
-    "sentenceStart": "Sein ",
-    "targetAnswer": "Ursprung",
+    "sentenceStart": "",
+    "targetAnswer": "Sein Ursprung",
     "sentenceEnd": " ist unbekannt.",
     "acceptedAnswers": [
-      "ursprung"
+      "sein ursprung"
     ],
     "fullSentence": "Sein Ursprung ist unbekannt.",
     "translation": "Its origin is unknown.",
@@ -47455,11 +47455,11 @@
     "case": "nominativ",
     "determinerGroup": "poss",
     "determinerHint": "(mein, meiner, meinem, meine)",
-    "sentenceStart": "Ihre ",
-    "targetAnswer": "Verordnung",
+    "sentenceStart": "",
+    "targetAnswer": "Ihre Verordnung",
     "sentenceEnd": " wurde von der Regierung erlassen.",
     "acceptedAnswers": [
-      "verordnung"
+      "ihre verordnung"
     ],
     "fullSentence": "Ihre Verordnung wurde von der Regierung erlassen.",
     "translation": "Their regulation was issued by the government.",
@@ -47475,11 +47475,11 @@
     "case": "nominativ",
     "determinerGroup": "dies",
     "determinerHint": "(dieser, diese, diesem, diesen)",
-    "sentenceStart": "Dieser ",
-    "targetAnswer": "Vormittag",
+    "sentenceStart": "",
+    "targetAnswer": "Dieser Vormittag",
     "sentenceEnd": " war besonders produktiv.",
     "acceptedAnswers": [
-      "vormittag"
+      "dieser vormittag"
     ],
     "fullSentence": "Dieser Vormittag war besonders produktiv.",
     "translation": "This morning was particularly productive.",
@@ -47535,11 +47535,11 @@
     "case": "nominativ",
     "determinerGroup": "kein",
     "determinerHint": "(kein, keine, keinem, keiner)",
-    "sentenceStart": "Kein ",
-    "targetAnswer": "Zinssatz",
+    "sentenceStart": "",
+    "targetAnswer": "Kein Zinssatz",
     "sentenceEnd": " ist derzeit attraktiv.",
     "acceptedAnswers": [
-      "zinssatz"
+      "kein zinssatz"
     ],
     "fullSentence": "Kein Zinssatz ist derzeit attraktiv.",
     "translation": "No interest rate is currently attractive.",
@@ -47595,11 +47595,11 @@
     "case": "nominativ",
     "determinerGroup": "poss",
     "determinerHint": "(mein, meiner, meinem, meine)",
-    "sentenceStart": "Ihre ",
-    "targetAnswer": "Abschreibung",
+    "sentenceStart": "",
+    "targetAnswer": "Ihre Abschreibung",
     "sentenceEnd": " wurde vom Finanzamt anerkannt.",
     "acceptedAnswers": [
-      "abschreibung"
+      "ihre abschreibung"
     ],
     "fullSentence": "Ihre Abschreibung wurde vom Finanzamt anerkannt.",
     "translation": "Their depreciation was recognized by the tax office.",
@@ -47615,11 +47615,11 @@
     "case": "nominativ",
     "determinerGroup": "dies",
     "determinerHint": "(dieser, diese, diesem, diesen)",
-    "sentenceStart": "Diese ",
-    "targetAnswer": "Achse",
+    "sentenceStart": "",
+    "targetAnswer": "Diese Achse",
     "sentenceEnd": " ist für das Fahrzeug entscheidend.",
     "acceptedAnswers": [
-      "achse"
+      "diese achse"
     ],
     "fullSentence": "Diese Achse ist für das Fahrzeug entscheidend.",
     "translation": "This axle is crucial for the vehicle.",
@@ -49175,11 +49175,11 @@
     "case": "nominativ",
     "determinerGroup": "poss",
     "determinerHint": "(mein, meiner, meinem, meine)",
-    "sentenceStart": "Ihre ",
-    "targetAnswer": "Erhaltung",
+    "sentenceStart": "",
+    "targetAnswer": "Ihre Erhaltung",
     "sentenceEnd": " ist von größter Bedeutung für die Umwelt.",
     "acceptedAnswers": [
-      "erhaltung"
+      "ihre erhaltung"
     ],
     "fullSentence": "Ihre Erhaltung ist von größter Bedeutung für die Umwelt.",
     "translation": "Its preservation is of utmost importance for the environment.",
@@ -49195,11 +49195,11 @@
     "case": "nominativ",
     "determinerGroup": "dies",
     "determinerHint": "(dieser, diese, diesem, diesen)",
-    "sentenceStart": "Dieser ",
-    "targetAnswer": "Erzähler",
+    "sentenceStart": "",
+    "targetAnswer": "Dieser Erzähler",
     "sentenceEnd": " hat eine faszinierende Stimme.",
     "acceptedAnswers": [
-      "erzähler"
+      "dieser erzähler"
     ],
     "fullSentence": "Dieser Erzähler hat eine faszinierende Stimme.",
     "translation": "This narrator has a fascinating voice.",
@@ -49215,11 +49215,11 @@
     "case": "nominativ",
     "determinerGroup": "solch",
     "determinerHint": "(solche, solcher, solches, solchem)",
-    "sentenceStart": "Ein solcher ",
-    "targetAnswer": "Fachbereich",
+    "sentenceStart": "",
+    "targetAnswer": "Ein solcher Fachbereich",
     "sentenceEnd": " ist für die Forschung unerlässlich.",
     "acceptedAnswers": [
-      "fachbereich"
+      "ein solcher fachbereich"
     ],
     "fullSentence": "Ein solcher Fachbereich ist für die Forschung unerlässlich.",
     "translation": "Such a department is essential for research.",
@@ -49235,11 +49235,11 @@
     "case": "nominativ",
     "determinerGroup": "ander",
     "determinerHint": "(andere, anderer, anderes, anderem)",
-    "sentenceStart": "Andere ",
-    "targetAnswer": "Fachleute",
+    "sentenceStart": "",
+    "targetAnswer": "Andere Fachleute",
     "sentenceEnd": " haben diese Theorie bestätigt.",
     "acceptedAnswers": [
-      "fachleute"
+      "andere fachleute"
     ],
     "fullSentence": "Andere Fachleute haben diese Theorie bestätigt.",
     "translation": "Other experts have confirmed this theory.",
@@ -49255,11 +49255,11 @@
     "case": "nominativ",
     "determinerGroup": "kein",
     "determinerHint": "(kein, keine, keinem, keiner)",
-    "sentenceStart": "Keine ",
-    "targetAnswer": "Fakten",
+    "sentenceStart": "",
+    "targetAnswer": "Keine Fakten",
     "sentenceEnd": " wurden uns vorenthalten.",
     "acceptedAnswers": [
-      "fakten"
+      "keine fakten"
     ],
     "fullSentence": "Keine Fakten wurden uns vorenthalten.",
     "translation": "No facts were withheld from us.",
@@ -49315,11 +49315,11 @@
     "case": "nominativ",
     "determinerGroup": "poss",
     "determinerHint": "(mein, meiner, meinem, meine)",
-    "sentenceStart": "Unser ",
-    "targetAnswer": "Forum",
+    "sentenceStart": "",
+    "targetAnswer": "Unser Forum",
     "sentenceEnd": " bietet eine Plattform für Diskussionen.",
     "acceptedAnswers": [
-      "forum"
+      "unser forum"
     ],
     "fullSentence": "Unser Forum bietet eine Plattform für Diskussionen.",
     "translation": "Our forum offers a platform for discussions.",
@@ -49335,11 +49335,11 @@
     "case": "nominativ",
     "determinerGroup": "dies",
     "determinerHint": "(dieser, diese, diesem, diesen)",
-    "sentenceStart": "Diese ",
-    "targetAnswer": "Frequenz",
+    "sentenceStart": "",
+    "targetAnswer": "Diese Frequenz",
     "sentenceEnd": " wird für Radioübertragungen genutzt.",
     "acceptedAnswers": [
-      "frequenz"
+      "diese frequenz"
     ],
     "fullSentence": "Diese Frequenz wird für Radioübertragungen genutzt.",
     "translation": "This frequency is used for radio transmissions.",
@@ -49355,11 +49355,11 @@
     "case": "nominativ",
     "determinerGroup": "solch",
     "determinerHint": "(solche, solcher, solches, solchem)",
-    "sentenceStart": "Eine solche ",
-    "targetAnswer": "Gerechtigkeit",
+    "sentenceStart": "",
+    "targetAnswer": "Eine solche Gerechtigkeit",
     "sentenceEnd": " ist schwer zu erreichen.",
     "acceptedAnswers": [
-      "gerechtigkeit"
+      "eine solche gerechtigkeit"
     ],
     "fullSentence": "Eine solche Gerechtigkeit ist schwer zu erreichen.",
     "translation": "Such justice is difficult to achieve.",
@@ -49375,11 +49375,11 @@
     "case": "nominativ",
     "determinerGroup": "ander",
     "determinerHint": "(andere, anderer, anderes, anderem)",
-    "sentenceStart": "Ein anderer ",
-    "targetAnswer": "Gipfel",
+    "sentenceStart": "",
+    "targetAnswer": "Ein anderer Gipfel",
     "sentenceEnd": " ist noch höher als dieser.",
     "acceptedAnswers": [
-      "gipfel"
+      "ein anderer gipfel"
     ],
     "fullSentence": "Ein anderer Gipfel ist noch höher als dieser.",
     "translation": "Another peak is even higher than this one.",
@@ -49395,11 +49395,11 @@
     "case": "nominativ",
     "determinerGroup": "kein",
     "determinerHint": "(kein, keine, keinem, keiner)",
-    "sentenceStart": "Kein ",
-    "targetAnswer": "Großteil",
+    "sentenceStart": "",
+    "targetAnswer": "Kein Großteil",
     "sentenceEnd": " der Bevölkerung war damit einverstanden.",
     "acceptedAnswers": [
-      "großteil"
+      "kein großteil"
     ],
     "fullSentence": "Kein Großteil der Bevölkerung war damit einverstanden.",
     "translation": "No large part of the population agreed with that.",
@@ -49455,11 +49455,11 @@
     "case": "nominativ",
     "determinerGroup": "poss",
     "determinerHint": "(mein, meiner, meinem, meine)",
-    "sentenceStart": "Unser ",
-    "targetAnswer": "Industrieland",
+    "sentenceStart": "",
+    "targetAnswer": "Unser Industrieland",
     "sentenceEnd": " ist auf Export angewiesen.",
     "acceptedAnswers": [
-      "industrieland"
+      "unser industrieland"
     ],
     "fullSentence": "Unser Industrieland ist auf Export angewiesen.",
     "translation": "Our industrial country is dependent on exports.",
@@ -49475,11 +49475,11 @@
     "case": "nominativ",
     "determinerGroup": "ander",
     "determinerHint": "(andere, anderer, anderes, anderem)",
-    "sentenceStart": "Eine andere ",
-    "targetAnswer": "Jagd",
+    "sentenceStart": "",
+    "targetAnswer": "Eine andere Jagd",
     "sentenceEnd": " ist viel spannender.",
     "acceptedAnswers": [
-      "jagd"
+      "eine andere jagd"
     ],
     "fullSentence": "Eine andere Jagd ist viel spannender.",
     "translation": "Another hunt is much more exciting.",
@@ -49495,11 +49495,11 @@
     "case": "nominativ",
     "determinerGroup": "kein",
     "determinerHint": "(kein, keine, keinem, keiner)",
-    "sentenceStart": "Keine ",
-    "targetAnswer": "Jahreszeit",
+    "sentenceStart": "",
+    "targetAnswer": "Keine Jahreszeit",
     "sentenceEnd": " ist so schön wie der Frühling.",
     "acceptedAnswers": [
-      "jahreszeit"
+      "keine jahreszeit"
     ],
     "fullSentence": "Keine Jahreszeit ist so schön wie der Frühling.",
     "translation": "No season is as beautiful as spring.",
@@ -49555,11 +49555,11 @@
     "case": "nominativ",
     "determinerGroup": "poss",
     "determinerHint": "(mein, meiner, meinem, meine)",
-    "sentenceStart": "Meine ",
-    "targetAnswer": "Lücke",
+    "sentenceStart": "",
+    "targetAnswer": "Meine Lücke",
     "sentenceEnd": " im Lebenslauf muss ich noch erklären.",
     "acceptedAnswers": [
-      "lücke"
+      "meine lücke"
     ],
     "fullSentence": "Meine Lücke im Lebenslauf muss ich noch erklären.",
     "translation": "I still have to explain my gap in my resume.",
@@ -49575,11 +49575,11 @@
     "case": "nominativ",
     "determinerGroup": "dies",
     "determinerHint": "(dieser, diese, diesem, diesen)",
-    "sentenceStart": "Dieses ",
-    "targetAnswer": "Metall",
+    "sentenceStart": "",
+    "targetAnswer": "Dieses Metall",
     "sentenceEnd": " ist sehr widerstandsfähig.",
     "acceptedAnswers": [
-      "metall"
+      "dieses metall"
     ],
     "fullSentence": "Dieses Metall ist sehr widerstandsfähig.",
     "translation": "This metal is very resistant.",
@@ -49595,11 +49595,11 @@
     "case": "nominativ",
     "determinerGroup": "solch",
     "determinerHint": "(solche, solcher, solches, solchem)",
-    "sentenceStart": "Solcher ",
-    "targetAnswer": "Missbrauch",
+    "sentenceStart": "",
+    "targetAnswer": "Solcher Missbrauch",
     "sentenceEnd": " ist inakzeptabel.",
     "acceptedAnswers": [
-      "missbrauch"
+      "solcher missbrauch"
     ],
     "fullSentence": "Solcher Missbrauch ist inakzeptabel.",
     "translation": "Such abuse is unacceptable.",
@@ -49615,11 +49615,11 @@
     "case": "nominativ",
     "determinerGroup": "ander",
     "determinerHint": "(andere, anderer, anderes, anderem)",
-    "sentenceStart": "Eine andere ",
-    "targetAnswer": "Motivation",
+    "sentenceStart": "",
+    "targetAnswer": "Eine andere Motivation",
     "sentenceEnd": " ist schwer zu finden.",
     "acceptedAnswers": [
-      "motivation"
+      "eine andere motivation"
     ],
     "fullSentence": "Eine andere Motivation ist schwer zu finden.",
     "translation": "Another motivation is hard to find.",
@@ -49635,11 +49635,11 @@
     "case": "nominativ",
     "determinerGroup": "kein",
     "determinerHint": "(kein, keine, keinem, keiner)",
-    "sentenceStart": "Keine ",
-    "targetAnswer": "Option",
+    "sentenceStart": "",
+    "targetAnswer": "Keine Option",
     "sentenceEnd": " scheint ideal zu sein.",
     "acceptedAnswers": [
-      "option"
+      "keine option"
     ],
     "fullSentence": "Keine Option scheint ideal zu sein.",
     "translation": "No option seems ideal.",
@@ -49695,11 +49695,11 @@
     "case": "nominativ",
     "determinerGroup": "poss",
     "determinerHint": "(mein, meiner, meinem, meine)",
-    "sentenceStart": "Mein ",
-    "targetAnswer": "Physiker",
+    "sentenceStart": "",
+    "targetAnswer": "Mein Physiker",
     "sentenceEnd": " hat eine neue Theorie entwickelt.",
     "acceptedAnswers": [
-      "physiker"
+      "mein physiker"
     ],
     "fullSentence": "Mein Physiker hat eine neue Theorie entwickelt.",
     "translation": "My physicist has developed a new theory.",
@@ -49715,11 +49715,11 @@
     "case": "nominativ",
     "determinerGroup": "dies",
     "determinerHint": "(dieser, diese, diesem, diesen)",
-    "sentenceStart": "Diese ",
-    "targetAnswer": "Pistole",
+    "sentenceStart": "",
+    "targetAnswer": "Diese Pistole",
     "sentenceEnd": " ist sehr alt.",
     "acceptedAnswers": [
-      "pistole"
+      "diese pistole"
     ],
     "fullSentence": "Diese Pistole ist sehr alt.",
     "translation": "This pistol is very old.",
@@ -49735,11 +49735,11 @@
     "case": "nominativ",
     "determinerGroup": "solch",
     "determinerHint": "(solche, solcher, solches, solchem)",
-    "sentenceStart": "Solche ",
-    "targetAnswer": "Reichweite",
+    "sentenceStart": "",
+    "targetAnswer": "Solche Reichweite",
     "sentenceEnd": " ist beeindruckend.",
     "acceptedAnswers": [
-      "reichweite"
+      "solche reichweite"
     ],
     "fullSentence": "Solche Reichweite ist beeindruckend.",
     "translation": "Such a range is impressive.",
@@ -49755,11 +49755,11 @@
     "case": "nominativ",
     "determinerGroup": "ander",
     "determinerHint": "(andere, anderer, anderes, anderem)",
-    "sentenceStart": "Eine andere ",
-    "targetAnswer": "Reparatur",
+    "sentenceStart": "",
+    "targetAnswer": "Eine andere Reparatur",
     "sentenceEnd": " wäre zu teuer gewesen.",
     "acceptedAnswers": [
-      "reparatur"
+      "eine andere reparatur"
     ],
     "fullSentence": "Eine andere Reparatur wäre zu teuer gewesen.",
     "translation": "Another repair would have been too expensive.",

@@ -5,6 +5,7 @@
   import { loadUserStats, saveUserStats, loadCardsMap, saveCardsMap, clearAllProgress } from './lib/storage';
   import { getDetailedGrammarExplanation } from './lib/grammarExplanation';
   import { isPersonOrProfession } from './lib/personNouns';
+  import { getDeterminerButtonGroups, type DeterminerButtonGroupResult } from './lib/buttonOptions';
 
   // Settings & modal state
   let showSettingsModal = false;
@@ -27,7 +28,8 @@
     totalMastered: 0,
     totalReviews: 0,
     correctAnswersCount: 0,
-    skipPeopleAndProfessions: false
+    skipPeopleAndProfessions: false,
+    inputMode: 'buttons'
   };
 
   // Session & Queue
@@ -39,6 +41,10 @@
 
   // Active interaction state
   let userInput = '';
+  let selectedPart1 = '';
+  let selectedPart2 = '';
+  let buttonWrongPart1 = false;
+  let buttonWrongPart2 = false;
   let isCorrect = false;
   let isRevealed = false;
   let showTranslation = false;
@@ -58,6 +64,8 @@
   $: currentExercise = sessionQueue.length > 0 && sessionQueue[currentExerciseIndex]
     ? allExercises.find(e => e.id === sessionQueue[currentExerciseIndex]) || null
     : null;
+
+  $: buttonGroups = currentExercise ? getDeterminerButtonGroups(currentExercise) : null;
 
   $: grammarBreakdown = currentExercise ? getDetailedGrammarExplanation(currentExercise) : null;
 
@@ -338,6 +346,10 @@
 
   function resetCardState() {
     userInput = '';
+    selectedPart1 = '';
+    selectedPart2 = '';
+    buttonWrongPart1 = false;
+    buttonWrongPart2 = false;
     isCorrect = false;
     isRevealed = false;
     showTranslation = false;
@@ -345,7 +357,76 @@
     if (inputRef) {
       inputRef.value = '';
     }
-    tick().then(focusInput);
+    if (userStats.inputMode === 'typing') {
+      tick().then(focusInput);
+    }
+  }
+
+  function handleSelectPart1(val: string) {
+    if (!currentExercise || !buttonGroups || isCorrect || isRevealed || isAutoAdvancing) return;
+
+    selectedPart1 = val;
+    buttonWrongPart1 = false;
+
+    if (buttonGroups.type === 'single') {
+      const isMatch = normalizeAnswer(val) === normalizeAnswer(buttonGroups.target1);
+      if (isMatch) {
+        markAsCorrect();
+      } else {
+        buttonWrongPart1 = true;
+        handleWrongSelection();
+      }
+    } else {
+      if (selectedPart2) {
+        checkTwoPartAnswer();
+      }
+    }
+  }
+
+  function handleSelectPart2(val: string) {
+    if (!currentExercise || !buttonGroups || isCorrect || isRevealed || isAutoAdvancing) return;
+    if (buttonGroups.type !== 'two-part') return;
+
+    selectedPart2 = val;
+    buttonWrongPart2 = false;
+
+    if (selectedPart1) {
+      checkTwoPartAnswer();
+    }
+  }
+
+  function checkTwoPartAnswer() {
+    if (!currentExercise || !buttonGroups || buttonGroups.type !== 'two-part') return;
+
+    const chosen = normalizeAnswer(selectedPart1 + ' ' + selectedPart2);
+    const target = normalizeAnswer(buttonGroups.target1 + ' ' + buttonGroups.target2);
+
+    const matchesAccepted = (currentExercise.acceptedAnswers || []).some(a => {
+      const aWords = a.trim().split(/\s+/);
+      const determinerCombo = aWords.slice(0, 2).join(' ');
+      return normalizeAnswer(determinerCombo) === chosen;
+    });
+
+    if (chosen === target || matchesAccepted) {
+      markAsCorrect();
+    } else {
+      buttonWrongPart1 = normalizeAnswer(selectedPart1) !== normalizeAnswer(buttonGroups.target1);
+      buttonWrongPart2 = normalizeAnswer(selectedPart2) !== normalizeAnswer(buttonGroups.target2);
+      handleWrongSelection();
+    }
+  }
+
+  function handleWrongSelection() {
+    if (!currentExercise || isCorrect || isRevealed) return;
+    isRevealed = true;
+
+    // Update FSRS card with 'again'
+    const card = cardsMap[currentExercise.id] || createNewCard(currentExercise.id);
+    cardsMap[currentExercise.id] = scheduleCard(card, 'again');
+    saveCardsMap(cardsMap);
+
+    // Re-insert current card at the end of sessionQueue so it's practiced again today
+    sessionQueue.push(currentExercise.id);
   }
 
   function focusInput() {
@@ -444,11 +525,13 @@
   }
 
   function handleKeydown(e: KeyboardEvent) {
-    // Space bar when input is empty triggers "Ich weiß das nicht"
-    if (e.code === 'Space' && userInput.trim() === '' && !isRevealed && !isCorrect) {
-      e.preventDefault();
-      handleDontKnow();
-      return;
+    // Space bar triggers "Ich weiß das nicht"
+    if (e.code === 'Space' && !isRevealed && !isCorrect) {
+      if (userStats.inputMode === 'buttons' || userInput.trim() === '') {
+        e.preventDefault();
+        handleDontKnow();
+        return;
+      }
     }
 
     // Enter when revealed moves to next card
@@ -470,6 +553,39 @@
       e.preventDefault();
       showTranslation = !showTranslation;
       return;
+    }
+
+    // Number keys 1-6 for Button Mode
+    if (userStats.inputMode === 'buttons' && buttonGroups && !isCorrect && !isRevealed) {
+      const num = parseInt(e.key, 10);
+      if (num >= 1 && num <= 6) {
+        e.preventDefault();
+        if (buttonGroups.type === 'single') {
+          const opt = buttonGroups.group1[num - 1];
+          if (opt) handleSelectPart1(opt);
+        } else {
+          // If part1 not yet selected, pick part1; if part1 selected, pick part2!
+          if (!selectedPart1) {
+            const opt1 = buttonGroups.group1[num - 1];
+            if (opt1) handleSelectPart1(opt1);
+          } else {
+            const opt2 = buttonGroups.group2[num - 1];
+            if (opt2) handleSelectPart2(opt2);
+          }
+        }
+        return;
+      }
+
+      // Backspace to undo selection
+      if (e.code === 'Backspace') {
+        if (selectedPart2) {
+          e.preventDefault();
+          selectedPart2 = '';
+        } else if (selectedPart1) {
+          e.preventDefault();
+          selectedPart1 = '';
+        }
+      }
     }
   }
 
@@ -846,8 +962,8 @@
         <!-- Active Exercise Card (Clean, modern elevation, no harsh borders) -->
         <div class="p-3.5 sm:p-7 rounded-2xl sm:rounded-3xl bg-white dark:bg-slate-900 shadow-sm space-y-2.5 sm:space-y-5 relative transition-all duration-200 {isCorrect ? 'ring-2 ring-emerald-500 bg-emerald-50/10' : ''}">
           
-          <!-- Top Row of Card: Tier Pill, Case Pill & Translation Toggle -->
-          <div class="flex items-center justify-between gap-2">
+          <!-- Top Row of Card: Tier Pill, Case Pill, Mode Switcher & Translation Toggle -->
+          <div class="flex items-center justify-between gap-2 flex-wrap">
             <div class="flex items-center gap-1.5">
               <!-- Tier Badge -->
               <span class="px-2 py-0.5 rounded-md text-[10px] sm:text-[11px] font-bold tracking-tight {getTierBadgeStyle(currentExercise.category)}">
@@ -859,16 +975,45 @@
               </span>
             </div>
 
-            <!-- Optional Translation Toggle -->
-            <button
-              type="button"
-              class="text-[11px] sm:text-xs text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition-colors flex items-center gap-1 cursor-pointer"
-              on:click={() => showTranslation = !showTranslation}
-              title="Englische Übersetzung einblenden (Tab-Taste)"
-            >
-              <span>{showTranslation ? 'Übersetzung verbergen' : 'Übersetzung anzeigen'}</span>
-              <span class="text-[9px] sm:text-[10px] opacity-60">[{showTranslation ? 'x' : 'Tab'}]</span>
-            </button>
+            <div class="flex items-center gap-2">
+              <!-- Mode Toggle: Knöpfe vs Tippen -->
+              <div class="inline-flex items-center p-0.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-[10px] sm:text-[11px] font-semibold shadow-2xs">
+                <button
+                  type="button"
+                  class="px-2 py-0.5 rounded-lg transition-all cursor-pointer flex items-center gap-1 {userStats.inputMode === 'buttons' ? 'bg-white dark:bg-slate-700 text-indigo-600 dark:text-indigo-300 font-bold shadow-2xs' : 'text-slate-500 hover:text-slate-800 dark:hover:text-slate-300'}"
+                  on:click={() => {
+                    userStats.inputMode = 'buttons';
+                    saveUserStats(userStats);
+                  }}
+                  title="Schnellauswahl per Knöpfe"
+                >
+                  <span>🔘 Knöpfe</span>
+                </button>
+                <button
+                  type="button"
+                  class="px-2 py-0.5 rounded-lg transition-all cursor-pointer flex items-center gap-1 {userStats.inputMode === 'typing' ? 'bg-white dark:bg-slate-700 text-indigo-600 dark:text-indigo-300 font-bold shadow-2xs' : 'text-slate-500 hover:text-slate-800 dark:hover:text-slate-300'}"
+                  on:click={() => {
+                    userStats.inputMode = 'typing';
+                    saveUserStats(userStats);
+                    tick().then(focusInput);
+                  }}
+                  title="Volltext-Tippen"
+                >
+                  <span>⌨️ Tippen</span>
+                </button>
+              </div>
+
+              <!-- Optional Translation Toggle -->
+              <button
+                type="button"
+                class="text-[11px] sm:text-xs text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition-colors flex items-center gap-1 cursor-pointer"
+                on:click={() => showTranslation = !showTranslation}
+                title="Englische Übersetzung einblenden (Tab-Taste)"
+              >
+                <span>{showTranslation ? 'Übersetzung verbergen' : 'Übersetzung anzeigen'}</span>
+                <span class="text-[9px] sm:text-[10px] opacity-60">[{showTranslation ? 'x' : 'Tab'}]</span>
+              </button>
+            </div>
           </div>
 
           <!-- Dedicated Nomen & Muster Bar: Single horizontal row on mobile, joint with vertical separator -->
@@ -913,6 +1058,21 @@
                 <span class="text-emerald-600 dark:text-emerald-400 font-bold bg-emerald-50 dark:bg-emerald-950/60 px-1.5 py-0.2 rounded-md sm:rounded-lg animate-in fade-in">
                   {currentExercise.targetAnswer} ✓
                 </span>
+              {:else if userStats.inputMode === 'buttons' && buttonGroups}
+                {#if buttonGroups.type === 'two-part'}
+                  <span class="inline-flex items-center gap-1.5 align-baseline">
+                    <span class="px-2.5 py-0.5 rounded-lg border-2 font-bold transition-all text-sm sm:text-base {selectedPart1 ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-950/40 text-indigo-700 dark:text-indigo-300' : 'border-dashed border-slate-300 dark:border-slate-600 text-slate-400'}">
+                      {selectedPart1 || '____'}
+                    </span>
+                    <span class="px-2.5 py-0.5 rounded-lg border-2 font-bold transition-all text-sm sm:text-base {selectedPart2 ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-950/40 text-indigo-700 dark:text-indigo-300' : 'border-dashed border-slate-300 dark:border-slate-600 text-slate-400'}">
+                      {selectedPart2 || '____'}
+                    </span>
+                  </span>
+                {:else}
+                  <span class="px-3 py-0.5 rounded-lg border-2 font-bold transition-all text-sm sm:text-base {selectedPart1 ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-950/40 text-indigo-700 dark:text-indigo-300' : 'border-dashed border-slate-300 dark:border-slate-600 text-slate-400'}">
+                    {selectedPart1 || '________'}
+                  </span>
+                {/if}
               {:else}
                 <span class="text-indigo-600 dark:text-indigo-400 font-bold bg-indigo-50 dark:bg-indigo-950/60 px-2 py-0.2 rounded-md sm:rounded-lg tracking-wider">
                   ________
@@ -932,60 +1092,163 @@
             {/if}
           </div>
 
-          <!-- Active Text Input Field: For full sentence typing -->
-          <div class="space-y-1">
-            <div class="relative">
-              <input
-                bind:this={inputRef}
-                type="text"
-                bind:value={userInput}
-                on:input={handleInput}
-                readonly={isCorrect || isAutoAdvancing}
-                placeholder="Ganzen Satz hier tippen..."
-                class="w-full text-base sm:text-lg px-3.5 py-2.5 sm:px-4 sm:py-3.5 rounded-xl sm:rounded-2xl bg-slate-100/90 dark:bg-slate-800/80 border-0 transition-all text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 shadow-2xs select-text {isCorrect 
-                  ? 'ring-2 ring-emerald-500 bg-emerald-50/20 text-emerald-800 dark:text-emerald-200' 
-                  : isRevealed 
-                  ? 'ring-2 ring-rose-400 bg-rose-50/20 text-rose-800 dark:text-rose-200' 
-                  : ''}"
-                style="-webkit-user-select: text; user-select: text;"
-                autocomplete="off"
-                autocorrect="off"
-                autocapitalize="none"
-                spellcheck="false"
-              />
+          {#if userStats.inputMode === 'buttons' && buttonGroups}
+            <!-- Button-Based Selection Mode -->
+            <div class="pt-1 sm:pt-2 space-y-3">
+              {#if buttonGroups.type === 'single'}
+                <div class="space-y-1.5">
+                  <div class="text-[10px] sm:text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider text-center">
+                    {buttonGroups.group1Title}
+                  </div>
+                  <div class="flex flex-wrap items-center justify-center gap-2">
+                    {#each buttonGroups.group1 as opt, idx}
+                      {@const isChosen = selectedPart1.toLowerCase() === opt.toLowerCase()}
+                      {@const isTarget = opt.toLowerCase() === buttonGroups.target1.toLowerCase()}
+                      <button
+                        type="button"
+                        disabled={isCorrect || isRevealed}
+                        class="min-w-[70px] sm:min-w-[85px] py-2.5 px-3.5 rounded-2xl text-sm sm:text-base font-bold transition-all cursor-pointer active:scale-95 shadow-xs flex items-center justify-center gap-1.5 {
+                          isCorrect && isChosen
+                            ? 'bg-emerald-600 text-white shadow-emerald-500/20'
+                            : isRevealed && isTarget
+                            ? 'bg-emerald-600 text-white ring-2 ring-emerald-400'
+                            : isRevealed && isChosen && buttonWrongPart1
+                            ? 'bg-rose-500 text-white'
+                            : isChosen
+                            ? 'bg-indigo-600 text-white shadow-xs'
+                            : 'bg-slate-100 hover:bg-slate-200/80 dark:bg-slate-800/90 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-100 border border-slate-200/60 dark:border-slate-700/60'
+                        }"
+                        on:click={() => handleSelectPart1(opt)}
+                      >
+                        <span>{opt}</span>
+                        <span class="text-[10px] opacity-40 font-mono hidden sm:inline">[{idx + 1}]</span>
+                      </button>
+                    {/each}
+                  </div>
+                </div>
+              {:else if buttonGroups.type === 'two-part'}
+                <div class="space-y-3.5">
+                  <!-- Group 1: Article -->
+                  <div class="space-y-1.5">
+                    <div class="text-[10px] sm:text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider text-center">
+                      1. {buttonGroups.group1Title}
+                    </div>
+                    <div class="flex flex-wrap items-center justify-center gap-1.5 sm:gap-2">
+                      {#each buttonGroups.group1 as opt, idx}
+                        {@const isChosen = selectedPart1.toLowerCase() === opt.toLowerCase()}
+                        {@const isTarget = opt.toLowerCase() === buttonGroups.target1.toLowerCase()}
+                        <button
+                          type="button"
+                          disabled={isCorrect || isRevealed}
+                          class="min-w-[62px] sm:min-w-[76px] py-2 px-2.5 sm:px-3 rounded-2xl text-xs sm:text-sm font-bold transition-all cursor-pointer active:scale-95 shadow-xs flex items-center justify-center gap-1 {
+                            isCorrect && isChosen
+                              ? 'bg-emerald-600 text-white shadow-emerald-500/20'
+                              : isRevealed && isTarget
+                              ? 'bg-emerald-600 text-white ring-2 ring-emerald-400'
+                              : isRevealed && isChosen && buttonWrongPart1
+                              ? 'bg-rose-500 text-white'
+                              : isChosen
+                              ? 'bg-indigo-600 text-white'
+                              : 'bg-slate-100 hover:bg-slate-200/80 dark:bg-slate-800/90 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-100 border border-slate-200/60 dark:border-slate-700/60'
+                          }"
+                          on:click={() => handleSelectPart1(opt)}
+                        >
+                          <span>{opt}</span>
+                          <span class="text-[10px] opacity-40 font-mono hidden sm:inline">[{idx + 1}]</span>
+                        </button>
+                      {/each}
+                    </div>
+                  </div>
 
-              {#if isCorrect}
-                <span class="absolute right-4 top-1/2 -translate-y-1/2 text-emerald-600 dark:text-emerald-400 text-lg font-black animate-in zoom-in">
-                  ✓
-                </span>
+                  <!-- Group 2: Adjective / Determiner Ending -->
+                  <div class="space-y-1.5">
+                    <div class="text-[10px] sm:text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider text-center">
+                      2. {buttonGroups.group2Title}
+                    </div>
+                    <div class="flex flex-wrap items-center justify-center gap-1.5 sm:gap-2">
+                      {#each buttonGroups.group2 as opt}
+                        {@const isChosen = selectedPart2.toLowerCase() === opt.toLowerCase()}
+                        {@const isTarget = opt.toLowerCase() === buttonGroups.target2.toLowerCase()}
+                        <button
+                          type="button"
+                          disabled={isCorrect || isRevealed}
+                          class="min-w-[62px] sm:min-w-[76px] py-2 px-2.5 sm:px-3 rounded-2xl text-xs sm:text-sm font-bold transition-all cursor-pointer active:scale-95 shadow-xs flex items-center justify-center gap-1 {
+                            isCorrect && isChosen
+                              ? 'bg-emerald-600 text-white shadow-emerald-500/20'
+                              : isRevealed && isTarget
+                              ? 'bg-emerald-600 text-white ring-2 ring-emerald-400'
+                              : isRevealed && isChosen && buttonWrongPart2
+                              ? 'bg-rose-500 text-white'
+                              : isChosen
+                              ? 'bg-indigo-600 text-white'
+                              : 'bg-slate-100 hover:bg-slate-200/80 dark:bg-slate-800/90 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-100 border border-slate-200/60 dark:border-slate-700/60'
+                          }"
+                          on:click={() => handleSelectPart2(opt)}
+                        >
+                          <span>{opt}</span>
+                        </button>
+                      {/each}
+                    </div>
+                  </div>
+                </div>
               {/if}
             </div>
+          {:else}
+            <!-- Active Text Input Field: For full sentence typing -->
+            <div class="space-y-1">
+              <div class="relative">
+                <input
+                  bind:this={inputRef}
+                  type="text"
+                  bind:value={userInput}
+                  on:input={handleInput}
+                  readonly={isCorrect || isAutoAdvancing}
+                  placeholder="Ganzen Satz hier tippen..."
+                  class="w-full text-base sm:text-lg px-3.5 py-2.5 sm:px-4 sm:py-3.5 rounded-xl sm:rounded-2xl bg-slate-100/90 dark:bg-slate-800/80 border-0 transition-all text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 shadow-2xs select-text {isCorrect 
+                    ? 'ring-2 ring-emerald-500 bg-emerald-50/20 text-emerald-800 dark:text-emerald-200' 
+                    : isRevealed 
+                    ? 'ring-2 ring-rose-400 bg-rose-50/20 text-rose-800 dark:text-rose-200' 
+                    : ''}"
+                  style="-webkit-user-select: text; user-select: text;"
+                  autocomplete="off"
+                  autocorrect="off"
+                  autocapitalize="none"
+                  spellcheck="false"
+                />
 
-            <!-- Signal if user typed only the missing part instead of the full sentence -->
-            {#if isTargetOnlyTyped && currentExercise}
-              <div class="p-3 rounded-2xl bg-amber-50/90 dark:bg-amber-950/40 border border-amber-200/80 dark:border-amber-800/60 text-amber-900 dark:text-amber-200 text-xs sm:text-sm flex items-center gap-2.5 animate-in fade-in slide-in-from-top-1 shadow-2xs">
-                <span class="text-base sm:text-lg flex-shrink-0">💡</span>
-                <div class="leading-snug">
-                  <span class="font-bold text-amber-800 dark:text-amber-300">Richtig erkannt!</span>
-                  <span class="opacity-90"> Bitte tippe aber den <strong>ganzen Satz</strong> zu Ende:</span>
-                  <div class="font-semibold text-slate-800 dark:text-slate-100 mt-1 select-text">
-                    „{currentExercise.fullSentence}“
+                {#if isCorrect}
+                  <span class="absolute right-4 top-1/2 -translate-y-1/2 text-emerald-600 dark:text-emerald-400 text-lg font-black animate-in zoom-in">
+                    ✓
+                  </span>
+                {/if}
+              </div>
+
+              <!-- Signal if user typed only the missing part instead of the full sentence -->
+              {#if isTargetOnlyTyped && currentExercise}
+                <div class="p-3 rounded-2xl bg-amber-50/90 dark:bg-amber-950/40 border border-amber-200/80 dark:border-amber-800/60 text-amber-900 dark:text-amber-200 text-xs sm:text-sm flex items-center gap-2.5 animate-in fade-in slide-in-from-top-1 shadow-2xs">
+                  <span class="text-base sm:text-lg flex-shrink-0">💡</span>
+                  <div class="leading-snug">
+                    <span class="font-bold text-amber-800 dark:text-amber-300">Richtig erkannt!</span>
+                    <span class="opacity-90"> Bitte tippe aber den <strong>ganzen Satz</strong> zu Ende:</span>
+                    <div class="font-semibold text-slate-800 dark:text-slate-100 mt-1 select-text">
+                      „{currentExercise.fullSentence}“
+                    </div>
                   </div>
                 </div>
-              </div>
-            {:else if isMissingArticle && currentExercise}
-              <div class="p-3 rounded-2xl bg-amber-50/90 dark:bg-amber-950/40 border border-amber-200/80 dark:border-amber-800/60 text-amber-900 dark:text-amber-200 text-xs sm:text-sm flex items-center gap-2.5 animate-in fade-in slide-in-from-top-1 shadow-2xs">
-                <span class="text-base sm:text-lg flex-shrink-0">⚠️</span>
-                <div class="leading-snug">
-                  <span class="font-bold text-amber-800 dark:text-amber-300">Artikel fehlt!</span>
-                  <span class="opacity-90"> Bitte setze auch den passenden Begleiter ein {#if currentExercise.determinerHint}<span class="font-mono text-[11px] font-semibold bg-amber-100 dark:bg-amber-900/60 px-1.5 py-0.5 rounded">{currentExercise.determinerHint}</span>{/if}:</span>
-                  <div class="font-semibold text-slate-800 dark:text-slate-100 mt-1 select-text">
-                    „{currentExercise.fullSentence}“
+              {:else if isMissingArticle && currentExercise}
+                <div class="p-3 rounded-2xl bg-amber-50/90 dark:bg-amber-950/40 border border-amber-200/80 dark:border-amber-800/60 text-amber-900 dark:text-amber-200 text-xs sm:text-sm flex items-center gap-2.5 animate-in fade-in slide-in-from-top-1 shadow-2xs">
+                  <span class="text-base sm:text-lg flex-shrink-0">⚠️</span>
+                  <div class="leading-snug">
+                    <span class="font-bold text-amber-800 dark:text-amber-300">Artikel fehlt!</span>
+                    <span class="opacity-90"> Bitte setze auch den passenden Begleiter ein {#if currentExercise.determinerHint}<span class="font-mono text-[11px] font-semibold bg-amber-100 dark:bg-amber-900/60 px-1.5 py-0.5 rounded">{currentExercise.determinerHint}</span>{/if}:</span>
+                    <div class="font-semibold text-slate-800 dark:text-slate-100 mt-1 select-text">
+                      „{currentExercise.fullSentence}“
+                    </div>
                   </div>
                 </div>
-              </div>
-            {/if}
-          </div>
+              {/if}
+            </div>
+          {/if}
 
           <!-- Explanation Pill (Shows on reveal or upon correct) -->
           {#if (isRevealed || isCorrect) && grammarBreakdown}
@@ -1077,7 +1340,7 @@
 
   <!-- Minimal Footer -->
   <footer class="max-w-3xl w-full mx-auto text-center py-4 text-xs text-slate-400 dark:text-slate-500">
-    <p>Tippe den ganzen Satz (z. B. <em>Wir betreten gerade den Raum.</em>) — springt bei richtiger Eingabe automatisch weiter.</p>
+    <p>Knopf-Modus: Wähle die passende Artikelform (Zahlentasten 1–6) &bull; Tipp-Modus: Den ganzen Satz tippen &bull; Springt automatisch weiter.</p>
   </footer>
 
 </div>
@@ -1196,6 +1459,40 @@
         >
           ✕
         </button>
+      </div>
+
+      <!-- Setting: Input Mode (Knöpfe vs Tippen) -->
+      <div class="space-y-1.5">
+        <span class="text-xs font-medium text-slate-600 dark:text-slate-400 block">
+          Eingabemodus:
+        </span>
+        <div class="grid grid-cols-2 gap-2">
+          <button
+            type="button"
+            class="py-2 px-3 rounded-xl text-xs font-semibold transition-all cursor-pointer flex items-center justify-center gap-1.5 {userStats.inputMode === 'buttons' 
+              ? 'bg-slate-900 dark:bg-white text-white dark:text-slate-900 shadow-xs' 
+              : 'bg-slate-100 dark:bg-slate-800/80 text-slate-700 dark:text-slate-300 hover:bg-slate-200/80 dark:hover:bg-slate-700'}"
+            on:click={() => {
+              userStats.inputMode = 'buttons';
+              saveUserStats(userStats);
+            }}
+          >
+            <span>🔘 Knöpfe (Schnell)</span>
+          </button>
+          <button
+            type="button"
+            class="py-2 px-3 rounded-xl text-xs font-semibold transition-all cursor-pointer flex items-center justify-center gap-1.5 {userStats.inputMode === 'typing' 
+              ? 'bg-slate-900 dark:bg-white text-white dark:text-slate-900 shadow-xs' 
+              : 'bg-slate-100 dark:bg-slate-800/80 text-slate-700 dark:text-slate-300 hover:bg-slate-200/80 dark:hover:bg-slate-700'}"
+            on:click={() => {
+              userStats.inputMode = 'typing';
+              saveUserStats(userStats);
+              tick().then(focusInput);
+            }}
+          >
+            <span>⌨️ Tippen (Satz)</span>
+          </button>
+        </div>
       </div>
 
       <!-- Setting: Daily Goal -->

@@ -24,7 +24,8 @@ export function loadUserStats(): UserStats {
     totalMastered: 0,
     totalReviews: 0,
     correctAnswersCount: 0,
-    skipPeopleAndProfessions: false
+    skipPeopleAndProfessions: false,
+    inputMode: 'buttons'
   };
 
   if (typeof localStorage === 'undefined') return defaultStats;
@@ -47,6 +48,9 @@ export function loadUserStats(): UserStats {
     }
     if (typeof parsed.skipPeopleAndProfessions !== 'boolean') {
       parsed.skipPeopleAndProfessions = false;
+    }
+    if (parsed.inputMode !== 'buttons' && parsed.inputMode !== 'typing') {
+      parsed.inputMode = 'buttons';
     }
 
     // Reset today's count if new day

@@ -49,4 +49,5 @@ export interface UserStats {
   totalReviews: number;
   correctAnswersCount: number;
   skipPeopleAndProfessions?: boolean; // Option to skip words representing persons/professions
+  inputMode?: 'buttons' | 'typing';   // 'buttons' (default) or 'typing'
 }
