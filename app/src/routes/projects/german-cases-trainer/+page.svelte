@@ -66,6 +66,16 @@
   $: sentencesPercent = Math.min(100, Math.round(((userStats.todaySentencesCompleted || 0) / dailySentencesGoal) * 100));
   $: progressPercent = wordsPercent;
 
+  $: exerciseById = new Map(allExercises.map(e => [e.id, e]));
+  $: newWordsCount = (() => {
+    const wordIds = new Set<number>();
+    for (const id of newQueue) {
+      const ex = exerciseById.get(id);
+      if (ex) wordIds.add(ex.wordId);
+    }
+    return wordIds.size;
+  })();
+
   function expandContractions(text: string): string {
     return text
       .replace(/\bim\b/gi, 'in dem')
@@ -746,7 +756,7 @@
       <div class="flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400 pt-1 flex-wrap gap-2">
         <div class="flex items-center gap-3">
           <span>Fällig: <strong class="text-amber-600 dark:text-amber-400">{dueQueue.length}</strong></span>
-          <span>Neu: <strong class="text-slate-700 dark:text-slate-300">{newQueue.length}</strong></span>
+          <span>Neu: <strong class="text-slate-700 dark:text-slate-300">{newWordsCount} Wörter</strong> <span class="text-[10px] opacity-70">({newQueue.length} Sätze)</span></span>
           <span>Gemeistert: <strong class="text-slate-700 dark:text-slate-300">{userStats.totalMastered}</strong></span>
         </div>
 
@@ -1226,6 +1236,7 @@
           type="button"
           role="switch"
           aria-checked={userStats.skipPeopleAndProfessions}
+          aria-label="Personen und Berufe überspringen"
           class="relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-hidden {userStats.skipPeopleAndProfessions ? 'bg-indigo-600' : 'bg-slate-200 dark:bg-slate-700'}"
           on:click={() => {
             userStats.skipPeopleAndProfessions = !userStats.skipPeopleAndProfessions;
