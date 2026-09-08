@@ -58,6 +58,7 @@
   // Visual cues
   let showConfettiCelebration = false;
   let activeTab: 'new' | 'review' = 'new';
+  let isMinimalMode = false;
 
   $: currentExercise = sessionQueue.length > 0 && sessionQueue[currentExerciseIndex]
     ? allExercises.find(e => e.id === sessionQueue[currentExerciseIndex]) || null
@@ -151,6 +152,11 @@
     userStats = loadUserStats();
     cardsMap = loadCardsMap();
     checkDailyReset();
+    if (typeof window !== 'undefined') {
+      try {
+        isMinimalMode = localStorage.getItem('cases_trainer_minimal_mode') === 'true';
+      } catch (e) {}
+    }
 
     const handleVisibilityOrFocus = () => {
       checkDailyReset();
@@ -250,6 +256,23 @@
     }
 
     return result;
+  }
+
+  function toggleMinimalMode() {
+    isMinimalMode = !isMinimalMode;
+    if (typeof window !== 'undefined') {
+      try {
+        localStorage.setItem('cases_trainer_minimal_mode', String(isMinimalMode));
+      } catch (e) {}
+    }
+  }
+
+  function startDailyWorkout() {
+    const { stats, didReset } = checkAndResetDailyProgress(userStats);
+    if (didReset) {
+      userStats = { ...stats };
+      applyFilterAndRebuildQueue();
+    }
   }
 
   function checkDailyReset() {
@@ -789,96 +812,155 @@
     </nav>
 
     <!-- Prominent Progress Bar & Daily Motivation Card -->
-    <section class="p-3 sm:p-5 rounded-xl sm:rounded-2xl bg-white dark:bg-slate-900/90 shadow-xs space-y-2.5 sm:space-y-3">
-      {#if activeTab === 'new'}
-        <!-- TAB 1: Neue Wörter (2 Progress Bars: Sätze & Wörter) -->
-        <div class="space-y-3.5">
-          <!-- 1. Progress Bar: Sätze geübt (Sofortiges Feedback nach jedem Satz) -->
-          <div class="space-y-1.5">
-            <div class="flex items-center justify-between text-xs">
-              <div class="flex items-center gap-1.5 sm:gap-2">
-                <span class="font-bold text-slate-800 dark:text-slate-200">Sätze geübt</span>
-                <span class="px-2 py-0.5 rounded-full text-[10px] sm:text-[11px] font-bold bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300">
-                  {userStats.todaySentencesCompleted || 0} / {dailySentencesGoal} Sätze
-                </span>
-                <button
-                  type="button"
-                  class="text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 cursor-pointer transition-colors p-0.5"
-                  on:click={() => showInfoModal = true}
-                  title="Wie funktioniert das Zielsystem?"
-                  aria-label="Info anzeigen"
-                >
-                  <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                </button>
+    <section class="{isMinimalMode ? 'p-2 sm:p-2.5' : 'p-3 sm:p-5'} rounded-xl sm:rounded-2xl bg-white dark:bg-slate-900/90 shadow-xs {isMinimalMode ? '' : 'space-y-2.5 sm:space-y-3'}">
+      {#if isMinimalMode}
+        <!-- Minimal Mode: Only thin progress bars without labels or percentages + toggle button -->
+        <div class="flex items-center gap-3 w-full">
+          <div class="flex-1 space-y-1.5">
+            {#if activeTab === 'new'}
+              <!-- 1. Progress Bar: Sätze geübt (thinner: h-1) -->
+              <div class="w-full h-1 rounded-full bg-slate-100 dark:bg-slate-800 overflow-hidden relative">
+                <div 
+                  class="h-full rounded-full transition-all duration-300 ease-out {sentencesPercent >= 100 ? 'bg-emerald-500' : 'bg-indigo-600 dark:bg-indigo-500'}"
+                  style="width: {sentencesPercent}%;"
+                ></div>
               </div>
-              <div class="text-xs font-bold {sentencesPercent >= 100 ? 'text-emerald-600 dark:text-emerald-400' : 'text-indigo-600 dark:text-indigo-400'}">
-                {sentencesPercent}%
+
+              <!-- 2. Progress Bar: Wörter komplett (thinner: h-1) -->
+              <div class="w-full h-1 rounded-full bg-slate-100 dark:bg-slate-800 overflow-hidden relative">
+                <div 
+                  class="h-full rounded-full transition-all duration-500 ease-out {wordsPercent >= 100 ? 'bg-emerald-500' : 'bg-purple-600 dark:bg-purple-500'}"
+                  style="width: {wordsPercent}%;"
+                ></div>
               </div>
-            </div>
-            <!-- Progress Bar: Sätze -->
-            <div class="w-full h-2 rounded-full bg-slate-100 dark:bg-slate-800 overflow-hidden relative">
-              <div 
-                class="h-full rounded-full transition-all duration-300 ease-out {sentencesPercent >= 100 ? 'bg-emerald-500' : 'bg-indigo-600 dark:bg-indigo-500'}"
-                style="width: {sentencesPercent}%;"
-              ></div>
-            </div>
+            {:else}
+              <!-- Progress Bar: Wiederholen (thinner: h-1) -->
+              <div class="w-full h-1 rounded-full bg-slate-100 dark:bg-slate-800 overflow-hidden relative">
+                <div 
+                  class="h-full rounded-full transition-all duration-500 ease-out {dueWordsCount === 0 ? 'bg-emerald-500' : 'bg-amber-500'}"
+                  style="width: {dueWordsCount === 0 ? 100 : Math.min(100, Math.round(((currentExerciseIndex) / Math.max(1, sessionQueue.length)) * 100))}%;"
+                ></div>
+              </div>
+            {/if}
           </div>
 
-          <!-- 2. Progress Bar: Ganze Wörter abgeschlossen (Alle Fälle gemeistert) -->
-          <div class="space-y-1.5 pt-0.5">
-            <div class="flex items-center justify-between text-xs">
-              <div class="flex items-center gap-2">
-                <span class="font-bold text-slate-800 dark:text-slate-200">Wörter komplett</span>
-                <span class="px-2 py-0.5 rounded-full text-[10px] sm:text-[11px] font-bold bg-purple-50 dark:bg-purple-950/60 text-purple-700 dark:text-purple-300">
-                  {userStats.todayCompleted} / {userStats.dailyGoal} Wörter
-                </span>
-              </div>
-              <div class="text-xs font-bold {wordsPercent >= 100 ? 'text-emerald-600 dark:text-emerald-400' : 'text-purple-600 dark:text-purple-400'}">
-                {wordsPercent}%
-              </div>
-            </div>
-            <!-- Progress Bar: Wörter -->
-            <div class="w-full h-2 rounded-full bg-slate-100 dark:bg-slate-800 overflow-hidden relative">
-              <div 
-                class="h-full rounded-full transition-all duration-500 ease-out {wordsPercent >= 100 ? 'bg-emerald-500' : 'bg-purple-600 dark:bg-purple-500'}"
-                style="width: {wordsPercent}%;"
-              ></div>
-            </div>
-          </div>
+          <!-- Switch back to standard mode button -->
+          <button
+            type="button"
+            class="shrink-0 inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[11px] font-medium text-slate-600 hover:text-indigo-600 dark:text-slate-300 dark:hover:text-indigo-400 bg-slate-100 hover:bg-slate-200/80 dark:bg-slate-800 dark:hover:bg-slate-700 transition-all cursor-pointer"
+            on:click={toggleMinimalMode}
+            title="Standard-Modus wiederherstellen"
+          >
+            <svg class="w-3.5 h-3.5 opacity-70" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M8 3v3a2 2 0 01-2 2H3m18 0h-3a2 2 0 01-2-2V3m0 18v-3a2 2 0 012-2h3M3 16h3a2 2 0 012 2v3" />
+            </svg>
+            <span>Standard</span>
+          </button>
         </div>
       {:else}
-        <!-- TAB 2: Wiederholen (Unbegrenzt) -->
-        <div class="flex items-center justify-between text-xs sm:text-sm gap-2">
-          <div class="flex items-center gap-2">
-            <span class="font-bold text-slate-800 dark:text-slate-200">Wiederholungen</span>
-            <span class="px-2 py-0.5 rounded-full text-[11px] font-bold {dueWordsCount === 0 ? 'bg-emerald-50 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300' : 'bg-amber-50 text-amber-800 dark:bg-amber-950/60 dark:text-amber-300'}">
-              {dueWordsCount === 0 ? 'Alles erledigt' : `${dueWordsCount} ${dueWordsCount === 1 ? 'Wort' : 'Wörter'} fällig`}
-            </span>
-          </div>
-          <div class="text-xs font-bold {dueWordsCount === 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-amber-600 dark:text-amber-400'}">
-            {dueWordsCount === 0 ? '100%' : `${sessionQueue.length > 0 ? currentExerciseIndex + 1 : 0} / ${sessionQueue.length}`}
-          </div>
-        </div>
+        {#if activeTab === 'new'}
+          <!-- TAB 1: Neue Wörter (2 Progress Bars: Sätze & Wörter) -->
+          <div class="space-y-3.5">
+            <!-- 1. Progress Bar: Sätze geübt (Sofortiges Feedback nach jedem Satz) -->
+            <div class="space-y-1.5">
+              <div class="flex items-center justify-between text-xs">
+                <div class="flex items-center gap-1.5 sm:gap-2">
+                  <span class="font-bold text-slate-800 dark:text-slate-200">Sätze geübt</span>
+                  <span class="px-2 py-0.5 rounded-full text-[10px] sm:text-[11px] font-bold bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300">
+                    {userStats.todaySentencesCompleted || 0} / {dailySentencesGoal} Sätze
+                  </span>
+                  <button
+                    type="button"
+                    class="text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 cursor-pointer transition-colors p-0.5"
+                    on:click={() => showInfoModal = true}
+                    title="Wie funktioniert das Zielsystem?"
+                    aria-label="Info anzeigen"
+                  >
+                    <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                  </button>
+                </div>
+                <div class="text-xs font-bold {sentencesPercent >= 100 ? 'text-emerald-600 dark:text-emerald-400' : 'text-indigo-600 dark:text-indigo-400'}">
+                  {sentencesPercent}%
+                </div>
+              </div>
+              <!-- Progress Bar: Sätze -->
+              <div class="w-full h-2 rounded-full bg-slate-100 dark:bg-slate-800 overflow-hidden relative">
+                <div 
+                  class="h-full rounded-full transition-all duration-300 ease-out {sentencesPercent >= 100 ? 'bg-emerald-500' : 'bg-indigo-600 dark:bg-indigo-500'}"
+                  style="width: {sentencesPercent}%;"
+                ></div>
+              </div>
+            </div>
 
-        <!-- Animated Progress Bar for Reviews -->
-        <div class="w-full h-2.5 rounded-full bg-slate-100 dark:bg-slate-800 overflow-hidden relative">
-          <div 
-            class="h-full rounded-full transition-all duration-500 ease-out {dueWordsCount === 0 ? 'bg-emerald-500' : 'bg-amber-500'}"
-            style="width: {dueWordsCount === 0 ? 100 : Math.min(100, Math.round(((currentExerciseIndex) / Math.max(1, sessionQueue.length)) * 100))}%;"
-          ></div>
+            <!-- 2. Progress Bar: Ganze Wörter abgeschlossen (Alle Fälle gemeistert) -->
+            <div class="space-y-1.5 pt-0.5">
+              <div class="flex items-center justify-between text-xs">
+                <div class="flex items-center gap-2">
+                  <span class="font-bold text-slate-800 dark:text-slate-200">Wörter komplett</span>
+                  <span class="px-2 py-0.5 rounded-full text-[10px] sm:text-[11px] font-bold bg-purple-50 dark:bg-purple-950/60 text-purple-700 dark:text-purple-300">
+                    {userStats.todayCompleted} / {userStats.dailyGoal} Wörter
+                  </span>
+                </div>
+                <div class="text-xs font-bold {wordsPercent >= 100 ? 'text-emerald-600 dark:text-emerald-400' : 'text-purple-600 dark:text-purple-400'}">
+                  {wordsPercent}%
+                </div>
+              </div>
+              <!-- Progress Bar: Wörter -->
+              <div class="w-full h-2 rounded-full bg-slate-100 dark:bg-slate-800 overflow-hidden relative">
+                <div 
+                  class="h-full rounded-full transition-all duration-500 ease-out {wordsPercent >= 100 ? 'bg-emerald-500' : 'bg-purple-600 dark:bg-purple-500'}"
+                  style="width: {wordsPercent}%;"
+                ></div>
+              </div>
+            </div>
+          </div>
+        {:else}
+          <!-- TAB 2: Wiederholen (Unbegrenzt) -->
+          <div class="flex items-center justify-between text-xs sm:text-sm gap-2">
+            <div class="flex items-center gap-2">
+              <span class="font-bold text-slate-800 dark:text-slate-200">Wiederholungen</span>
+              <span class="px-2 py-0.5 rounded-full text-[11px] font-bold {dueWordsCount === 0 ? 'bg-emerald-50 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300' : 'bg-amber-50 text-amber-800 dark:bg-amber-950/60 dark:text-amber-300'}">
+                {dueWordsCount === 0 ? 'Alles erledigt' : `${dueWordsCount} ${dueWordsCount === 1 ? 'Wort' : 'Wörter'} fällig`}
+              </span>
+            </div>
+            <div class="text-xs font-bold {dueWordsCount === 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-amber-600 dark:text-amber-400'}">
+              {dueWordsCount === 0 ? '100%' : `${sessionQueue.length > 0 ? currentExerciseIndex + 1 : 0} / ${sessionQueue.length}`}
+            </div>
+          </div>
+
+          <!-- Animated Progress Bar for Reviews -->
+          <div class="w-full h-2.5 rounded-full bg-slate-100 dark:bg-slate-800 overflow-hidden relative">
+            <div 
+              class="h-full rounded-full transition-all duration-500 ease-out {dueWordsCount === 0 ? 'bg-emerald-500' : 'bg-amber-500'}"
+              style="width: {dueWordsCount === 0 ? 100 : Math.min(100, Math.round(((currentExerciseIndex) / Math.max(1, sessionQueue.length)) * 100))}%;"
+            ></div>
+          </div>
+        {/if}
+
+        <!-- Mini Stats Row (Clean, no harsh borders) -->
+        <div class="flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400 pt-1 flex-wrap gap-2">
+          <div class="flex items-center gap-3 flex-wrap">
+            <span>Fällig: <strong class="text-amber-600 dark:text-amber-400">{dueWordsCount} {dueWordsCount === 1 ? 'Wort' : 'Wörter'}</strong> <span class="text-[10px] opacity-70">({dueQueue.length} Sätze)</span></span>
+            <span>Neu: <strong class="text-slate-700 dark:text-slate-300">{newWordsCount} {newWordsCount === 1 ? 'Wort' : 'Wörter'}</strong> <span class="text-[10px] opacity-70">({newQueue.length} Sätze)</span></span>
+            <span>Gemeistert: <strong class="text-slate-700 dark:text-slate-300">{userStats.totalMastered}</strong></span>
+
+            <!-- Button on the right of Gemeistert to enter minimal mode -->
+            <button
+              type="button"
+              class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] sm:text-[11px] font-medium text-slate-500 hover:text-indigo-600 dark:text-slate-400 dark:hover:text-indigo-400 bg-slate-100 hover:bg-slate-200/80 dark:bg-slate-800 dark:hover:bg-slate-700 transition-all cursor-pointer"
+              on:click={toggleMinimalMode}
+              title="Minimal-Modus für mehr Konzentration aktivieren"
+            >
+              <svg class="w-3 h-3 opacity-70" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
+              </svg>
+              <span>Minimal</span>
+            </button>
+          </div>
         </div>
       {/if}
-
-      <!-- Mini Stats Row (Clean, no harsh borders) -->
-      <div class="flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400 pt-1 flex-wrap gap-2">
-        <div class="flex items-center gap-3">
-          <span>Fällig: <strong class="text-amber-600 dark:text-amber-400">{dueWordsCount} {dueWordsCount === 1 ? 'Wort' : 'Wörter'}</strong> <span class="text-[10px] opacity-70">({dueQueue.length} Sätze)</span></span>
-          <span>Neu: <strong class="text-slate-700 dark:text-slate-300">{newWordsCount} {newWordsCount === 1 ? 'Wort' : 'Wörter'}</strong> <span class="text-[10px] opacity-70">({newQueue.length} Sätze)</span></span>
-          <span>Gemeistert: <strong class="text-slate-700 dark:text-slate-300">{userStats.totalMastered}</strong></span>
-        </div>
-      </div>
     </section>
 
     <!-- Main Practice Card (High Focus & Minimalist) -->
@@ -963,19 +1045,21 @@
         <div class="p-3.5 sm:p-7 rounded-2xl sm:rounded-3xl bg-white dark:bg-slate-900 shadow-sm space-y-2.5 sm:space-y-5 relative transition-all duration-200 {isCorrect ? 'ring-2 ring-emerald-500 bg-emerald-50/10' : ''}">
           
           <!-- Top Row of Card: Tier Pill, Case Pill, Mode Switcher & Translation Toggle -->
-          <div class="flex items-center justify-between gap-2 flex-wrap">
+          <div class="flex items-center justify-between gap-2 flex-wrap {isMinimalMode ? 'min-h-[22px]' : ''}">
             <div class="flex items-center gap-1.5">
-              <!-- Tier Badge -->
-              <span class="px-2 py-0.5 rounded-md text-[10px] sm:text-[11px] font-bold tracking-tight {getTierBadgeStyle(currentExercise.category)}">
-                {formatTierName(currentExercise.category)}
-              </span>
+              {#if !isMinimalMode}
+                <!-- Tier Badge -->
+                <span class="px-2 py-0.5 rounded-md text-[10px] sm:text-[11px] font-bold tracking-tight {getTierBadgeStyle(currentExercise.category)}">
+                  {formatTierName(currentExercise.category)}
+                </span>
 
-              <span class="px-2.5 py-0.5 rounded-full text-[10px] sm:text-xs font-bold uppercase tracking-wider {getCaseBadgeStyle(currentExercise.case)}">
-                {currentExercise.case}
-              </span>
+                <span class="px-2.5 py-0.5 rounded-full text-[10px] sm:text-xs font-bold uppercase tracking-wider {getCaseBadgeStyle(currentExercise.case)}">
+                  {currentExercise.case}
+                </span>
+              {/if}
             </div>
 
-            <div class="flex items-center gap-2">
+            <div class="flex items-center gap-2 ml-auto">
               <!-- Optional Translation Toggle -->
               <button
                 type="button"
@@ -1043,9 +1127,11 @@
             <div class="pt-1 sm:pt-2 space-y-3">
               {#if buttonGroups.type === 'single'}
                 <div class="space-y-1.5">
-                  <div class="text-[10px] sm:text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider text-center">
-                    {buttonGroups.group1Title}
-                  </div>
+                  {#if !isMinimalMode}
+                    <div class="text-[10px] sm:text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider text-center">
+                      {buttonGroups.group1Title}
+                    </div>
+                  {/if}
                   <div class="flex flex-wrap items-center justify-center gap-2">
                     {#each buttonGroups.group1 as opt, idx}
                       {@const isChosen = selectedPart1.toLowerCase() === opt.toLowerCase()}
@@ -1076,9 +1162,11 @@
                 <div class="space-y-3.5">
                   <!-- Group 1: Article -->
                   <div class="space-y-1.5">
-                    <div class="text-[10px] sm:text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider text-center">
-                      1. {buttonGroups.group1Title}
-                    </div>
+                    {#if !isMinimalMode}
+                      <div class="text-[10px] sm:text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider text-center">
+                        1. {buttonGroups.group1Title}
+                      </div>
+                    {/if}
                     <div class="flex flex-wrap items-center justify-center gap-1.5 sm:gap-2">
                       {#each buttonGroups.group1 as opt, idx}
                         {@const isChosen = selectedPart1.toLowerCase() === opt.toLowerCase()}
@@ -1108,9 +1196,11 @@
 
                   <!-- Group 2: Adjective / Determiner Ending -->
                   <div class="space-y-1.5">
-                    <div class="text-[10px] sm:text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider text-center">
-                      2. {buttonGroups.group2Title}
-                    </div>
+                    {#if !isMinimalMode}
+                      <div class="text-[10px] sm:text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider text-center">
+                        2. {buttonGroups.group2Title}
+                      </div>
+                    {/if}
                     <div class="flex flex-wrap items-center justify-center gap-1.5 sm:gap-2">
                       {#each buttonGroups.group2 as opt}
                         {@const isChosen = selectedPart2.toLowerCase() === opt.toLowerCase()}
