@@ -40,7 +40,6 @@
   let currentExercise: CaseExercise | null = null;
 
   // Active interaction state
-  let userInput = '';
   let selectedPart1 = '';
   let selectedPart2 = '';
   let buttonWrongPart1 = false;
@@ -51,7 +50,6 @@
   let isAutoAdvancing = false;
   let selectedCaseFilter: GrammarCase | 'all' = 'all';
   let selectedTierFilter: 'all' | 'top1000' | 'top2000' | 'top3000' | 'top4000' = 'all';
-  let inputRef: HTMLInputElement | null = null;
   let installPromptEvent: any = null;
   let showInstallButton = false;
   let isStandalone = false;
@@ -66,6 +64,16 @@
     : null;
 
   $: buttonGroups = currentExercise ? getDeterminerButtonGroups(currentExercise) : null;
+
+  function getExerciseNoun(exercise: CaseExercise | null): string {
+    if (!exercise) return '';
+    const parts = exercise.targetAnswer.trim().split(/\s+/);
+    const detCount = (exercise.determinerGroup === 'ander' || (exercise.determinerGroup === 'solch' && parts.length > 2)) ? 2 : 1;
+    const noun = parts.slice(detCount).join(' ');
+    return noun || exercise.baseNoun;
+  }
+
+  $: exerciseNoun = getExerciseNoun(currentExercise);
 
   $: grammarBreakdown = currentExercise ? getDetailedGrammarExplanation(currentExercise) : null;
 
@@ -105,51 +113,6 @@
       .replace(/\s+/g, ' ');
     return expandContractions(cleaned);
   }
-
-  $: isTargetOnlyTyped = (() => {
-    if (!currentExercise || isCorrect || isRevealed) return false;
-    const norm = normalizeAnswer(userInput);
-    if (!norm) return false;
-    const fullNorm = normalizeAnswer(currentExercise.fullSentence);
-    if (norm === fullNorm) return false;
-
-    // Check if input matches the targetAnswer
-    const targetNorm = normalizeAnswer(currentExercise.targetAnswer);
-    if (norm === targetNorm) return true;
-
-    // Or matches one of the accepted target answers (prevent accepting answers that drop the article)
-    const targetWords = currentExercise.targetAnswer.trim().split(/\s+/);
-    if (currentExercise.acceptedAnswers?.some(a => {
-      const aWords = a.trim().split(/\s+/);
-      if (targetWords.length > 1 && aWords.length < targetWords.length) return false;
-      const an = normalizeAnswer(a);
-      return an === norm && an !== fullNorm;
-    })) {
-      return true;
-    }
-
-    return false;
-  })();
-
-  $: isMissingArticle = (() => {
-    if (!currentExercise || isCorrect || isRevealed) return false;
-    const norm = normalizeAnswer(userInput);
-    if (!norm) return false;
-
-    const targetWords = currentExercise.targetAnswer.trim().split(/\s+/);
-    if (targetWords.length <= 1) return false;
-
-    const baseNounNorm = normalizeAnswer(currentExercise.baseNoun);
-
-    // 1. User typed just the base noun without article (e.g. "Raum" instead of "dem Raum")
-    if (norm === baseNounNorm) return true;
-
-    // 2. User typed the sentence with bare noun (e.g. "In Raum ist es ziemlich kalt.")
-    const sentenceWithBareNoun = (currentExercise.sentenceStart || '') + currentExercise.baseNoun + (currentExercise.sentenceEnd || '');
-    if (norm === normalizeAnswer(sentenceWithBareNoun)) return true;
-
-    return false;
-  })();
 
   onMount(async () => {
     // 1. Standalone app detection
@@ -345,7 +308,6 @@
   }
 
   function resetCardState() {
-    userInput = '';
     selectedPart1 = '';
     selectedPart2 = '';
     buttonWrongPart1 = false;
@@ -354,12 +316,6 @@
     isRevealed = false;
     showTranslation = false;
     isAutoAdvancing = false;
-    if (inputRef) {
-      inputRef.value = '';
-    }
-    if (userStats.inputMode === 'typing') {
-      tick().then(focusInput);
-    }
   }
 
   function handleSelectPart1(val: string) {
@@ -429,40 +385,6 @@
     sessionQueue.push(currentExercise.id);
   }
 
-  function focusInput() {
-    if (inputRef) {
-      try {
-        inputRef.focus();
-      } catch (_) {}
-    }
-  }
-
-  function handleInput() {
-    if (!currentExercise || isCorrect || isRevealed || isAutoAdvancing) return;
-
-    const normalizedInput = normalizeAnswer(userInput);
-    if (!normalizedInput) return;
-
-    // 1. Primary check: Full sentence match (case & punctuation insensitive)
-    const fullNorm = normalizeAnswer(currentExercise.fullSentence);
-    const isFullMatch = normalizedInput === fullNorm;
-
-    // Check variations of full sentence with accepted alternative articles/forms (e.g. "einem" vs "dem", or inverted "solch ein")
-    const targetWords = currentExercise.targetAnswer.trim().split(/\s+/);
-    const matchesAcceptedFull = (currentExercise.acceptedAnswers || []).some(a => {
-      const aWords = a.trim().split(/\s+/);
-      // Strictly prevent matching if candidate dropped required article/determiner words
-      if (targetWords.length > 1 && aWords.length < targetWords.length) return false;
-      const candidate = (currentExercise.sentenceStart || '') + a + (currentExercise.sentenceEnd || '');
-      return normalizeAnswer(candidate) === normalizedInput;
-    });
-
-    // Strictly require typing the full sentence!
-    if (isFullMatch || matchesAcceptedFull) {
-      markAsCorrect();
-    }
-  }
-
   function markAsCorrect() {
     if (!currentExercise || isAutoAdvancing) return;
     isCorrect = true;
@@ -527,11 +449,9 @@
   function handleKeydown(e: KeyboardEvent) {
     // Space bar triggers "Ich weiß das nicht"
     if (e.code === 'Space' && !isRevealed && !isCorrect) {
-      if (userStats.inputMode === 'buttons' || userInput.trim() === '') {
-        e.preventDefault();
-        handleDontKnow();
-        return;
-      }
+      e.preventDefault();
+      handleDontKnow();
+      return;
     }
 
     // Enter when revealed moves to next card
@@ -556,7 +476,7 @@
     }
 
     // Number keys 1-6 for Button Mode
-    if (userStats.inputMode === 'buttons' && buttonGroups && !isCorrect && !isRevealed) {
+    if (buttonGroups && !isCorrect && !isRevealed) {
       const num = parseInt(e.key, 10);
       if (num >= 1 && num <= 6) {
         e.preventDefault();
@@ -976,33 +896,6 @@
             </div>
 
             <div class="flex items-center gap-2">
-              <!-- Mode Toggle: Knöpfe vs Tippen -->
-              <div class="inline-flex items-center p-0.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-[10px] sm:text-[11px] font-semibold shadow-2xs">
-                <button
-                  type="button"
-                  class="px-2 py-0.5 rounded-lg transition-all cursor-pointer flex items-center gap-1 {userStats.inputMode === 'buttons' ? 'bg-white dark:bg-slate-700 text-indigo-600 dark:text-indigo-300 font-bold shadow-2xs' : 'text-slate-500 hover:text-slate-800 dark:hover:text-slate-300'}"
-                  on:click={() => {
-                    userStats.inputMode = 'buttons';
-                    saveUserStats(userStats);
-                  }}
-                  title="Schnellauswahl per Knöpfe"
-                >
-                  <span>🔘 Knöpfe</span>
-                </button>
-                <button
-                  type="button"
-                  class="px-2 py-0.5 rounded-lg transition-all cursor-pointer flex items-center gap-1 {userStats.inputMode === 'typing' ? 'bg-white dark:bg-slate-700 text-indigo-600 dark:text-indigo-300 font-bold shadow-2xs' : 'text-slate-500 hover:text-slate-800 dark:hover:text-slate-300'}"
-                  on:click={() => {
-                    userStats.inputMode = 'typing';
-                    saveUserStats(userStats);
-                    tick().then(focusInput);
-                  }}
-                  title="Volltext-Tippen"
-                >
-                  <span>⌨️ Tippen</span>
-                </button>
-              </div>
-
               <!-- Optional Translation Toggle -->
               <button
                 type="button"
@@ -1016,33 +909,7 @@
             </div>
           </div>
 
-          <!-- Dedicated Nomen & Muster Bar: Single horizontal row on mobile, joint with vertical separator -->
-          <div class="flex flex-row items-stretch rounded-xl sm:rounded-2xl bg-slate-50 dark:bg-slate-800/70 border border-slate-200/80 dark:border-slate-700/60 shadow-2xs overflow-hidden">
-            <!-- Nomen Box -->
-            <div class="px-2.5 py-1.5 sm:px-4 sm:py-2.5 flex flex-col justify-center min-w-[85px] sm:min-w-[140px] bg-slate-100/60 dark:bg-slate-800/50">
-              <span class="text-[9px] sm:text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-400">
-                Nomen
-              </span>
-              <span class="text-sm sm:text-lg font-black text-slate-900 dark:text-white leading-tight mt-0.5">
-                {currentExercise.baseNoun}
-              </span>
-            </div>
-
-            <!-- Vertical Separator Line -->
-            <div class="w-px bg-slate-200 dark:bg-slate-700 self-stretch"></div>
-
-            <!-- Muster Box -->
-            <div class="px-2.5 py-1.5 sm:px-4 sm:py-2.5 flex flex-col justify-center flex-1 bg-indigo-50/30 dark:bg-indigo-950/20 min-w-0">
-              <span class="text-[9px] sm:text-[10px] font-bold uppercase tracking-wider text-indigo-500 dark:text-indigo-400">
-                Muster
-              </span>
-              <span class="text-xs sm:text-sm font-semibold text-slate-800 dark:text-indigo-100 leading-tight mt-0.5 truncate sm:whitespace-normal">
-                {getDeterminerHint(currentExercise)}
-              </span>
-            </div>
-          </div>
-
-          <!-- Sentence Prompt with Inline Gap -->
+          <!-- Sentence Prompt with Inline Gap and Noun -->
           <div class="space-y-1 sm:space-y-3 py-1 sm:py-2">
             <div class="text-base sm:text-xl font-bold leading-snug sm:leading-relaxed text-slate-900 dark:text-white flex flex-wrap items-baseline gap-1.5 sm:gap-2 select-text">
               {#if currentExercise.sentenceStart}
@@ -1051,14 +918,14 @@
               
               <!-- Dynamic Gap Visualizer -->
               {#if isRevealed}
-                <span class="text-rose-600 dark:text-rose-400 font-bold bg-rose-50 dark:bg-rose-950/60 px-1.5 py-0.2 rounded-md sm:rounded-lg animate-in fade-in">
+                <span class="text-rose-600 dark:text-rose-400 font-bold bg-rose-50 dark:bg-rose-950/60 px-2 py-0.5 rounded-lg animate-in fade-in">
                   {currentExercise.targetAnswer}
                 </span>
               {:else if isCorrect}
-                <span class="text-emerald-600 dark:text-emerald-400 font-bold bg-emerald-50 dark:bg-emerald-950/60 px-1.5 py-0.2 rounded-md sm:rounded-lg animate-in fade-in">
+                <span class="text-emerald-600 dark:text-emerald-400 font-bold bg-emerald-50 dark:bg-emerald-950/60 px-2 py-0.5 rounded-lg animate-in fade-in">
                   {currentExercise.targetAnswer} ✓
                 </span>
-              {:else if userStats.inputMode === 'buttons' && buttonGroups}
+              {:else if buttonGroups}
                 {#if buttonGroups.type === 'two-part'}
                   <span class="inline-flex items-center gap-1.5 align-baseline">
                     <span class="px-2.5 py-0.5 rounded-lg border-2 font-bold transition-all text-sm sm:text-base {selectedPart1 ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-950/40 text-indigo-700 dark:text-indigo-300' : 'border-dashed border-slate-300 dark:border-slate-600 text-slate-400'}">
@@ -1073,13 +940,12 @@
                     {selectedPart1 || '________'}
                   </span>
                 {/if}
-              {:else}
-                <span class="text-indigo-600 dark:text-indigo-400 font-bold bg-indigo-50 dark:bg-indigo-950/60 px-2 py-0.2 rounded-md sm:rounded-lg tracking-wider">
-                  ________
-                </span>
               {/if}
 
-              {#if currentExercise.sentenceEnd}
+              <!-- The noun and sentenceEnd together when not yet revealed/correct -->
+              {#if !isRevealed && !isCorrect}
+                <span><span class="font-extrabold text-slate-900 dark:text-white">{exerciseNoun}</span>{currentExercise.sentenceEnd || ''}</span>
+              {:else if currentExercise.sentenceEnd}
                 <span>{currentExercise.sentenceEnd}</span>
               {/if}
             </div>
@@ -1092,7 +958,7 @@
             {/if}
           </div>
 
-          {#if userStats.inputMode === 'buttons' && buttonGroups}
+          {#if buttonGroups}
             <!-- Button-Based Selection Mode -->
             <div class="pt-1 sm:pt-2 space-y-3">
               {#if buttonGroups.type === 'single'}
@@ -1193,61 +1059,6 @@
                 </div>
               {/if}
             </div>
-          {:else}
-            <!-- Active Text Input Field: For full sentence typing -->
-            <div class="space-y-1">
-              <div class="relative">
-                <input
-                  bind:this={inputRef}
-                  type="text"
-                  bind:value={userInput}
-                  on:input={handleInput}
-                  readonly={isCorrect || isAutoAdvancing}
-                  placeholder="Ganzen Satz hier tippen..."
-                  class="w-full text-base sm:text-lg px-3.5 py-2.5 sm:px-4 sm:py-3.5 rounded-xl sm:rounded-2xl bg-slate-100/90 dark:bg-slate-800/80 border-0 transition-all text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 shadow-2xs select-text {isCorrect 
-                    ? 'ring-2 ring-emerald-500 bg-emerald-50/20 text-emerald-800 dark:text-emerald-200' 
-                    : isRevealed 
-                    ? 'ring-2 ring-rose-400 bg-rose-50/20 text-rose-800 dark:text-rose-200' 
-                    : ''}"
-                  style="-webkit-user-select: text; user-select: text;"
-                  autocomplete="off"
-                  autocorrect="off"
-                  autocapitalize="none"
-                  spellcheck="false"
-                />
-
-                {#if isCorrect}
-                  <span class="absolute right-4 top-1/2 -translate-y-1/2 text-emerald-600 dark:text-emerald-400 text-lg font-black animate-in zoom-in">
-                    ✓
-                  </span>
-                {/if}
-              </div>
-
-              <!-- Signal if user typed only the missing part instead of the full sentence -->
-              {#if isTargetOnlyTyped && currentExercise}
-                <div class="p-3 rounded-2xl bg-amber-50/90 dark:bg-amber-950/40 border border-amber-200/80 dark:border-amber-800/60 text-amber-900 dark:text-amber-200 text-xs sm:text-sm flex items-center gap-2.5 animate-in fade-in slide-in-from-top-1 shadow-2xs">
-                  <span class="text-base sm:text-lg flex-shrink-0">💡</span>
-                  <div class="leading-snug">
-                    <span class="font-bold text-amber-800 dark:text-amber-300">Richtig erkannt!</span>
-                    <span class="opacity-90"> Bitte tippe aber den <strong>ganzen Satz</strong> zu Ende:</span>
-                    <div class="font-semibold text-slate-800 dark:text-slate-100 mt-1 select-text">
-                      „{currentExercise.fullSentence}“
-                    </div>
-                  </div>
-                </div>
-              {:else if isMissingArticle && currentExercise}
-                <div class="p-3 rounded-2xl bg-amber-50/90 dark:bg-amber-950/40 border border-amber-200/80 dark:border-amber-800/60 text-amber-900 dark:text-amber-200 text-xs sm:text-sm flex items-center gap-2.5 animate-in fade-in slide-in-from-top-1 shadow-2xs">
-                  <span class="text-base sm:text-lg flex-shrink-0">⚠️</span>
-                  <div class="leading-snug">
-                    <span class="font-bold text-amber-800 dark:text-amber-300">Artikel fehlt!</span>
-                    <span class="opacity-90"> Bitte setze auch den passenden Begleiter ein {#if currentExercise.determinerHint}<span class="font-mono text-[11px] font-semibold bg-amber-100 dark:bg-amber-900/60 px-1.5 py-0.5 rounded">{currentExercise.determinerHint}</span>{/if}:</span>
-                    <div class="font-semibold text-slate-800 dark:text-slate-100 mt-1 select-text">
-                      „{currentExercise.fullSentence}“
-                    </div>
-                  </div>
-                </div>
-              {/if}
-            </div>
           {/if}
 
           <!-- Explanation Pill (Shows on reveal or upon correct) -->
@@ -1320,12 +1131,12 @@
               {#if !isCorrect}
                 <button
                   type="button"
-                  class="text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition-colors flex items-center gap-1 cursor-pointer py-1 px-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800"
+                  class="bg-emerald-600 hover:bg-emerald-500 active:bg-emerald-700 text-white transition-all flex items-center gap-1.5 cursor-pointer py-1.5 px-3 rounded-xl shadow-xs font-semibold text-xs sm:text-sm"
                   on:click={handleMastered}
                   title="Dieses Nomen dauerhaft als gemeistert markieren – wird nie wieder zur Wiederholung vorgelegt (Esc-Taste)"
                 >
-                  <span>Kann ich schon / Gemeistert</span>
-                  <span class="text-[10px] opacity-50">[Esc]</span>
+                  <span>✓ Kann ich schon / Gemeistert</span>
+                  <span class="text-[10px] sm:text-xs opacity-75 font-mono">[Esc]</span>
                 </button>
               {/if}
             </div>
@@ -1340,7 +1151,7 @@
 
   <!-- Minimal Footer -->
   <footer class="max-w-3xl w-full mx-auto text-center py-4 text-xs text-slate-400 dark:text-slate-500">
-    <p>Knopf-Modus: Wähle die passende Artikelform (Zahlentasten 1–6) &bull; Tipp-Modus: Den ganzen Satz tippen &bull; Springt automatisch weiter.</p>
+    <p>Wähle die passende Artikelform (Zahlentasten 1–6) &bull; Springt bei richtiger Antwort automatisch weiter.</p>
   </footer>
 
 </div>
@@ -1459,40 +1270,6 @@
         >
           ✕
         </button>
-      </div>
-
-      <!-- Setting: Input Mode (Knöpfe vs Tippen) -->
-      <div class="space-y-1.5">
-        <span class="text-xs font-medium text-slate-600 dark:text-slate-400 block">
-          Eingabemodus:
-        </span>
-        <div class="grid grid-cols-2 gap-2">
-          <button
-            type="button"
-            class="py-2 px-3 rounded-xl text-xs font-semibold transition-all cursor-pointer flex items-center justify-center gap-1.5 {userStats.inputMode === 'buttons' 
-              ? 'bg-slate-900 dark:bg-white text-white dark:text-slate-900 shadow-xs' 
-              : 'bg-slate-100 dark:bg-slate-800/80 text-slate-700 dark:text-slate-300 hover:bg-slate-200/80 dark:hover:bg-slate-700'}"
-            on:click={() => {
-              userStats.inputMode = 'buttons';
-              saveUserStats(userStats);
-            }}
-          >
-            <span>🔘 Knöpfe (Schnell)</span>
-          </button>
-          <button
-            type="button"
-            class="py-2 px-3 rounded-xl text-xs font-semibold transition-all cursor-pointer flex items-center justify-center gap-1.5 {userStats.inputMode === 'typing' 
-              ? 'bg-slate-900 dark:bg-white text-white dark:text-slate-900 shadow-xs' 
-              : 'bg-slate-100 dark:bg-slate-800/80 text-slate-700 dark:text-slate-300 hover:bg-slate-200/80 dark:hover:bg-slate-700'}"
-            on:click={() => {
-              userStats.inputMode = 'typing';
-              saveUserStats(userStats);
-              tick().then(focusInput);
-            }}
-          >
-            <span>⌨️ Tippen (Satz)</span>
-          </button>
-        </div>
       </div>
 
       <!-- Setting: Daily Goal -->
