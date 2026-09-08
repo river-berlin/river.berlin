@@ -23,7 +23,8 @@ export function loadUserStats(): UserStats {
     lastActiveDate: getTodayDateString(),
     totalMastered: 0,
     totalReviews: 0,
-    correctAnswersCount: 0
+    correctAnswersCount: 0,
+    skipPeopleAndProfessions: false
   };
 
   if (typeof localStorage === 'undefined') return defaultStats;
@@ -43,6 +44,9 @@ export function loadUserStats(): UserStats {
     }
     if (typeof parsed.todaySentencesCompleted !== 'number') {
       parsed.todaySentencesCompleted = parsed.todaySentenceIds.length;
+    }
+    if (typeof parsed.skipPeopleAndProfessions !== 'boolean') {
+      parsed.skipPeopleAndProfessions = false;
     }
 
     // Reset today's count if new day

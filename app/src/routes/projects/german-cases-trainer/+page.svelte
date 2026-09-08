@@ -4,6 +4,7 @@
   import { createNewCard, scheduleCard, partitionQueue } from './lib/fsrs';
   import { loadUserStats, saveUserStats, loadCardsMap, saveCardsMap, clearAllProgress } from './lib/storage';
   import { getDetailedGrammarExplanation } from './lib/grammarExplanation';
+  import { isPersonOrProfession } from './lib/personNouns';
 
   // Settings & modal state
   let showSettingsModal = false;
@@ -25,7 +26,8 @@
     lastActiveDate: '',
     totalMastered: 0,
     totalReviews: 0,
-    correctAnswersCount: 0
+    correctAnswersCount: 0,
+    skipPeopleAndProfessions: false
   };
 
   // Session & Queue
@@ -254,6 +256,9 @@
     }
     if (selectedCaseFilter !== 'all') {
       filtered = filtered.filter(e => e.case === selectedCaseFilter);
+    }
+    if (userStats.skipPeopleAndProfessions) {
+      filtered = filtered.filter(e => !isPersonOrProfession(e.baseNoun));
     }
     filteredExercises = filtered;
 
@@ -1204,6 +1209,34 @@
             </button>
           {/each}
         </div>
+      </div>
+
+      <!-- Setting: Skip People and Professions -->
+      <div class="pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between gap-3">
+        <div class="space-y-0.5 pr-2">
+          <label for="toggle-skip-people" class="text-xs font-semibold text-slate-800 dark:text-slate-200 cursor-pointer block">
+            Personen & Berufe überspringen
+          </label>
+          <p class="text-[11px] text-slate-500 dark:text-slate-400 leading-snug">
+            Überspringt Nomen wie <em>Patient, Arzt, Bettler</em> usw., deren Geschlecht durch das biologische Geschlecht offensichtlich ist.
+          </p>
+        </div>
+        <button
+          id="toggle-skip-people"
+          type="button"
+          role="switch"
+          aria-checked={userStats.skipPeopleAndProfessions}
+          class="relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-hidden {userStats.skipPeopleAndProfessions ? 'bg-indigo-600' : 'bg-slate-200 dark:bg-slate-700'}"
+          on:click={() => {
+            userStats.skipPeopleAndProfessions = !userStats.skipPeopleAndProfessions;
+            saveUserStats(userStats);
+            applyFilterAndRebuildQueue();
+          }}
+        >
+          <span
+            class="pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-sm ring-0 transition duration-200 ease-in-out {userStats.skipPeopleAndProfessions ? 'translate-x-5' : 'translate-x-0'}"
+          ></span>
+        </button>
       </div>
 
       <!-- Browser Installation Guide (Firefox & Andere) -->

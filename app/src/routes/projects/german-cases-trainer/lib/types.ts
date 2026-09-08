@@ -48,4 +48,5 @@ export interface UserStats {
   totalMastered: number;
   totalReviews: number;
   correctAnswersCount: number;
+  skipPeopleAndProfessions?: boolean; // Option to skip words representing persons/professions
 }
