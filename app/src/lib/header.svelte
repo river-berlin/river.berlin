@@ -18,6 +18,7 @@
     let isDarkMode = false;
     let dropdownOpen = false;
     let themeMode: 'light' | 'dark' | 'system' = 'system';
+    let isMinimal = false;
 
     function toggleDropdown() {
         dropdownOpen = !dropdownOpen;
@@ -25,6 +26,13 @@
 
     function closeDropdown() {
         dropdownOpen = false;
+    }
+
+    function toggleMinimalism() {
+        isMinimal = !isMinimal;
+        if (typeof localStorage !== 'undefined') {
+            localStorage.setItem('minimalism_mode', isMinimal ? 'true' : 'false');
+        }
     }
 
     function setTheme(mode: 'light' | 'dark' | 'system') {
@@ -57,6 +65,7 @@
     
     // Initialize theme based on localStorage or system preference
     onMount(() => {
+        isMinimal = localStorage.getItem('minimalism_mode') === 'true';
         const savedTheme = localStorage.getItem('darkMode');
         if (savedTheme === 'true') {
             isDarkMode = true;
@@ -131,7 +140,7 @@
     }
 
     .dropdown-menu {
-        @apply absolute right-0 mt-2 py-2 w-40 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 z-50;
+        @apply absolute right-0 mt-2 py-2 w-44 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 z-50;
     }
 
     .dropdown-item {
@@ -143,8 +152,9 @@
     }
 </style>
 
-<div class="w-full flex justify-center px-6 pt-8 mb-8  transition-colors duration-200">
-    <div class="flex flex-col md:flex-row justify-between items-center w-full max-w-[700px] gap-4">
+<div class="w-full flex {isMinimal ? 'justify-end px-4 sm:px-6 pt-3 sm:pt-4 mb-2' : 'justify-center px-6 pt-8 mb-8'} transition-all duration-200">
+    <div class="flex flex-col md:flex-row {isMinimal ? 'justify-end' : 'justify-between'} items-center w-full max-w-[700px] gap-4">
+        {#if !isMinimal}
         <div class="flex items-center">
             <img src="{image}" alt="a meditating non-binary person" height="80" class="h-20">
             <div class="flex flex-col ml-5">
@@ -204,8 +214,10 @@
                 </div>
             </div>
         </div>
+        {/if}
 
-        <div class="flex items-center gap-4">
+        <div class="flex items-center gap-4 {isMinimal ? 'ml-auto' : ''}">
+            {#if !isMinimal}
             <div class="font-['Sofia_Sans']">
                 <div class="flex gap-3">
                     <div class="page">
@@ -217,6 +229,7 @@
                     </div>
                 </div>
             </div>
+            {/if}
             
             <div class="theme-dropdown">
                 <button 
@@ -286,6 +299,26 @@
                             <path fill-rule="evenodd" d="M3 5a2 2 0 012-2h10a2 2 0 012 2v8a2 2 0 01-2 2h-2.22l.123.489.804.804A1 1 0 0113 18H7a1 1 0 01-.707-1.707l.804-.804L7.22 15H5a2 2 0 01-2-2V5zm5.771 7H5V5h10v7H8.771z" clip-rule="evenodd" />
                         </svg>
                         System
+                    </button>
+
+                    <div class="my-1 border-t border-gray-200 dark:border-gray-700"></div>
+
+                    <!-- Minimalism option -->
+                    <button 
+                        class="dropdown-item flex items-center justify-between {isMinimal ? 'active' : ''}" 
+                        on:click={toggleMinimalism}
+                        role="menuitem"
+                        tabindex="0"
+                    >
+                        <div class="flex items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2 text-gray-500 dark:text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h8m-8 6h16" />
+                            </svg>
+                            <span>Minimalism</span>
+                        </div>
+                        <span class="text-[11px] px-1.5 py-0.5 rounded font-mono font-medium {isMinimal ? 'bg-primary-100 text-primary-700 dark:bg-primary-900/40 dark:text-primary-300 font-bold' : 'text-gray-400'}">
+                            {isMinimal ? 'ON' : 'OFF'}
+                        </span>
                     </button>
                 </div>
                 {/if}

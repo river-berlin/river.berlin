@@ -83,6 +83,26 @@
   $: progressPercent = wordsPercent;
 
   $: exerciseById = new Map(allExercises.map(e => [e.id, e]));
+
+  // Reactive queue computations based on filteredExercises and cardsMap
+  $: dueExercises = filteredExercises.filter(e => {
+    const card = cardsMap[e.id];
+    return card && card.state !== 'new' && card.state !== 'mastered' && card.due <= Date.now();
+  });
+  $: dueQueue = dueExercises.map(e => e.id);
+  $: dueWordsCount = (() => {
+    const wordIds = new Set<number>();
+    for (const e of dueExercises) {
+      wordIds.add(e.wordId);
+    }
+    return wordIds.size;
+  })();
+
+  $: newExercises = filteredExercises.filter(e => {
+    const card = cardsMap[e.id];
+    return !card || card.state === 'new';
+  });
+  $: newQueue = newExercises.map(e => e.id);
   $: newWordsCount = (() => {
     const wordIds = new Set<number>();
     for (const id of newQueue) {
@@ -243,20 +263,29 @@
     }
     filteredExercises = filtered;
 
-    const filteredIds = filteredExercises.map(e => e.id);
-    const partition = partitionQueue(cardsMap, filteredIds, userStats.dailyGoal, userStats.todayCompleted);
-    
-    dueQueue = partition.dueQueue;
-    newQueue = partition.newQueue;
+    const now = Date.now();
+    const currentDueIds = filteredExercises
+      .filter(e => {
+        const c = cardsMap[e.id];
+        return c && c.state !== 'new' && c.state !== 'mastered' && c.due <= now;
+      })
+      .map(e => e.id);
+
+    const currentNewIds = filteredExercises
+      .filter(e => {
+        const c = cardsMap[e.id];
+        return !c || c.state === 'new';
+      })
+      .map(e => e.id);
 
     if (activeTab === 'review') {
       // TAB 2: Wiederholen -> UNBEGRENZT & GEMISCHT!
-      sessionQueue = shuffleQueue(dueQueue);
+      sessionQueue = shuffleQueue(currentDueIds);
     } else {
       // TAB 1: Neue Wörter -> 25 Wörter Tagesziel, GEMISCHT!
       const remainingWords = Math.max(1, userStats.dailyGoal - (userStats.todayWordIds?.length || 0));
       const newCardsSlice = Math.max(30, remainingWords * (selectedCaseFilter === 'all' ? 3 : 1) + 10);
-      const selectedNewCards = newQueue.slice(0, newCardsSlice);
+      const selectedNewCards = currentNewIds.slice(0, newCardsSlice);
       sessionQueue = shuffleQueue(selectedNewCards);
     }
 
@@ -379,6 +408,7 @@
     // Update FSRS card with 'again'
     const card = cardsMap[currentExercise.id] || createNewCard(currentExercise.id);
     cardsMap[currentExercise.id] = scheduleCard(card, 'again');
+    cardsMap = { ...cardsMap };
     saveCardsMap(cardsMap);
 
     // Re-insert current card at the end of sessionQueue so it's practiced again today
@@ -393,6 +423,7 @@
     // Update FSRS card
     const card = cardsMap[currentExercise.id] || createNewCard(currentExercise.id);
     cardsMap[currentExercise.id] = scheduleCard(card, 'good');
+    cardsMap = { ...cardsMap };
     saveCardsMap(cardsMap);
 
     // Update user stats
@@ -400,6 +431,7 @@
     userStats.correctAnswersCount += 1;
     recordSentenceCompletion(currentExercise.id);
     checkAndRecordWordCompletion(currentExercise.wordId);
+    userStats = { ...userStats };
     saveUserStats(userStats);
 
     // Auto-advance after 350ms (smooth, delightful flow)
@@ -415,6 +447,7 @@
     // Update FSRS card with 'again'
     const card = cardsMap[currentExercise.id] || createNewCard(currentExercise.id);
     cardsMap[currentExercise.id] = scheduleCard(card, 'again');
+    cardsMap = { ...cardsMap };
     saveCardsMap(cardsMap);
 
     // Re-insert current card at the end of sessionQueue so it's practiced again today
@@ -426,11 +459,13 @@
 
     const card = cardsMap[currentExercise.id] || createNewCard(currentExercise.id);
     cardsMap[currentExercise.id] = scheduleCard(card, 'mastered');
+    cardsMap = { ...cardsMap };
     saveCardsMap(cardsMap);
 
     userStats.totalMastered += 1;
     recordSentenceCompletion(currentExercise.id);
     checkAndRecordWordCompletion(currentExercise.wordId);
+    userStats = { ...userStats };
     saveUserStats(userStats);
 
     advanceToNextCard();
@@ -693,13 +728,13 @@
         on:click={() => switchTab('review')}
       >
         <span>Wiederholen</span>
-        {#if dueQueue.length > 0}
+        {#if dueWordsCount > 0}
           <span class="px-1.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-100/90 dark:bg-amber-950/80 text-amber-800 dark:text-amber-300">
-            {dueQueue.length} fällig
+            {dueWordsCount} {dueWordsCount === 1 ? 'Wort' : 'Wörter'}
           </span>
         {:else}
           <span class="px-1.5 py-0.5 rounded-full text-[10px] font-bold bg-slate-200/80 dark:bg-slate-700/80 text-slate-500 dark:text-slate-400">
-            0 fällig
+            0 Wörter
           </span>
         {/if}
       </button>
@@ -770,20 +805,20 @@
         <div class="flex items-center justify-between text-xs sm:text-sm gap-2">
           <div class="flex items-center gap-2">
             <span class="font-bold text-slate-800 dark:text-slate-200">Wiederholungen</span>
-            <span class="px-2 py-0.5 rounded-full text-[11px] font-bold {dueQueue.length === 0 ? 'bg-emerald-50 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300' : 'bg-amber-50 text-amber-800 dark:bg-amber-950/60 dark:text-amber-300'}">
-              {dueQueue.length === 0 ? 'Alles erledigt' : `${dueQueue.length} fällig (unbegrenzt)`}
+            <span class="px-2 py-0.5 rounded-full text-[11px] font-bold {dueWordsCount === 0 ? 'bg-emerald-50 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300' : 'bg-amber-50 text-amber-800 dark:bg-amber-950/60 dark:text-amber-300'}">
+              {dueWordsCount === 0 ? 'Alles erledigt' : `${dueWordsCount} ${dueWordsCount === 1 ? 'Wort' : 'Wörter'} fällig`}
             </span>
           </div>
-          <div class="text-xs font-bold {dueQueue.length === 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-amber-600 dark:text-amber-400'}">
-            {dueQueue.length === 0 ? '100%' : `${sessionQueue.length > 0 ? currentExerciseIndex + 1 : 0} / ${sessionQueue.length}`}
+          <div class="text-xs font-bold {dueWordsCount === 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-amber-600 dark:text-amber-400'}">
+            {dueWordsCount === 0 ? '100%' : `${sessionQueue.length > 0 ? currentExerciseIndex + 1 : 0} / ${sessionQueue.length}`}
           </div>
         </div>
 
         <!-- Animated Progress Bar for Reviews -->
         <div class="w-full h-2.5 rounded-full bg-slate-100 dark:bg-slate-800 overflow-hidden relative">
           <div 
-            class="h-full rounded-full transition-all duration-500 ease-out {dueQueue.length === 0 ? 'bg-emerald-500' : 'bg-amber-500'}"
-            style="width: {dueQueue.length === 0 ? 100 : Math.min(100, Math.round(((currentExerciseIndex) / Math.max(1, sessionQueue.length)) * 100))}%;"
+            class="h-full rounded-full transition-all duration-500 ease-out {dueWordsCount === 0 ? 'bg-emerald-500' : 'bg-amber-500'}"
+            style="width: {dueWordsCount === 0 ? 100 : Math.min(100, Math.round(((currentExerciseIndex) / Math.max(1, sessionQueue.length)) * 100))}%;"
           ></div>
         </div>
       {/if}
@@ -791,23 +826,10 @@
       <!-- Mini Stats Row (Clean, no harsh borders) -->
       <div class="flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400 pt-1 flex-wrap gap-2">
         <div class="flex items-center gap-3">
-          <span>Fällig: <strong class="text-amber-600 dark:text-amber-400">{dueQueue.length}</strong></span>
-          <span>Neu: <strong class="text-slate-700 dark:text-slate-300">{newWordsCount} Wörter</strong> <span class="text-[10px] opacity-70">({newQueue.length} Sätze)</span></span>
+          <span>Fällig: <strong class="text-amber-600 dark:text-amber-400">{dueWordsCount} {dueWordsCount === 1 ? 'Wort' : 'Wörter'}</strong> <span class="text-[10px] opacity-70">({dueQueue.length} Sätze)</span></span>
+          <span>Neu: <strong class="text-slate-700 dark:text-slate-300">{newWordsCount} {newWordsCount === 1 ? 'Wort' : 'Wörter'}</strong> <span class="text-[10px] opacity-70">({newQueue.length} Sätze)</span></span>
           <span>Gemeistert: <strong class="text-slate-700 dark:text-slate-300">{userStats.totalMastered}</strong></span>
         </div>
-
-        <!-- Info button on the right (Replaced Stufe & Kasus dropdowns) -->
-        <button
-          type="button"
-          class="flex items-center gap-1.5 px-2 py-1 rounded-lg text-slate-500 hover:text-indigo-600 dark:text-slate-400 dark:hover:text-indigo-400 hover:bg-slate-100 dark:hover:bg-slate-800/80 transition-all cursor-pointer font-medium"
-          on:click={() => showInfoModal = true}
-          title="Wie funktioniert das Zielsystem?"
-        >
-          <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-          </svg>
-          <span>Wie es funktioniert</span>
-        </button>
       </div>
     </section>
 
@@ -865,13 +887,13 @@
                 <span>➔</span>
               </button>
 
-              {#if dueQueue.length > 0}
+              {#if dueWordsCount > 0}
                 <button
                   type="button"
                   class="px-5 py-2.5 rounded-xl bg-amber-600 hover:bg-amber-700 text-white font-semibold text-xs sm:text-sm shadow-xs transition-all cursor-pointer active:scale-95"
                   on:click={() => switchTab('review')}
                 >
-                  {dueQueue.length} Wiederholungen üben ➔
+                  {dueWordsCount} {dueWordsCount === 1 ? 'Wort' : 'Wörter'} wiederholen ➔
                 </button>
               {/if}
             </div>
@@ -1152,11 +1174,6 @@
 
   </div>
 
-  <!-- Minimal Footer -->
-  <footer class="max-w-3xl w-full mx-auto text-center py-4 text-xs text-slate-400 dark:text-slate-500">
-    <p>Wähle die passende Artikelform (Zahlentasten 1–6) &bull; Springt bei richtiger Antwort automatisch weiter.</p>
-  </footer>
-
 </div>
 
 <!-- Information Popup Modal ("Wie es funktioniert") -->
@@ -1202,7 +1219,7 @@
             <span>1. Sätze geübt (Sofortiger Fortschritt)</span>
           </div>
           <p class="text-[11px] text-slate-600 dark:text-slate-300">
-            Jeder Satz, den du richtig abtippst, zählt direkt hier. So siehst du bei jedem getippten Satz sofort deinen Fortschritt und bleibst im Fluss.
+            Jeder Satz, den du richtig auswählst, zählt direkt hier. So siehst du bei jedem Satz sofort deinen Fortschritt und bleibst im Fluss.
           </p>
         </div>
 
@@ -1213,7 +1230,7 @@
             <span>2. Wörter komplett (Alle Kasus gemeistert)</span>
           </div>
           <p class="text-[11px] text-slate-600 dark:text-slate-300">
-            Ein deutsches Nomen hat mehrere Kasus (Nominativ, Akkusativ, Dativ & Genitiv). Erst wenn alle Kasus-Übungen zu diesem Nomen gemeistert sind, gilt das Wort als abgeschlossen für dein Tagesziel.
+            Ein deutsches Nomen hat mehrere Kasus (Nominativ, Akkusativ, Dativ & Genitiv). Erst wenn alle Kasus-Übungen zu diesem Nomen abgeschlossen oder gemeistert sind, gilt das Wort als abgeschlossen für dein Tagesziel.
           </p>
         </div>
 
