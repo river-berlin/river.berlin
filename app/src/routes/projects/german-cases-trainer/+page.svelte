@@ -1061,6 +1061,33 @@
             </div>
           {/if}
 
+          <!-- When revealed on error / reveal: Weiter button placed directly ABOVE grammar explanation -->
+          {#if isRevealed}
+            <div class="pt-1 sm:pt-2 flex items-center justify-between gap-2 flex-wrap text-xs animate-in fade-in">
+              <button
+                type="button"
+                class="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold transition-all cursor-pointer flex items-center gap-1.5 shadow-xs text-xs sm:text-sm active:scale-95"
+                on:click={advanceToNextCard}
+              >
+                <span>Weiter</span>
+                <span>➔</span>
+                <span class="text-[10px] sm:text-xs opacity-75 font-mono">[Enter]</span>
+              </button>
+
+              {#if !isCorrect}
+                <button
+                  type="button"
+                  class="px-3 py-1.5 rounded-xl bg-emerald-100 hover:bg-emerald-200 dark:bg-emerald-950/60 dark:hover:bg-emerald-900/60 text-emerald-800 dark:text-emerald-200 border border-emerald-300/60 dark:border-emerald-700/60 font-medium transition-all cursor-pointer active:scale-95"
+                  on:click={handleMastered}
+                  title="Dieses Nomen dauerhaft als gemeistert markieren – wird nie wieder zur Wiederholung vorgelegt (Esc-Taste)"
+                >
+                  <span>Kann ich schon / Gemeistert</span>
+                  <span class="text-[10px] opacity-60 ml-1">[Esc]</span>
+                </button>
+              {/if}
+            </div>
+          {/if}
+
           <!-- Explanation Pill (Shows on reveal or upon correct) -->
           {#if (isRevealed || isCorrect) && grammarBreakdown}
             <div class="p-4 sm:p-5 rounded-2xl text-xs sm:text-sm leading-relaxed space-y-3 animate-in fade-in slide-in-from-top-2 border {isCorrect ? 'bg-emerald-50/70 dark:bg-emerald-950/30 border-emerald-200/70 dark:border-emerald-800/40 text-emerald-950 dark:text-emerald-100' : 'bg-slate-50/90 dark:bg-slate-800/70 border-slate-200/80 dark:border-slate-700/60 text-slate-800 dark:text-slate-200'}">
@@ -1098,12 +1125,12 @@
             </div>
           {/if}
 
-          <!-- Card Bottom Action Bar -->
-          <div class="pt-1.5 sm:pt-3 flex items-center justify-between gap-2 flex-wrap text-xs">
-            
-            <!-- Left: "Ich weiß das nicht" button / Hotkey info -->
-            <div>
-              {#if !isRevealed && !isCorrect}
+          <!-- Card Bottom Action Bar (When in regular answering state) -->
+          {#if !isRevealed && !isCorrect}
+            <div class="pt-1.5 sm:pt-3 flex items-center justify-between gap-2 flex-wrap text-xs">
+              
+              <!-- Left: "Ich weiß das nicht" button / Hotkey info -->
+              <div>
                 <button
                   type="button"
                   class="px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 font-medium transition-all cursor-pointer active:scale-95"
@@ -1113,22 +1140,10 @@
                   <span>Ich weiß das nicht</span>
                   <span class="text-[10px] opacity-50 ml-1">[Leertaste]</span>
                 </button>
-              {:else if isRevealed}
-                <button
-                  type="button"
-                  class="px-4 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold transition-all cursor-pointer flex items-center gap-1.5 shadow-xs"
-                  on:click={advanceToNextCard}
-                >
-                  <span>Weiter</span>
-                  <span>➔</span>
-                  <span class="text-[10px] opacity-75">[Enter]</span>
-                </button>
-              {/if}
-            </div>
+              </div>
 
-            <!-- Right: "Kann ich schon / Gemeistert" button (Mark as Mastered) -->
-            <div>
-              {#if !isCorrect}
+              <!-- Right: "Kann ich schon / Gemeistert" button (Mark as Mastered) -->
+              <div>
                 <button
                   type="button"
                   class="px-3 py-1.5 rounded-xl bg-emerald-100 hover:bg-emerald-200 dark:bg-emerald-950/60 dark:hover:bg-emerald-900/60 text-emerald-800 dark:text-emerald-200 border border-emerald-300/60 dark:border-emerald-700/60 font-medium transition-all cursor-pointer active:scale-95"
@@ -1138,10 +1153,10 @@
                   <span>Kann ich schon / Gemeistert</span>
                   <span class="text-[10px] opacity-60 ml-1">[Esc]</span>
                 </button>
-              {/if}
-            </div>
+              </div>
 
-          </div>
+            </div>
+          {/if}
 
         </div>
       {/if}
