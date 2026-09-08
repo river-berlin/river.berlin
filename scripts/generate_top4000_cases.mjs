@@ -288,16 +288,20 @@ async function main() {
     try {
       const partial = JSON.parse(fs.readFileSync(OUTPUT_PATH, 'utf8'));
       for (const item of partial) {
-        if (!processedWordIds.has(item.wordId)) {
-          masterDataset.push(item);
-          processedWordIds.add(item.wordId);
-        }
+        masterDataset.push(item);
+        processedWordIds.add(item.wordId);
       }
       console.log(`Bereits verarbeitete Nomen insgesamt: ${processedWordIds.size}/${allNouns.length}`);
     } catch (e) {}
   }
 
-  const remainingNouns = allNouns.filter(n => !processedWordIds.has(n.id));
+  // Count how many sentences each word already has (target: 3 sentences per word)
+  const sentencesPerWord = new Map();
+  for (const item of masterDataset) {
+    sentencesPerWord.set(item.wordId, (sentencesPerWord.get(item.wordId) || 0) + 1);
+  }
+
+  const remainingNouns = allNouns.filter(n => (sentencesPerWord.get(n.id) || 0) < 3);
   console.log(`Noch zu generierende Nomen: ${remainingNouns.length}`);
 
   const BATCH_SIZE = 8; // 8 nouns * 3 sentences = 24 sentences per batch

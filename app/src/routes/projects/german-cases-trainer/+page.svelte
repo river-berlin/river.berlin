@@ -2,7 +2,7 @@
   import { onMount, tick } from 'svelte';
   import type { CaseExercise, FSRSCard, UserStats, GrammarCase } from './lib/types';
   import { createNewCard, scheduleCard, partitionQueue } from './lib/fsrs';
-  import { loadUserStats, saveUserStats, loadCardsMap, saveCardsMap, clearAllProgress } from './lib/storage';
+  import { loadUserStats, saveUserStats, loadCardsMap, saveCardsMap, clearAllProgress, checkAndResetDailyProgress } from './lib/storage';
   import { getDetailedGrammarExplanation } from './lib/grammarExplanation';
   import { isPersonOrProfession } from './lib/personNouns';
   import { getDeterminerButtonGroups, type DeterminerButtonGroupResult } from './lib/buttonOptions';
@@ -151,6 +151,13 @@
     // 3. Load user progress & cards from storage
     userStats = loadUserStats();
     cardsMap = loadCardsMap();
+    checkDailyReset();
+
+    const handleVisibilityOrFocus = () => {
+      checkDailyReset();
+    };
+    document.addEventListener('visibilitychange', handleVisibilityOrFocus);
+    window.addEventListener('focus', handleVisibilityOrFocus);
 
     // 4. PWA install prompt detection
     window.addEventListener('beforeinstallprompt', (e) => {
@@ -250,7 +257,17 @@
     return result;
   }
 
+  function checkDailyReset() {
+    const { stats, didReset } = checkAndResetDailyProgress(userStats);
+    if (didReset) {
+      userStats = { ...stats };
+      applyFilterAndRebuildQueue();
+    }
+  }
+
   function applyFilterAndRebuildQueue() {
+    checkDailyReset();
+
     let filtered = [...allExercises];
     if (selectedTierFilter !== 'all') {
       filtered = filtered.filter(e => e.category === selectedTierFilter);
@@ -282,11 +299,24 @@
       // TAB 2: Wiederholen -> UNBEGRENZT & GEMISCHT!
       sessionQueue = shuffleQueue(currentDueIds);
     } else {
-      // TAB 1: Neue Wörter -> 25 Wörter Tagesziel, GEMISCHT!
-      const remainingWords = Math.max(1, userStats.dailyGoal - (userStats.todayWordIds?.length || 0));
-      const newCardsSlice = Math.max(30, remainingWords * (selectedCaseFilter === 'all' ? 3 : 1) + 10);
-      const selectedNewCards = currentNewIds.slice(0, newCardsSlice);
-      sessionQueue = shuffleQueue(selectedNewCards);
+      // TAB 1: Neue Wörter
+      if (userStats.todayCompleted >= userStats.dailyGoal) {
+        // Daily goal is reached! Do not queue more cards.
+        sessionQueue = [];
+      } else {
+        const remainingWords = Math.max(0, userStats.dailyGoal - userStats.todayCompleted);
+        const selectedWordIds = new Set<number>();
+        const selectedNewCards: string[] = [];
+        for (const id of currentNewIds) {
+          const ex = exerciseById.get(id);
+          if (!ex) continue;
+          if (selectedWordIds.size < remainingWords || selectedWordIds.has(ex.wordId)) {
+            selectedWordIds.add(ex.wordId);
+            selectedNewCards.push(id);
+          }
+        }
+        sessionQueue = shuffleQueue(selectedNewCards);
+      }
     }
 
     currentExerciseIndex = 0;
@@ -319,7 +349,7 @@
       userStats.todayWordIds = [...userStats.todayWordIds, wordId];
       userStats.todayCompleted = userStats.todayWordIds.length;
 
-      if (userStats.todayCompleted === userStats.dailyGoal) {
+      if (userStats.todayCompleted >= userStats.dailyGoal) {
         showConfettiCelebration = true;
         setTimeout(() => { showConfettiCelebration = false; }, 4000);
       }
@@ -472,6 +502,13 @@
   }
 
   function advanceToNextCard() {
+    if (activeTab === 'new' && userStats.todayCompleted >= userStats.dailyGoal) {
+      sessionQueue = [];
+      currentExerciseIndex = 0;
+      resetCardState();
+      return;
+    }
+
     if (currentExerciseIndex < sessionQueue.length - 1) {
       currentExerciseIndex += 1;
       resetCardState();
@@ -571,6 +608,7 @@
   function handleLearnMoreWords(count: number = 10) {
     userStats.dailyGoal = (userStats.dailyGoal || 25) + count;
     saveUserStats(userStats);
+    userStats = { ...userStats };
     selectedCaseFilter = 'all';
     applyFilterAndRebuildQueue();
   }
@@ -869,12 +907,12 @@
           <div class="p-10 text-center rounded-3xl bg-white dark:bg-slate-900 shadow-sm space-y-4 animate-in fade-in">
             <div class="space-y-1">
               <h2 class="text-lg sm:text-xl font-bold text-slate-900 dark:text-white">
-                {userStats.todayCompleted >= userStats.dailyGoal ? 'Tagesziel erreicht' : 'Aktuelle Wörter erledigt'}
+                {userStats.todayCompleted >= userStats.dailyGoal ? 'Tagesziel erreicht! 🎉' : 'Aktuelle Wörter erledigt'}
               </h2>
               <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 max-w-md mx-auto">
                 {userStats.todayCompleted >= userStats.dailyGoal 
-                  ? `Du hast dein Tagesziel von ${userStats.dailyGoal} Wörtern für heute gemeistert.` 
-                  : `Du hast heute ${userStats.todayCompleted} von ${userStats.dailyGoal} Wörtern geübt.`}
+                  ? `Du hast dein Tagesziel von ${userStats.dailyGoal} ${userStats.dailyGoal === 1 ? 'Wort' : 'Wörtern'} für heute gemeistert.` 
+                  : `Du hast heute ${userStats.todayCompleted} von ${userStats.dailyGoal} ${userStats.dailyGoal === 1 ? 'Wort' : 'Wörtern'} geübt.`}
               </p>
             </div>
             <div class="pt-2 flex items-center justify-center gap-3 flex-wrap">
@@ -886,6 +924,16 @@
                 <span>+ 10 weitere Wörter lernen</span>
                 <span>➔</span>
               </button>
+
+              {#if userStats.dailyGoal <= 5}
+                <button
+                  type="button"
+                  class="px-4 py-2.5 rounded-xl bg-indigo-50 dark:bg-indigo-950/60 hover:bg-indigo-100 dark:hover:bg-indigo-900/60 text-indigo-700 dark:text-indigo-300 font-semibold text-xs sm:text-sm transition-all cursor-pointer active:scale-95"
+                  on:click={() => handleLearnMoreWords(1)}
+                >
+                  + 1 Wort (Test) ➔
+                </button>
+              {/if}
 
               {#if dueWordsCount > 0}
                 <button
@@ -1297,8 +1345,8 @@
         <span class="text-xs font-medium text-slate-600 dark:text-slate-400 block">
           Tagesziel (Neue Wörter pro Tag):
         </span>
-        <div class="grid grid-cols-5 gap-1.5">
-          {#each [10, 15, 20, 25, 30] as goal}
+        <div class="grid grid-cols-6 gap-1.5">
+          {#each [1, 5, 10, 15, 20, 25] as goal}
             <button
               type="button"
               class="py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer {userStats.dailyGoal === goal 
@@ -1307,6 +1355,8 @@
               on:click={() => {
                 userStats.dailyGoal = goal;
                 saveUserStats(userStats);
+                userStats = { ...userStats };
+                applyFilterAndRebuildQueue();
               }}
             >
               {goal}

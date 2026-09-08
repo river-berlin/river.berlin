@@ -54,31 +54,41 @@ export function loadUserStats(): UserStats {
     }
 
     // Reset today's count if new day
-    if (parsed.lastActiveDate !== today) {
-      const lastDate = new Date(parsed.lastActiveDate);
-      const todayDate = new Date(today);
-      const diffDays = Math.round((todayDate.getTime() - lastDate.getTime()) / (1000 * 60 * 60 * 24));
-
-      if (diffDays === 1) {
-        // Consecutive day! Maintain streak
-        parsed.streakDays += 1;
-      } else if (diffDays > 1) {
-        // Streak broken
-        parsed.streakDays = 1;
-      }
-      parsed.todayCompleted = 0;
-      parsed.todayWordIds = [];
-      parsed.todaySentencesCompleted = 0;
-      parsed.todaySentenceIds = [];
-      parsed.lastActiveDate = today;
-      saveUserStats(parsed);
-    }
+    checkAndResetDailyProgress(parsed);
 
     return parsed;
   } catch (err) {
     console.warn('Fehler beim Laden der Benutzerstatistik:', err);
     return defaultStats;
   }
+}
+
+export function checkAndResetDailyProgress(stats: UserStats): { stats: UserStats; didReset: boolean } {
+  const today = getTodayDateString();
+  if (!stats.lastActiveDate || stats.lastActiveDate !== today) {
+    const lastParts = (stats.lastActiveDate || today).split('-').map(Number);
+    const todayParts = today.split('-').map(Number);
+    const lastDate = new Date(lastParts[0], lastParts[1] - 1, lastParts[2]);
+    const todayDate = new Date(todayParts[0], todayParts[1] - 1, todayParts[2]);
+    const diffDays = Math.round((todayDate.getTime() - lastDate.getTime()) / (1000 * 60 * 60 * 24));
+
+    if (diffDays === 1) {
+      // Consecutive day! Maintain streak
+      stats.streakDays = (stats.streakDays || 1) + 1;
+    } else if (diffDays > 1) {
+      // Streak broken
+      stats.streakDays = 1;
+    }
+
+    stats.todayCompleted = 0;
+    stats.todayWordIds = [];
+    stats.todaySentencesCompleted = 0;
+    stats.todaySentenceIds = [];
+    stats.lastActiveDate = today;
+    saveUserStats(stats);
+    return { stats, didReset: true };
+  }
+  return { stats, didReset: false };
 }
 
 export function saveUserStats(stats: UserStats): void {
