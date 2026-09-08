@@ -1061,30 +1061,18 @@
             </div>
           {/if}
 
-          <!-- When revealed on error / reveal: Weiter button placed directly ABOVE grammar explanation -->
+          <!-- When revealed on error / reveal: Centered Weiter button placed directly ABOVE grammar explanation -->
           {#if isRevealed}
-            <div class="pt-1 sm:pt-2 flex items-center justify-between gap-2 flex-wrap text-xs animate-in fade-in">
+            <div class="pt-1 sm:pt-2 flex items-center justify-center animate-in fade-in">
               <button
                 type="button"
-                class="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold transition-all cursor-pointer flex items-center gap-1.5 shadow-xs text-xs sm:text-sm active:scale-95"
+                class="px-6 py-2.5 rounded-2xl bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 text-white font-bold transition-all cursor-pointer flex items-center gap-2 shadow-sm active:scale-95 text-xs sm:text-sm"
                 on:click={advanceToNextCard}
               >
                 <span>Weiter</span>
                 <span>➔</span>
                 <span class="text-[10px] sm:text-xs opacity-75 font-mono">[Enter]</span>
               </button>
-
-              {#if !isCorrect}
-                <button
-                  type="button"
-                  class="px-3 py-1.5 rounded-xl bg-emerald-100 hover:bg-emerald-200 dark:bg-emerald-950/60 dark:hover:bg-emerald-900/60 text-emerald-800 dark:text-emerald-200 border border-emerald-300/60 dark:border-emerald-700/60 font-medium transition-all cursor-pointer active:scale-95"
-                  on:click={handleMastered}
-                  title="Dieses Nomen dauerhaft als gemeistert markieren – wird nie wieder zur Wiederholung vorgelegt (Esc-Taste)"
-                >
-                  <span>Kann ich schon / Gemeistert</span>
-                  <span class="text-[10px] opacity-60 ml-1">[Esc]</span>
-                </button>
-              {/if}
             </div>
           {/if}
 
