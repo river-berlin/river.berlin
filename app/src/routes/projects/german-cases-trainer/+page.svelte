@@ -100,7 +100,7 @@
 
   $: newExercises = filteredExercises.filter(e => {
     const card = cardsMap[e.id];
-    return !card || card.state === 'new';
+    return !card || card.state === 'new' || card.state === 'learning';
   });
   $: newQueue = newExercises.map(e => e.id);
   $: newWordsCount = (() => {
@@ -291,7 +291,7 @@
     const currentNewIds = filteredExercises
       .filter(e => {
         const c = cardsMap[e.id];
-        return !c || c.state === 'new';
+        return !c || c.state === 'new' || c.state === 'learning';
       })
       .map(e => e.id);
 
@@ -336,13 +336,23 @@
       ? allExercises.filter(e => e.wordId === wordId) 
       : filteredExercises.filter(e => e.wordId === wordId);
 
-    if (relevantExercises.length === 0) return;
-
-    // A word is complete if all its exercises are scheduled and none are currently due
     const now = Date.now();
+    const relevantIds = new Set(relevantExercises.map(e => e.id));
+
+    // 1. Must not have any pending repetitions waiting in the remaining sessionQueue
+    const hasPendingInQueue = sessionQueue.slice(currentExerciseIndex + 1).some(id => relevantIds.has(id));
+    if (hasPendingInQueue) {
+      return; // A failed sentence for this word is still waiting to be repeated!
+    }
+
+    // 2. A word is complete only if ALL its exercises have been correctly completed ('review' with due in future, or 'mastered')
+    // Cards with state 'learning' (failed/again) or 'new' do NOT count as done!
     const allDone = relevantExercises.every(ex => {
       const card = cardsMap[ex.id];
-      return card && (card.state === 'mastered' || card.due > now);
+      if (!card) return false;
+      if (card.state === 'mastered') return true;
+      if (card.state === 'review' && card.due > now) return true;
+      return false;
     });
 
     if (allDone) {
