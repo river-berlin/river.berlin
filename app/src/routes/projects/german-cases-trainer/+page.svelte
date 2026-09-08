@@ -105,9 +105,8 @@
   $: newQueue = newExercises.map(e => e.id);
   $: newWordsCount = (() => {
     const wordIds = new Set<number>();
-    for (const id of newQueue) {
-      const ex = exerciseById.get(id);
-      if (ex) wordIds.add(ex.wordId);
+    for (const e of newExercises) {
+      wordIds.add(e.wordId);
     }
     return wordIds.size;
   })();
@@ -173,10 +172,6 @@
 
     // 5. Load generated exercises dataset
     await loadExercisesData();
-
-    // Focus input field immediately
-    await tick();
-    focusInput();
   });
 
   async function loadExercisesData() {
@@ -288,12 +283,14 @@
       })
       .map(e => e.id);
 
-    const currentNewIds = filteredExercises
-      .filter(e => {
-        const c = cardsMap[e.id];
-        return !c || c.state === 'new' || c.state === 'learning';
-      })
-      .map(e => e.id);
+    const currentNewExercises = filteredExercises.filter(e => {
+      // Don't queue words that were already finished today
+      if (userStats.todayWordIds && userStats.todayWordIds.includes(e.wordId)) {
+        return false;
+      }
+      const c = cardsMap[e.id];
+      return !c || c.state === 'new' || c.state === 'learning';
+    });
 
     if (activeTab === 'review') {
       // TAB 2: Wiederholen -> UNBEGRENZT & GEMISCHT!
@@ -307,12 +304,10 @@
         const remainingWords = Math.max(0, userStats.dailyGoal - userStats.todayCompleted);
         const selectedWordIds = new Set<number>();
         const selectedNewCards: string[] = [];
-        for (const id of currentNewIds) {
-          const ex = exerciseById.get(id);
-          if (!ex) continue;
+        for (const ex of currentNewExercises) {
           if (selectedWordIds.size < remainingWords || selectedWordIds.has(ex.wordId)) {
             selectedWordIds.add(ex.wordId);
-            selectedNewCards.push(id);
+            selectedNewCards.push(ex.id);
           }
         }
         sessionQueue = shuffleQueue(selectedNewCards);
@@ -335,6 +330,11 @@
     const relevantExercises = selectedCaseFilter === 'all' 
       ? allExercises.filter(e => e.wordId === wordId) 
       : filteredExercises.filter(e => e.wordId === wordId);
+
+    // If 'all' cases are selected, the noun must have all 3 cases (nominativ, akkusativ, dativ)
+    if (relevantExercises.length === 0 || (selectedCaseFilter === 'all' && relevantExercises.length < 3)) {
+      return;
+    }
 
     const now = Date.now();
     const relevantIds = new Set(relevantExercises.map(e => e.id));
@@ -452,7 +452,7 @@
     saveCardsMap(cardsMap);
 
     // Re-insert current card at the end of sessionQueue so it's practiced again today
-    sessionQueue.push(currentExercise.id);
+    sessionQueue = [...sessionQueue, currentExercise.id];
   }
 
   function markAsCorrect() {
@@ -491,7 +491,7 @@
     saveCardsMap(cardsMap);
 
     // Re-insert current card at the end of sessionQueue so it's practiced again today
-    sessionQueue.push(currentExercise.id);
+    sessionQueue = [...sessionQueue, currentExercise.id];
   }
 
   function handleMastered() {
