@@ -1,7 +1,7 @@
 <script lang="ts">
   import { onMount, tick } from 'svelte';
-  import type { CaseExercise, FSRSCard, UserStats, GrammarCase } from './lib/types';
-  import { createNewCard, scheduleCard, partitionQueue } from './lib/fsrs';
+  import type { CaseExercise, FSRSCard, UserStats, GrammarCase, NounGender } from './lib/types';
+  import { createNewCard, scheduleCard, partitionQueue, getCardRepsRemaining, MASTERY_REPS_THRESHOLD } from './lib/fsrs';
   import { loadUserStats, saveUserStats, loadCardsMap, saveCardsMap, clearAllProgress, checkAndResetDailyProgress } from './lib/storage';
   import { getDetailedGrammarExplanation } from './lib/grammarExplanation';
   import { isPersonOrProfession } from './lib/personNouns';
@@ -57,8 +57,19 @@
 
   // Visual cues
   let showConfettiCelebration = false;
-  let activeTab: 'new' | 'review' = 'new';
+  let activeTab: 'new' | 'review' | 'words' = 'new';
   let isMinimalMode = false;
+
+  // Words directory state
+  let nounMeaningsMap: Record<string, string> = {};
+  let wordStatusFilter: 'all' | 'remaining' | 'learning' | 'due' | 'mastered' = 'all';
+  let wordsSearchQuery = '';
+  let wordTierFilter: 'all' | 'top1000' | 'top2000' | 'top3000' | 'top4000' = 'all';
+  let wordGenderFilter: 'all' | 'm' | 'f' | 'n' | 'pl' = 'all';
+  let wordSortOrder: 'az' | 'za' | 'reps_desc' | 'reps_asc' | 'tier' = 'az';
+  let wordsPage = 1;
+  const WORDS_PER_PAGE = 35;
+  let expandedWordId: number | null = null;
 
   $: currentExercise = sessionQueue.length > 0 && sessionQueue[currentExerciseIndex]
     ? allExercises.find(e => e.id === sessionQueue[currentExerciseIndex]) || null
@@ -111,6 +122,181 @@
     }
     return wordIds.size;
   })();
+
+  // Group allExercises by wordId for the comprehensive "Wörter" tab
+  $: uniqueWordsList = (() => {
+    if (!allExercises || allExercises.length === 0) return [];
+    const map = new Map<number, {
+      wordId: number;
+      baseNoun: string;
+      originalWord: string;
+      gender: NounGender;
+      category: string;
+      exercises: CaseExercise[];
+    }>();
+
+    for (const ex of allExercises) {
+      let entry = map.get(ex.wordId);
+      if (!entry) {
+        entry = {
+          wordId: ex.wordId,
+          baseNoun: ex.baseNoun,
+          originalWord: ex.originalWord,
+          gender: ex.gender,
+          category: ex.category,
+          exercises: []
+        };
+        map.set(ex.wordId, entry);
+      }
+      entry.exercises.push(ex);
+    }
+
+    const now = Date.now();
+    return Array.from(map.values()).map(w => {
+      let masteredCount = 0;
+      let dueCount = 0;
+      let learningCount = 0;
+      let maxRepsNeeded = 0;
+      let totalRepsNeeded = 0;
+
+      const caseBreakdown: Record<string, { repsRemaining: number; isDue: boolean; isMastered: boolean }> = {};
+
+      for (const ex of w.exercises) {
+        const card = cardsMap[ex.id];
+        const repsRemaining = getCardRepsRemaining(card);
+        const isMastered = card ? (card.state === 'mastered' || repsRemaining === 0) : false;
+        const isDue = card ? (card.state !== 'new' && !isMastered && card.due <= now) : false;
+        const isLearning = card ? (card.state === 'learning' || card.state === 'review') : false;
+
+        if (isMastered) masteredCount++;
+        if (isDue) dueCount++;
+        if (isLearning) learningCount++;
+
+        maxRepsNeeded = Math.max(maxRepsNeeded, repsRemaining);
+        totalRepsNeeded += repsRemaining;
+
+        caseBreakdown[ex.case] = {
+          repsRemaining,
+          isDue,
+          isMastered
+        };
+      }
+
+      let status: 'mastered' | 'due' | 'learning' | 'remaining' = 'remaining';
+      if (masteredCount === w.exercises.length && w.exercises.length > 0) {
+        status = 'mastered';
+      } else if (dueCount > 0) {
+        status = 'due';
+      } else if (learningCount > 0 || (userStats.todayWordIds && userStats.todayWordIds.includes(w.wordId))) {
+        status = 'learning';
+      } else {
+        status = 'remaining';
+      }
+
+      const meaning = nounMeaningsMap[String(w.wordId)] || '';
+
+      return {
+        ...w,
+        status,
+        meaning,
+        maxRepsNeeded,
+        totalRepsNeeded,
+        caseBreakdown
+      };
+    });
+  })();
+
+  $: totalWordsCount = uniqueWordsList.length;
+  $: remainingWordsCount = uniqueWordsList.filter(w => w.status === 'remaining').length;
+  $: learningWordsCount = uniqueWordsList.filter(w => w.status === 'learning').length;
+  $: dueWordsCountInList = uniqueWordsList.filter(w => w.status === 'due').length;
+  $: masteredWordsCount = uniqueWordsList.filter(w => w.status === 'mastered').length;
+
+  $: filteredWordsList = (() => {
+    let list = uniqueWordsList;
+
+    if (wordStatusFilter !== 'all') {
+      list = list.filter(w => w.status === wordStatusFilter);
+    }
+
+    if (wordTierFilter !== 'all') {
+      list = list.filter(w => w.category === wordTierFilter);
+    }
+
+    if (wordGenderFilter !== 'all') {
+      list = list.filter(w => w.gender === wordGenderFilter);
+    }
+
+    if (wordsSearchQuery.trim()) {
+      const q = wordsSearchQuery.trim().toLowerCase();
+      list = list.filter(w => 
+        w.baseNoun.toLowerCase().includes(q) ||
+        w.originalWord.toLowerCase().includes(q) ||
+        w.meaning.toLowerCase().includes(q)
+      );
+    }
+
+    const tierWeight: Record<string, number> = { top1000: 1, top2000: 2, top3000: 3, top4000: 4 };
+    return [...list].sort((a, b) => {
+      if (wordSortOrder === 'az') {
+        return a.baseNoun.localeCompare(b.baseNoun, 'de');
+      } else if (wordSortOrder === 'za') {
+        return b.baseNoun.localeCompare(a.baseNoun, 'de');
+      } else if (wordSortOrder === 'reps_desc') {
+        return b.maxRepsNeeded - a.maxRepsNeeded || a.baseNoun.localeCompare(b.baseNoun, 'de');
+      } else if (wordSortOrder === 'reps_asc') {
+        return a.maxRepsNeeded - b.maxRepsNeeded || a.baseNoun.localeCompare(b.baseNoun, 'de');
+      } else if (wordSortOrder === 'tier') {
+        const twA = tierWeight[a.category] || 5;
+        const twB = tierWeight[b.category] || 5;
+        return twA - twB || a.baseNoun.localeCompare(b.baseNoun, 'de');
+      }
+      return 0;
+    });
+  })();
+
+  $: paginatedWordsList = filteredWordsList.slice(0, wordsPage * WORDS_PER_PAGE);
+  $: hasMoreWords = paginatedWordsList.length < filteredWordsList.length;
+
+  function practiceSpecificWord(wordId: number) {
+    const exercisesForWord = allExercises.filter(e => e.wordId === wordId);
+    if (exercisesForWord.length === 0) return;
+    
+    const caseOrder: Record<string, number> = { nominativ: 1, akkusativ: 2, dativ: 3, genitiv: 4 };
+    exercisesForWord.sort((a, b) => (caseOrder[a.case] || 9) - (caseOrder[b.case] || 9));
+
+    sessionQueue = exercisesForWord.map(e => e.id);
+    currentExerciseIndex = 0;
+    resetCardState();
+    activeTab = 'new';
+  }
+
+  function toggleWordExpand(wordId: number) {
+    expandedWordId = expandedWordId === wordId ? null : wordId;
+  }
+
+  function formatGenderPill(g: NounGender): { label: string; style: string } {
+    switch (g) {
+      case 'm': return { label: 'der (Maskulin)', style: 'bg-blue-50 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300 border-blue-200/60 dark:border-blue-800/50' };
+      case 'f': return { label: 'die (Feminin)', style: 'bg-rose-50 text-rose-700 dark:bg-rose-950/60 dark:text-rose-300 border-rose-200/60 dark:border-rose-800/50' };
+      case 'n': return { label: 'das (Neutrum)', style: 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300 border-emerald-200/60 dark:border-emerald-800/50' };
+      default: return { label: 'Plural', style: 'bg-purple-50 text-purple-700 dark:bg-purple-950/60 dark:text-purple-300 border-purple-200/60 dark:border-purple-800/50' };
+    }
+  }
+
+  function getWordStatusBadge(status: 'mastered' | 'due' | 'learning' | 'remaining'): { label: string; style: string } {
+    switch (status) {
+      case 'mastered':
+        return { label: 'Gemeistert ✓', style: 'bg-emerald-50 text-emerald-800 dark:bg-emerald-950/70 dark:text-emerald-300 border-emerald-200/80 dark:border-emerald-800/50' };
+      case 'due':
+        return { label: 'Fällig zur Wiederholung ⏳', style: 'bg-amber-50 text-amber-800 dark:bg-amber-950/70 dark:text-amber-300 border-amber-200/80 dark:border-amber-800/50' };
+      case 'learning':
+        return { label: 'Beim Lernen 🔄', style: 'bg-indigo-50 text-indigo-800 dark:bg-indigo-950/70 dark:text-indigo-300 border-indigo-200/80 dark:border-indigo-800/50' };
+      case 'remaining':
+      default:
+        return { label: 'Noch offen ⚪', style: 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300 border-slate-200/80 dark:border-slate-700/50' };
+    }
+  }
 
   function expandContractions(text: string): string {
     return text
@@ -213,13 +399,25 @@
       }
     }
 
+    try {
+      const meaningsMod = import.meta.glob('./data/noun_meanings.json', { eager: true });
+      const mMod: any = Object.values(meaningsMod)[0];
+      if (mMod && typeof (mMod.default || mMod) === 'object') {
+        nounMeaningsMap = mMod.default || mMod;
+      }
+    } catch (e) {
+      console.warn('Fehler beim Laden von noun_meanings.json:', e);
+    }
+
     isLoadingData = false;
     applyFilterAndRebuildQueue();
   }
 
-  function switchTab(tab: 'new' | 'review') {
+  function switchTab(tab: 'new' | 'review' | 'words') {
     activeTab = tab;
-    applyFilterAndRebuildQueue();
+    if (tab !== 'words') {
+      applyFilterAndRebuildQueue();
+    }
   }
 
   function shuffleQueue(ids: string[]): string[] {
@@ -776,11 +974,11 @@
       </div>
     </header>
 
-    <!-- Mode Tabs: "Neue Wörter" vs "Wiederholen" (Minimalist, no borders, no emojis) -->
+    <!-- Mode Tabs: "Neue Wörter" vs "Wiederholen" vs "Wörter" (Minimalist, no borders, no emojis) -->
     <nav class="flex items-center justify-center p-1 sm:p-1.5 bg-slate-100 dark:bg-slate-800/70 rounded-xl sm:rounded-2xl max-w-xl mx-auto shadow-2xs gap-1">
       <button
         type="button"
-        class="flex-1 py-1.5 px-3 sm:py-2 sm:px-4 rounded-lg sm:rounded-xl text-xs sm:text-sm font-semibold transition-all flex items-center justify-center gap-2 cursor-pointer {activeTab === 'new' 
+        class="flex-1 py-1.5 px-2.5 sm:py-2 sm:px-3 rounded-lg sm:rounded-xl text-xs sm:text-sm font-semibold transition-all flex items-center justify-center gap-1.5 cursor-pointer {activeTab === 'new' 
           ? 'bg-white dark:bg-slate-900 text-indigo-600 dark:text-indigo-400 shadow-xs' 
           : 'text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white'}"
         on:click={() => switchTab('new')}
@@ -793,7 +991,7 @@
 
       <button
         type="button"
-        class="flex-1 py-1.5 px-3 sm:py-2 sm:px-4 rounded-lg sm:rounded-xl text-xs sm:text-sm font-semibold transition-all flex items-center justify-center gap-2 cursor-pointer {activeTab === 'review' 
+        class="flex-1 py-1.5 px-2.5 sm:py-2 sm:px-3 rounded-lg sm:rounded-xl text-xs sm:text-sm font-semibold transition-all flex items-center justify-center gap-1.5 cursor-pointer {activeTab === 'review' 
           ? 'bg-white dark:bg-slate-900 text-amber-600 dark:text-amber-400 shadow-xs' 
           : 'text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white'}"
         on:click={() => switchTab('review')}
@@ -801,13 +999,26 @@
         <span>Wiederholen</span>
         {#if dueWordsCount > 0}
           <span class="px-1.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-100/90 dark:bg-amber-950/80 text-amber-800 dark:text-amber-300">
-            {dueWordsCount} {dueWordsCount === 1 ? 'Wort' : 'Wörter'}
+            {dueWordsCount}
           </span>
         {:else}
           <span class="px-1.5 py-0.5 rounded-full text-[10px] font-bold bg-slate-200/80 dark:bg-slate-700/80 text-slate-500 dark:text-slate-400">
-            0 Wörter
+            0
           </span>
         {/if}
+      </button>
+
+      <button
+        type="button"
+        class="flex-1 py-1.5 px-2.5 sm:py-2 sm:px-3 rounded-lg sm:rounded-xl text-xs sm:text-sm font-semibold transition-all flex items-center justify-center gap-1.5 cursor-pointer {activeTab === 'words' 
+          ? 'bg-white dark:bg-slate-900 text-emerald-600 dark:text-emerald-400 shadow-xs' 
+          : 'text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white'}"
+        on:click={() => switchTab('words')}
+      >
+        <span>Wörter</span>
+        <span class="px-1.5 py-0.5 rounded-full text-[10px] font-bold {activeTab === 'words' ? 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300' : 'bg-slate-200/80 dark:bg-slate-700/80 text-slate-600 dark:text-slate-300'}">
+          {totalWordsCount}
+        </span>
       </button>
     </nav>
 
@@ -833,13 +1044,20 @@
                   style="width: {wordsPercent}%;"
                 ></div>
               </div>
-            {:else}
+            {:else if activeTab === 'review'}
               <!-- Progress Bar: Wiederholen (thinner: h-1) -->
               <div class="w-full h-1 rounded-full bg-slate-100 dark:bg-slate-800 overflow-hidden relative">
                 <div 
                   class="h-full rounded-full transition-all duration-500 ease-out {dueWordsCount === 0 ? 'bg-emerald-500' : 'bg-amber-500'}"
                   style="width: {dueWordsCount === 0 ? 100 : Math.min(100, Math.round(((currentExerciseIndex) / Math.max(1, sessionQueue.length)) * 100))}%;"
                 ></div>
+              </div>
+            {:else}
+              <!-- Progress Bar: Wörter (thinner: h-1 multi-segment) -->
+              <div class="w-full h-1 rounded-full bg-slate-100 dark:bg-slate-800 overflow-hidden flex">
+                <div class="h-full bg-emerald-500" style="width: {totalWordsCount > 0 ? (masteredWordsCount / totalWordsCount) * 100 : 0}%;"></div>
+                <div class="h-full bg-amber-500" style="width: {totalWordsCount > 0 ? (dueWordsCountInList / totalWordsCount) * 100 : 0}%;"></div>
+                <div class="h-full bg-indigo-500" style="width: {totalWordsCount > 0 ? (learningWordsCount / totalWordsCount) * 100 : 0}%;"></div>
               </div>
             {/if}
           </div>
@@ -916,7 +1134,7 @@
               </div>
             </div>
           </div>
-        {:else}
+        {:else if activeTab === 'review'}
           <!-- TAB 2: Wiederholen (Unbegrenzt) -->
           <div class="flex items-center justify-between text-xs sm:text-sm gap-2">
             <div class="flex items-center gap-2">
@@ -937,6 +1155,40 @@
               style="width: {dueWordsCount === 0 ? 100 : Math.min(100, Math.round(((currentExerciseIndex) / Math.max(1, sessionQueue.length)) * 100))}%;"
             ></div>
           </div>
+        {:else}
+          <!-- TAB 3: Wörter (Übersicht) -->
+          <div class="space-y-2">
+            <div class="flex items-center justify-between text-xs">
+              <div class="flex items-center gap-2">
+                <span class="font-bold text-slate-800 dark:text-slate-200">Wortschatz-Fortschritt</span>
+                <span class="px-2 py-0.5 rounded-full text-[10px] sm:text-[11px] font-bold bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300">
+                  {masteredWordsCount} / {totalWordsCount} Wörter gemeistert
+                </span>
+              </div>
+              <div class="text-xs font-bold text-emerald-600 dark:text-emerald-400">
+                {totalWordsCount > 0 ? Math.round((masteredWordsCount / totalWordsCount) * 100) : 0}%
+              </div>
+            </div>
+
+            <!-- Multi-segment progress bar (Mastered: Green, Due: Amber, Learning: Indigo) -->
+            <div class="w-full h-2.5 rounded-full bg-slate-100 dark:bg-slate-800 overflow-hidden flex">
+              <div 
+                class="h-full bg-emerald-500 transition-all duration-500" 
+                style="width: {totalWordsCount > 0 ? (masteredWordsCount / totalWordsCount) * 100 : 0}%;"
+                title="Gemeistert: {masteredWordsCount}"
+              ></div>
+              <div 
+                class="h-full bg-amber-500 transition-all duration-500" 
+                style="width: {totalWordsCount > 0 ? (dueWordsCountInList / totalWordsCount) * 100 : 0}%;"
+                title="Fällig: {dueWordsCountInList}"
+              ></div>
+              <div 
+                class="h-full bg-indigo-500 transition-all duration-500" 
+                style="width: {totalWordsCount > 0 ? (learningWordsCount / totalWordsCount) * 100 : 0}%;"
+                title="Beim Lernen: {learningWordsCount}"
+              ></div>
+            </div>
+          </div>
         {/if}
 
         <!-- Mini Stats Row (Clean, no harsh borders) -->
@@ -944,9 +1196,10 @@
           <div class="flex items-center gap-3 flex-wrap">
             <span>Fällig: <strong class="text-amber-600 dark:text-amber-400">{dueWordsCount} {dueWordsCount === 1 ? 'Wort' : 'Wörter'}</strong> <span class="text-[10px] opacity-70">({dueQueue.length} Sätze)</span></span>
             <span>Neu: <strong class="text-slate-700 dark:text-slate-300">{newWordsCount} {newWordsCount === 1 ? 'Wort' : 'Wörter'}</strong> <span class="text-[10px] opacity-70">({newQueue.length} Sätze)</span></span>
-            <span>Gemeistert: <strong class="text-slate-700 dark:text-slate-300">{userStats.totalMastered}</strong></span>
+            <span>Gemeistert: <strong class="text-slate-700 dark:text-slate-300">{masteredWordsCount}</strong></span>
+            <span>Verbleibend: <strong class="text-slate-700 dark:text-slate-300">{remainingWordsCount}</strong></span>
 
-            <!-- Button on the right of Gemeistert to enter minimal mode -->
+            <!-- Button on the right of stats to enter minimal mode -->
             <button
               type="button"
               class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] sm:text-[11px] font-medium text-slate-500 hover:text-indigo-600 dark:text-slate-400 dark:hover:text-indigo-400 bg-slate-100 hover:bg-slate-200/80 dark:bg-slate-800 dark:hover:bg-slate-700 transition-all cursor-pointer"
@@ -969,6 +1222,309 @@
         <div class="p-12 text-center rounded-3xl bg-white dark:bg-slate-900 shadow-xs space-y-3">
           <div class="inline-block animate-spin w-5 h-5 border-2 border-indigo-600 border-t-transparent rounded-full"></div>
           <p class="text-xs font-medium text-slate-500 dark:text-slate-400">Lade Kasus-Übungen...</p>
+        </div>
+
+      {:else if activeTab === 'words'}
+        <!-- Comprehensive Words Directory & Vocabulary Explorer -->
+        <div class="space-y-3.5 animate-in fade-in duration-200">
+          <!-- 1. Interactive Metric Cards (Click to filter by status or remaining count) -->
+          <div class="grid grid-cols-2 sm:grid-cols-5 gap-2 sm:gap-2.5">
+            <!-- Card: Alle Nomen -->
+            <button
+              type="button"
+              class="p-2.5 sm:p-3 rounded-xl sm:rounded-2xl transition-all text-left cursor-pointer border {wordStatusFilter === 'all' ? 'bg-indigo-50/80 dark:bg-indigo-950/50 border-indigo-300 dark:border-indigo-700 ring-2 ring-indigo-500/20' : 'bg-white dark:bg-slate-900 border-slate-100 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700'}"
+              on:click={() => { wordStatusFilter = 'all'; wordsPage = 1; }}
+            >
+              <div class="text-[10px] sm:text-xs font-semibold text-slate-500 dark:text-slate-400">Gesamt</div>
+              <div class="text-base sm:text-xl font-extrabold text-slate-900 dark:text-white mt-0.5">{totalWordsCount}</div>
+              <div class="text-[10px] text-slate-400 dark:text-slate-500 mt-0.5">Alle Wörter</div>
+            </button>
+
+            <!-- Card: Noch offen / Verbleibend (Remaining in total) -->
+            <button
+              type="button"
+              class="p-2.5 sm:p-3 rounded-xl sm:rounded-2xl transition-all text-left cursor-pointer border {wordStatusFilter === 'remaining' ? 'bg-slate-100 dark:bg-slate-800 border-slate-400 dark:border-slate-600 ring-2 ring-slate-400/20' : 'bg-white dark:bg-slate-900 border-slate-100 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700'}"
+              on:click={() => { wordStatusFilter = 'remaining'; wordsPage = 1; }}
+            >
+              <div class="text-[10px] sm:text-xs font-semibold text-slate-500 dark:text-slate-400">Noch offen</div>
+              <div class="text-base sm:text-xl font-extrabold text-slate-700 dark:text-slate-200 mt-0.5">{remainingWordsCount}</div>
+              <div class="text-[10px] text-slate-400 dark:text-slate-500 mt-0.5">Verbleibend</div>
+            </button>
+
+            <!-- Card: Beim Lernen (Currently learning) -->
+            <button
+              type="button"
+              class="p-2.5 sm:p-3 rounded-xl sm:rounded-2xl transition-all text-left cursor-pointer border {wordStatusFilter === 'learning' ? 'bg-indigo-50/80 dark:bg-indigo-950/50 border-indigo-300 dark:border-indigo-700 ring-2 ring-indigo-500/20' : 'bg-white dark:bg-slate-900 border-slate-100 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700'}"
+              on:click={() => { wordStatusFilter = 'learning'; wordsPage = 1; }}
+            >
+              <div class="text-[10px] sm:text-xs font-semibold text-indigo-600 dark:text-indigo-400">Beim Lernen</div>
+              <div class="text-base sm:text-xl font-extrabold text-indigo-700 dark:text-indigo-300 mt-0.5">{learningWordsCount}</div>
+              <div class="text-[10px] text-indigo-500/80 dark:text-indigo-400/70 mt-0.5">In Bearbeitung</div>
+            </button>
+
+            <!-- Card: Fällig zur Wiederholung (Needs to revise) -->
+            <button
+              type="button"
+              class="p-2.5 sm:p-3 rounded-xl sm:rounded-2xl transition-all text-left cursor-pointer border {wordStatusFilter === 'due' ? 'bg-amber-50/80 dark:bg-amber-950/50 border-amber-300 dark:border-amber-700 ring-2 ring-amber-500/20' : 'bg-white dark:bg-slate-900 border-slate-100 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700'}"
+              on:click={() => { wordStatusFilter = 'due'; wordsPage = 1; }}
+            >
+              <div class="text-[10px] sm:text-xs font-semibold text-amber-600 dark:text-amber-400">Fällig</div>
+              <div class="text-base sm:text-xl font-extrabold text-amber-700 dark:text-amber-300 mt-0.5">{dueWordsCountInList}</div>
+              <div class="text-[10px] text-amber-600/80 dark:text-amber-400/70 mt-0.5">Zu wiederholen</div>
+            </button>
+
+            <!-- Card: Gemeistert (Learnt) -->
+            <button
+              type="button"
+              class="p-2.5 sm:p-3 rounded-xl sm:rounded-2xl transition-all text-left cursor-pointer border {wordStatusFilter === 'mastered' ? 'bg-emerald-50/80 dark:bg-emerald-950/50 border-emerald-300 dark:border-emerald-700 ring-2 ring-emerald-500/20' : 'bg-white dark:bg-slate-900 border-slate-100 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700'}"
+              on:click={() => { wordStatusFilter = 'mastered'; wordsPage = 1; }}
+            >
+              <div class="text-[10px] sm:text-xs font-semibold text-emerald-600 dark:text-emerald-400">Gemeistert</div>
+              <div class="text-base sm:text-xl font-extrabold text-emerald-700 dark:text-emerald-300 mt-0.5">{masteredWordsCount}</div>
+              <div class="text-[10px] text-emerald-600/80 dark:text-emerald-400/70 mt-0.5">Vollständig gelernt</div>
+            </button>
+          </div>
+
+          <!-- 2. Search & Controls Bar -->
+          <div class="p-3 sm:p-4 rounded-2xl bg-white dark:bg-slate-900 shadow-xs border border-slate-100 dark:border-slate-800 space-y-2.5">
+            <div class="relative">
+              <input
+                type="text"
+                bind:value={wordsSearchQuery}
+                on:input={() => wordsPage = 1}
+                placeholder="Wort suchen (z. B. Raum, room, Katze, Buch)..."
+                class="w-full pl-9 pr-8 py-2 rounded-xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 text-xs sm:text-sm text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/30"
+              />
+              <svg class="w-4 h-4 text-slate-400 absolute left-3 top-2.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0118 0z" />
+              </svg>
+              {#if wordsSearchQuery}
+                <button
+                  type="button"
+                  class="absolute right-2.5 top-2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 text-xs p-1"
+                  on:click={() => { wordsSearchQuery = ''; wordsPage = 1; }}
+                  aria-label="Suche löschen"
+                >
+                  ✕
+                </button>
+              {/if}
+            </div>
+
+            <!-- Filters & Sort Options -->
+            <div class="flex items-center justify-between gap-2 flex-wrap text-xs">
+              <div class="flex items-center gap-2 flex-wrap">
+                <!-- Tier Filter -->
+                <select
+                  bind:value={wordTierFilter}
+                  on:change={() => wordsPage = 1}
+                  class="px-2.5 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 border-none font-medium text-xs focus:ring-1 focus:ring-indigo-500 cursor-pointer"
+                >
+                  <option value="all">Alle Tiers</option>
+                  <option value="top1000">Top 1000</option>
+                  <option value="top2000">Top 2000</option>
+                  <option value="top3000">Top 3000</option>
+                  <option value="top4000">Top 4000</option>
+                </select>
+
+                <!-- Gender Filter -->
+                <select
+                  bind:value={wordGenderFilter}
+                  on:change={() => wordsPage = 1}
+                  class="px-2.5 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 border-none font-medium text-xs focus:ring-1 focus:ring-indigo-500 cursor-pointer"
+                >
+                  <option value="all">Alle Artikel (der/die/das)</option>
+                  <option value="m">der (Maskulin)</option>
+                  <option value="f">die (Feminin)</option>
+                  <option value="n">das (Neutrum)</option>
+                </select>
+              </div>
+
+              <div class="flex items-center gap-2 ml-auto">
+                <span class="text-slate-400 text-[11px] hidden sm:inline">Sortierung:</span>
+                <select
+                  bind:value={wordSortOrder}
+                  class="px-2.5 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 border-none font-medium text-xs focus:ring-1 focus:ring-indigo-500 cursor-pointer"
+                >
+                  <option value="az">Alphabetisch (A–Z)</option>
+                  <option value="za">Alphabetisch (Z–A)</option>
+                  <option value="reps_desc">Meiste Wiederholungen nötig</option>
+                  <option value="reps_asc">Wenigste Wiederholungen nötig</option>
+                  <option value="tier">Häufigkeit (Top 1000 zuerst)</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- Active Filter & Count Line -->
+          <div class="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400 px-1">
+            <div>
+              <span>Zeige <strong>{paginatedWordsList.length}</strong> von <strong>{filteredWordsList.length}</strong> Wörtern</span>
+              {#if wordStatusFilter !== 'all'}
+                <span class="ml-1 text-indigo-600 dark:text-indigo-400 font-semibold">
+                  (Filter: {wordStatusFilter === 'remaining' ? 'Noch offen' : wordStatusFilter === 'learning' ? 'Beim Lernen' : wordStatusFilter === 'due' ? 'Fällig' : 'Gemeistert'})
+                </span>
+              {/if}
+            </div>
+            {#if wordStatusFilter !== 'all' || wordTierFilter !== 'all' || wordGenderFilter !== 'all' || wordsSearchQuery}
+              <button
+                type="button"
+                class="text-indigo-600 dark:text-indigo-400 hover:underline cursor-pointer text-xs font-semibold"
+                on:click={() => {
+                  wordStatusFilter = 'all';
+                  wordTierFilter = 'all';
+                  wordGenderFilter = 'all';
+                  wordsSearchQuery = '';
+                  wordsPage = 1;
+                }}
+              >
+                Filter zurücksetzen
+              </button>
+            {/if}
+          </div>
+
+          <!-- 3. Word Cards List -->
+          {#if paginatedWordsList.length === 0}
+            <div class="p-10 text-center rounded-3xl bg-white dark:bg-slate-900 shadow-xs space-y-2 border border-slate-100 dark:border-slate-800">
+              <p class="text-sm font-semibold text-slate-700 dark:text-slate-300">Keine Wörter gefunden</p>
+              <p class="text-xs text-slate-400">Versuche die Filter zurückzusetzen oder einen anderen Begriff einzugeben.</p>
+            </div>
+          {:else}
+            <div class="space-y-2.5">
+              {#each paginatedWordsList as word (word.wordId)}
+                {@const statusBadge = getWordStatusBadge(word.status)}
+                {@const genderPill = formatGenderPill(word.gender)}
+                {@const isExpanded = expandedWordId === word.wordId}
+                <div class="p-3.5 sm:p-4 rounded-2xl bg-white dark:bg-slate-900 shadow-xs border border-slate-100 dark:border-slate-800/80 hover:border-indigo-200 dark:hover:border-indigo-900/50 transition-all space-y-2.5">
+                  <!-- Top Row: German Dictionary Form, Gender, Tier & Status -->
+                  <div class="flex items-start justify-between gap-2 flex-wrap">
+                    <div class="space-y-0.5">
+                      <div class="flex items-center gap-2 flex-wrap">
+                        <span class="text-base sm:text-lg font-black text-slate-900 dark:text-white tracking-tight">
+                          {word.originalWord}
+                        </span>
+                        <span class="px-2 py-0.5 rounded-md text-[10px] font-bold border {genderPill.style}">
+                          {genderPill.label}
+                        </span>
+                        <span class="px-2 py-0.5 rounded-md text-[10px] font-bold {getTierBadgeStyle(word.category)}">
+                          {formatTierName(word.category)}
+                        </span>
+                      </div>
+                      {#if word.meaning}
+                        <div class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 italic">
+                          {word.meaning}
+                        </div>
+                      {/if}
+                    </div>
+
+                    <!-- Status Badge -->
+                    <span class="px-2.5 py-0.5 rounded-full text-[11px] font-bold border shrink-0 {statusBadge.style}">
+                      {statusBadge.label}
+                    </span>
+                  </div>
+
+                  <!-- Mastery & Revisions Remaining Label (Core feature) -->
+                  <div class="p-2.5 rounded-xl bg-slate-50/90 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 flex items-center justify-between gap-2 flex-wrap">
+                    <div class="flex items-center gap-1.5 text-xs sm:text-sm">
+                      {#if word.status === 'mastered'}
+                        <span class="font-bold text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
+                          <span>⭐</span>
+                          <span>Gemeistert – 0× wiederholen nötig</span>
+                        </span>
+                      {:else}
+                        <span class="font-bold text-slate-800 dark:text-slate-200 flex items-center gap-1.5">
+                          <span class="text-indigo-600 dark:text-indigo-400">🔄</span>
+                          <span>Noch <strong class="text-indigo-600 dark:text-indigo-400">{word.maxRepsNeeded}×</strong> wiederholen bis gemeistert</span>
+                        </span>
+                      {/if}
+                    </div>
+
+                    <!-- Case Progress Breakdown Chips (Nominativ, Akkusativ, Dativ) -->
+                    <div class="flex items-center gap-1.5 text-[11px] font-bold">
+                      {#each ['nominativ', 'akkusativ', 'dativ'] as c}
+                        {@const info = word.caseBreakdown[c]}
+                        <span class="px-2 py-0.5 rounded-md text-[10px] font-semibold border {
+                          info?.isMastered
+                            ? 'bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/50 dark:text-emerald-300 dark:border-emerald-800'
+                            : info?.isDue
+                            ? 'bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-950/50 dark:text-amber-300 dark:border-amber-800'
+                            : (info?.repsRemaining ?? 4) < 4
+                            ? 'bg-indigo-50 text-indigo-700 border-indigo-200 dark:bg-indigo-950/50 dark:text-indigo-300 dark:border-indigo-800'
+                            : 'bg-slate-100 text-slate-500 border-slate-200 dark:bg-slate-800 dark:text-slate-400 dark:border-slate-700'
+                        }">
+                          {c.slice(0, 3).toUpperCase()}: {info?.isMastered ? '✓' : `${info?.repsRemaining ?? 4}×`}
+                        </span>
+                      {/each}
+                    </div>
+                  </div>
+
+                  <!-- Actions Row: Expand Sentences + Practice Button -->
+                  <div class="flex items-center justify-between gap-2 pt-0.5">
+                    <button
+                      type="button"
+                      class="text-xs text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200 font-medium cursor-pointer transition-colors flex items-center gap-1"
+                      on:click={() => toggleWordExpand(word.wordId)}
+                    >
+                      <span>{isExpanded ? 'Kasus-Sätze verbergen ▲' : '3 Beispielsätze ansehen ▼'}</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      class="px-3 py-1.5 rounded-xl bg-indigo-50 hover:bg-indigo-100 dark:bg-indigo-950/60 dark:hover:bg-indigo-900/60 text-indigo-700 dark:text-indigo-300 font-bold text-xs transition-all cursor-pointer active:scale-95 flex items-center gap-1.5"
+                      on:click={() => practiceSpecificWord(word.wordId)}
+                      title="Diesen Begriff mit allen 3 Kasus-Sätzen üben"
+                    >
+                      <span>Dieses Wort üben</span>
+                      <span>➔</span>
+                    </button>
+                  </div>
+
+                  <!-- Expanded Sentences Preview -->
+                  {#if isExpanded}
+                    <div class="pt-2 border-t border-slate-100 dark:border-slate-800/80 space-y-2 animate-in fade-in">
+                      <div class="text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">
+                        Kasus-Sätze für „{word.baseNoun}“
+                      </div>
+                      <div class="grid grid-cols-1 gap-1.5">
+                        {#each word.exercises as ex}
+                          {@const card = cardsMap[ex.id]}
+                          {@const repsLeft = getCardRepsRemaining(card)}
+                          <div class="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/40 border border-slate-100 dark:border-slate-800 text-xs space-y-1">
+                            <div class="flex items-center justify-between gap-2">
+                              <span class="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider {getCaseBadgeStyle(ex.case)}">
+                                {ex.case}
+                              </span>
+                              <span class="text-[10px] text-slate-400">
+                                {card?.state === 'mastered' ? 'Gemeistert ✓' : card?.due && card.due <= Date.now() && card.state !== 'new' ? 'Fällig ⏳' : `Noch ${repsLeft}× wiederholen`}
+                              </span>
+                            </div>
+                            <div class="text-slate-800 dark:text-slate-100 font-medium">
+                              {ex.sentenceStart}<strong class="text-indigo-600 dark:text-indigo-400 underline decoration-indigo-300 underline-offset-2">{ex.targetAnswer}</strong>{ex.sentenceEnd || ''}
+                            </div>
+                            <div class="text-[11px] text-slate-400 dark:text-slate-500 italic">
+                              „{ex.translation}“
+                            </div>
+                          </div>
+                        {/each}
+                      </div>
+                    </div>
+                  {/if}
+                </div>
+              {/each}
+
+              <!-- Load More Pagination Button -->
+              {#if hasMoreWords}
+                <div class="pt-3 text-center">
+                  <button
+                    type="button"
+                    class="px-6 py-2.5 rounded-2xl bg-slate-100 hover:bg-slate-200/80 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-bold text-xs sm:text-sm transition-all cursor-pointer active:scale-95 shadow-xs"
+                    on:click={() => wordsPage += 1}
+                  >
+                    Mehr Wörter laden ({paginatedWordsList.length} von {filteredWordsList.length}) ➔
+                  </button>
+                </div>
+              {/if}
+            </div>
+          {/if}
         </div>
 
       {:else if !currentExercise}

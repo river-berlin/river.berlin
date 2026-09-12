@@ -23,6 +23,14 @@ export function createNewCard(exerciseId: string): FSRSCard {
 
 export type ReviewRating = 'again' | 'good' | 'mastered';
 
+export const MASTERY_REPS_THRESHOLD = 4;
+
+export function getCardRepsRemaining(card?: FSRSCard): number {
+  if (!card || card.state === 'new') return MASTERY_REPS_THRESHOLD;
+  if (card.state === 'mastered') return 0;
+  return Math.max(0, MASTERY_REPS_THRESHOLD - (card.reps || 0));
+}
+
 export function scheduleCard(card: FSRSCard, rating: ReviewRating): FSRSCard {
   const now = Date.now();
   const updated = { ...card, lastReview: now };
@@ -62,6 +70,13 @@ export function scheduleCard(card: FSRSCard, rating: ReviewRating): FSRSCard {
     // Decrease difficulty slightly on consecutive successes
     updated.difficulty = Math.max(1, updated.difficulty - 0.2);
     updated.due = now + Math.round(updated.stability * ONE_DAY_MS);
+  }
+
+  // Auto-promote card to mastered if it reaches the mastery threshold
+  if (updated.reps >= MASTERY_REPS_THRESHOLD) {
+    updated.state = 'mastered';
+    updated.stability = Infinity;
+    updated.due = Infinity;
   }
 
   return updated;
