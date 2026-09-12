@@ -62,7 +62,7 @@
 
   // Words directory state
   let nounMeaningsMap: Record<string, string> = {};
-  let wordStatusFilter: 'all' | 'remaining' | 'learning' | 'due' | 'mastered' = 'all';
+  let wordStatusFilter: 'all' | 'remaining' | 'learning' | 'due' | 'mastered' | 'already_known' = 'all';
   let wordsSearchQuery = '';
   let wordTierFilter: 'all' | 'top1000' | 'top2000' | 'top3000' | 'top4000' = 'all';
   let wordGenderFilter: 'all' | 'm' | 'f' | 'n' | 'pl' = 'all';
@@ -182,9 +182,37 @@
         };
       }
 
-      let status: 'mastered' | 'due' | 'learning' | 'remaining' = 'remaining';
+      // Auto-heal previously marked cards: if any card for this word was marked 'mastered' or 'isAlreadyKnown',
+      // mark all sentences of this word as mastered and known
+      let isAlreadyKnown = w.exercises.some(ex => {
+        const c = cardsMap[ex.id];
+        return c && (c.isAlreadyKnown || c.state === 'mastered');
+      });
+
+      if (isAlreadyKnown) {
+        masteredCount = w.exercises.length;
+        maxRepsNeeded = 0;
+        totalRepsNeeded = 0;
+        for (const ex of w.exercises) {
+          if (!cardsMap[ex.id] || cardsMap[ex.id].state !== 'mastered') {
+            const c = cardsMap[ex.id] || createNewCard(ex.id);
+            c.state = 'mastered';
+            c.stability = Infinity;
+            c.due = Infinity;
+            c.isAlreadyKnown = true;
+            cardsMap[ex.id] = c;
+          }
+          caseBreakdown[ex.case] = {
+            repsRemaining: 0,
+            isDue: false,
+            isMastered: true
+          };
+        }
+      }
+
+      let status: 'mastered' | 'already_known' | 'due' | 'learning' | 'remaining' = 'remaining';
       if (masteredCount === w.exercises.length && w.exercises.length > 0) {
-        status = 'mastered';
+        status = isAlreadyKnown ? 'already_known' : 'mastered';
       } else if (dueCount > 0) {
         status = 'due';
       } else if (learningCount > 0 || (userStats.todayWordIds && userStats.todayWordIds.includes(w.wordId))) {
@@ -211,6 +239,7 @@
   $: learningWordsCount = uniqueWordsList.filter(w => w.status === 'learning').length;
   $: dueWordsCountInList = uniqueWordsList.filter(w => w.status === 'due').length;
   $: masteredWordsCount = uniqueWordsList.filter(w => w.status === 'mastered').length;
+  $: alreadyKnownWordsCount = uniqueWordsList.filter(w => w.status === 'already_known').length;
 
   $: filteredWordsList = (() => {
     let list = uniqueWordsList;
@@ -284,8 +313,10 @@
     }
   }
 
-  function getWordStatusBadge(status: 'mastered' | 'due' | 'learning' | 'remaining'): { label: string; style: string } {
+  function getWordStatusBadge(status: 'mastered' | 'already_known' | 'due' | 'learning' | 'remaining'): { label: string; style: string } {
     switch (status) {
+      case 'already_known':
+        return { label: 'Bereits bekannt 🌟', style: 'bg-teal-50 text-teal-800 dark:bg-teal-950/70 dark:text-teal-300 border-teal-200/80 dark:border-teal-800/50' };
       case 'mastered':
         return { label: 'Gemeistert ✓', style: 'bg-emerald-50 text-emerald-800 dark:bg-emerald-950/70 dark:text-emerald-300 border-emerald-200/80 dark:border-emerald-800/50' };
       case 'due':
@@ -716,20 +747,54 @@
   }
 
   function handleMastered() {
-    if (!currentExercise) return;
+    handleMarkWordAsAlreadyKnown();
+  }
 
-    const card = cardsMap[currentExercise.id] || createNewCard(currentExercise.id);
-    cardsMap[currentExercise.id] = scheduleCard(card, 'mastered');
+  function handleMarkWordAsAlreadyKnown(targetWordId?: number) {
+    const wordId = targetWordId ?? currentExercise?.wordId;
+    if (!wordId) return;
+
+    const exercisesForWord = allExercises.filter(e => e.wordId === wordId);
+
+    for (const ex of exercisesForWord) {
+      const card = cardsMap[ex.id] || createNewCard(ex.id);
+      card.state = 'mastered';
+      card.stability = Infinity;
+      card.due = Infinity;
+      card.isAlreadyKnown = true;
+      cardsMap[ex.id] = card;
+      recordSentenceCompletion(ex.id);
+    }
+
+    // Remove any remaining sentences for this word from the current sessionQueue
+    const exerciseIds = new Set(exercisesForWord.map(e => e.id));
+    sessionQueue = sessionQueue.filter(id => !exerciseIds.has(id));
+
     cardsMap = { ...cardsMap };
     saveCardsMap(cardsMap);
 
+    checkAndRecordWordCompletion(wordId);
     userStats.totalMastered += 1;
-    recordSentenceCompletion(currentExercise.id);
-    checkAndRecordWordCompletion(currentExercise.wordId);
     userStats = { ...userStats };
     saveUserStats(userStats);
 
-    advanceToNextCard();
+    if (!targetWordId && currentExercise) {
+      advanceToNextCard();
+    }
+  }
+
+  function handleUnmarkAlreadyKnown(wordId: number) {
+    const exercisesForWord = allExercises.filter(e => e.wordId === wordId);
+    for (const ex of exercisesForWord) {
+      if (cardsMap[ex.id]) {
+        cardsMap[ex.id] = createNewCard(ex.id);
+      }
+    }
+    cardsMap = { ...cardsMap };
+    saveCardsMap(cardsMap);
+    userStats.totalMastered = Math.max(0, userStats.totalMastered - 1);
+    userStats = { ...userStats };
+    saveUserStats(userStats);
   }
 
   function advanceToNextCard() {
@@ -1228,7 +1293,7 @@
         <!-- Comprehensive Words Directory & Vocabulary Explorer -->
         <div class="space-y-3.5 animate-in fade-in duration-200">
           <!-- 1. Interactive Metric Cards (Click to filter by status or remaining count) -->
-          <div class="grid grid-cols-2 sm:grid-cols-5 gap-2 sm:gap-2.5">
+          <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-2 sm:gap-2.5">
             <!-- Card: Alle Nomen -->
             <button
               type="button"
@@ -1273,7 +1338,7 @@
               <div class="text-[10px] text-amber-600/80 dark:text-amber-400/70 mt-0.5">Zu wiederholen</div>
             </button>
 
-            <!-- Card: Gemeistert (Learnt) -->
+            <!-- Card: Gemeistert (Mastered in Training) -->
             <button
               type="button"
               class="p-2.5 sm:p-3 rounded-xl sm:rounded-2xl transition-all text-left cursor-pointer border {wordStatusFilter === 'mastered' ? 'bg-emerald-50/80 dark:bg-emerald-950/50 border-emerald-300 dark:border-emerald-700 ring-2 ring-emerald-500/20' : 'bg-white dark:bg-slate-900 border-slate-100 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700'}"
@@ -1281,7 +1346,18 @@
             >
               <div class="text-[10px] sm:text-xs font-semibold text-emerald-600 dark:text-emerald-400">Gemeistert</div>
               <div class="text-base sm:text-xl font-extrabold text-emerald-700 dark:text-emerald-300 mt-0.5">{masteredWordsCount}</div>
-              <div class="text-[10px] text-emerald-600/80 dark:text-emerald-400/70 mt-0.5">Vollständig gelernt</div>
+              <div class="text-[10px] text-emerald-600/80 dark:text-emerald-400/70 mt-0.5">Im Training</div>
+            </button>
+
+            <!-- Card: Bereits bekannt (Already Known / Kenne ich schon) -->
+            <button
+              type="button"
+              class="p-2.5 sm:p-3 rounded-xl sm:rounded-2xl transition-all text-left cursor-pointer border {wordStatusFilter === 'already_known' ? 'bg-teal-50/80 dark:bg-teal-950/50 border-teal-300 dark:border-teal-700 ring-2 ring-teal-500/20' : 'bg-white dark:bg-slate-900 border-slate-100 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700'}"
+              on:click={() => { wordStatusFilter = 'already_known'; wordsPage = 1; }}
+            >
+              <div class="text-[10px] sm:text-xs font-semibold text-teal-600 dark:text-teal-400">Bereits bekannt</div>
+              <div class="text-base sm:text-xl font-extrabold text-teal-700 dark:text-teal-300 mt-0.5">{alreadyKnownWordsCount}</div>
+              <div class="text-[10px] text-teal-600/80 dark:text-teal-400/70 mt-0.5">Kenne ich schon</div>
             </button>
           </div>
 
@@ -1425,10 +1501,15 @@
                   <!-- Mastery & Revisions Remaining Label (Core feature) -->
                   <div class="p-2.5 rounded-xl bg-slate-50/90 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 flex items-center justify-between gap-2 flex-wrap">
                     <div class="flex items-center gap-1.5 text-xs sm:text-sm">
-                      {#if word.status === 'mastered'}
+                      {#if word.status === 'already_known'}
+                        <span class="font-bold text-teal-700 dark:text-teal-300 flex items-center gap-1">
+                          <span>🌟</span>
+                          <span>Bereits bekannt (Kenne ich schon)</span>
+                        </span>
+                      {:else if word.status === 'mastered'}
                         <span class="font-bold text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
                           <span>⭐</span>
-                          <span>Gemeistert – 0× wiederholen nötig</span>
+                          <span>Im Training gemeistert – 0× wiederholen nötig</span>
                         </span>
                       {:else}
                         <span class="font-bold text-slate-800 dark:text-slate-200 flex items-center gap-1.5">
@@ -1457,8 +1538,8 @@
                     </div>
                   </div>
 
-                  <!-- Actions Row: Expand Sentences + Practice Button -->
-                  <div class="flex items-center justify-between gap-2 pt-0.5">
+                  <!-- Actions Row: Expand Sentences + Quick Known Toggle + Practice Button -->
+                  <div class="flex items-center justify-between gap-2 pt-0.5 flex-wrap">
                     <button
                       type="button"
                       class="text-xs text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200 font-medium cursor-pointer transition-colors flex items-center gap-1"
@@ -1467,15 +1548,37 @@
                       <span>{isExpanded ? 'Kasus-Sätze verbergen ▲' : '3 Beispielsätze ansehen ▼'}</span>
                     </button>
 
-                    <button
-                      type="button"
-                      class="px-3 py-1.5 rounded-xl bg-indigo-50 hover:bg-indigo-100 dark:bg-indigo-950/60 dark:hover:bg-indigo-900/60 text-indigo-700 dark:text-indigo-300 font-bold text-xs transition-all cursor-pointer active:scale-95 flex items-center gap-1.5"
-                      on:click={() => practiceSpecificWord(word.wordId)}
-                      title="Diesen Begriff mit allen 3 Kasus-Sätzen üben"
-                    >
-                      <span>Dieses Wort üben</span>
-                      <span>➔</span>
-                    </button>
+                    <div class="flex items-center gap-1.5 ml-auto">
+                      {#if word.status === 'already_known'}
+                        <button
+                          type="button"
+                          class="px-2.5 py-1 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 font-medium text-xs transition-all cursor-pointer active:scale-95 flex items-center gap-1"
+                          on:click={() => handleUnmarkAlreadyKnown(word.wordId)}
+                          title="Bereits-bekannt-Status aufheben und normal üben"
+                        >
+                          <span>↺ Zurücksetzen</span>
+                        </button>
+                      {:else if word.status !== 'mastered'}
+                        <button
+                          type="button"
+                          class="px-2.5 py-1 rounded-xl bg-teal-50 hover:bg-teal-100 dark:bg-teal-950/60 dark:hover:bg-teal-900/60 text-teal-700 dark:text-teal-300 border border-teal-200/60 dark:border-teal-800/50 font-medium text-xs transition-all cursor-pointer active:scale-95 flex items-center gap-1"
+                          on:click={() => handleMarkWordAsAlreadyKnown(word.wordId)}
+                          title="Als bereits bekannt markieren (nie wieder abfragen)"
+                        >
+                          <span>✓ Kenne ich schon</span>
+                        </button>
+                      {/if}
+
+                      <button
+                        type="button"
+                        class="px-3 py-1.5 rounded-xl bg-indigo-50 hover:bg-indigo-100 dark:bg-indigo-950/60 dark:hover:bg-indigo-900/60 text-indigo-700 dark:text-indigo-300 font-bold text-xs transition-all cursor-pointer active:scale-95 flex items-center gap-1.5"
+                        on:click={() => practiceSpecificWord(word.wordId)}
+                        title="Diesen Begriff mit allen 3 Kasus-Sätzen üben"
+                      >
+                        <span>Üben</span>
+                        <span>➔</span>
+                      </button>
+                    </div>
                   </div>
 
                   <!-- Expanded Sentences Preview -->
@@ -1856,16 +1959,16 @@
                 </button>
               </div>
 
-              <!-- Right: "Kann ich schon / Gemeistert" button (Mark as Mastered) -->
+              <!-- Right: "Kenne ich schon" button (Mark as Already Known & Mastered) -->
               <div>
                 <button
                   type="button"
-                  class="px-3 py-1.5 rounded-xl bg-emerald-100 hover:bg-emerald-200 dark:bg-emerald-950/60 dark:hover:bg-emerald-900/60 text-emerald-800 dark:text-emerald-200 border border-emerald-300/60 dark:border-emerald-700/60 font-medium transition-all cursor-pointer active:scale-95"
-                  on:click={handleMastered}
-                  title="Dieses Nomen dauerhaft als gemeistert markieren – wird nie wieder zur Wiederholung vorgelegt (Esc-Taste)"
+                  class="px-3 py-1.5 rounded-xl bg-teal-50 hover:bg-teal-100 dark:bg-teal-950/60 dark:hover:bg-teal-900/60 text-teal-800 dark:text-teal-200 border border-teal-300/60 dark:border-teal-700/60 font-medium transition-all cursor-pointer active:scale-95 flex items-center gap-1.5"
+                  on:click={() => handleMarkWordAsAlreadyKnown()}
+                  title="Dieses Nomen als bereits bekannt markieren – alle Kasus-Sätze werden übersprungen (Esc-Taste)"
                 >
-                  <span>Kann ich schon / Gemeistert</span>
-                  <span class="text-[10px] opacity-60 ml-1">[Esc]</span>
+                  <span>Kenne ich schon</span>
+                  <span class="text-[10px] opacity-60 ml-0.5">[Esc]</span>
                 </button>
               </div>
 

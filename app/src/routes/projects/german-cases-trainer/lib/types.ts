@@ -35,6 +35,7 @@ export interface FSRSCard {
   reps: number;                 // Number of successful reviews
   lapses: number;               // Number of times forgotten
   lastReview?: number;          // Timestamp of last review
+  isAlreadyKnown?: boolean;     // Marked as "Kenne ich schon / Bereits bekannt"
 }
 
 export interface UserStats {
