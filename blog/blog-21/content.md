@@ -47,7 +47,7 @@ lines I purposefully omitted :
 1. "I am not going to second guess a risk assessment I have no access to, that's dishonest lol, a ton of firms are horribly incompetent and I absolutely will second guess their risk assessment.
 
 
-Pangram scores this as 100% human.
+[Pangram scores this](https://www.pangram.com/history/32e804f8-c1ab-47ea-89ce-25d68cce2f1f?ucc=ZRiXVLxHO5K) as 100% human. 
 
 Authors note : I do not agree with the Article in-and-of itself as I write it, as a developer my instinct is that, as developers we have historically taken care of numerous bugs on a timely manner, so y2k, heardbleed and idk, the thousand other problems have been largely taken care of. 
 
