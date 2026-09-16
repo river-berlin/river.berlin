@@ -34,7 +34,8 @@ async function main() {
     .filter((e) => e.isDirectory() && /^blog-\d+$/.test(e.name))
     .map((e) => parseInt(e.name.replace("blog-", ""), 10));
 
-  const nextNum = blogNumbers.length ? Math.max(...blogNumbers) + 1 : 1;
+  const argNum = process.argv[2] && !isNaN(parseInt(process.argv[2], 10)) ? parseInt(process.argv[2], 10) : null;
+  const nextNum = argNum || (blogNumbers.length ? Math.max(...blogNumbers) + 1 : 1);
   const newBlogDir = path.join(blogDir, `blog-${nextNum}`);
 
   // create the new folder

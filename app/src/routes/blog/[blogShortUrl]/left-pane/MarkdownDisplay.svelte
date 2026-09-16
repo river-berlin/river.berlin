@@ -34,6 +34,12 @@
 </script>
 
 <div class="markdown-container">
+    {#if metadata?.hidden === true || metadata?.hidden === 'true'}
+        <p class="mb-5 text-sm text-gray-800 dark:text-gray-200">
+            <span class="underline decoration-wavy decoration-red-500 underline-offset-4" style="text-decoration: underline wavy #ef4444; text-underline-offset: 4px;">Note: This post is hidden for some reason or another by me, so it won't appear in my blog post list</span>
+        </p>
+    {/if}
+
     <div class="stuff book-review flex flex-col">
         <a href="/blog/{metadata.url}" class="relative p-1.5 mb-5 no-underline text-gray-900 dark:text-gray-100 group">
             <div class="flex flex-col">
