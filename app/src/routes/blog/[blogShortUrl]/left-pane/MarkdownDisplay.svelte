@@ -5,6 +5,7 @@
     export let blogNum;
     export let metadata;
     export let icon;
+    export let articlePath;
 
     let proseEl;
 
@@ -41,12 +42,13 @@
     {/if}
 
     <div class="stuff book-review flex flex-col">
-        <a href="/blog/{metadata.url}" class="relative p-1.5 mb-5 no-underline text-gray-900 dark:text-gray-100 group">
-            <div class="flex flex-col">
-                <span class="take-away font-medium text-primary-700 dark:text-primary-400">Blog #{blogNum}</span>
-                <span class="font-medium mt-1">{metadata.title}</span>
+        <div class="p-1.5 mb-5 text-gray-900 dark:text-gray-100">
+            <div class="flex w-full items-center gap-3">
+                <a href={articlePath} class="take-away font-medium text-primary-700 dark:text-primary-400 no-underline">Blog #{blogNum}</a>
+                <slot name="language" />
             </div>
-        </a>
+            <a href={articlePath} class="block font-medium mt-1 no-underline">{metadata.title}</a>
+        </div>
     </div>
     
     <div class="flex flex-col items-center justify-center w-full mb-10">

@@ -1,11 +1,17 @@
 import adapter from '@sveltejs/adapter-static';
 import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
 import path from 'path';
+import fs from 'node:fs';
 import {getBlogs, getBookTakeaways, getProjects} from './src/lib/server/get-contents.js'
 
 const currentDir = process.cwd();
 const blogs = await getBlogs(false, path.join(currentDir, "/src/things"))
-const blogUrls = blogs.map(blog => "/blog/" + blog.metadata.url)
+const blogUrls = blogs.flatMap(blog => {
+    const url = "/blog/" + blog.metadata.url;
+    return fs.existsSync(path.join(currentDir, `src/things/blog/blog-${blog.num}/content_de.md`))
+        ? [url, `/de${url}`]
+        : [url];
+});
 
 /** @type {import('@sveltejs/kit').Config} */
 const config = {

@@ -2,6 +2,7 @@
 import path from 'path';
 import nodeHtmlToImage from 'node-html-to-image';
 import fs from "fs"
+import showdown from 'showdown';
 import {getBlogs, getBookTakeaways, getProjects} from './src/lib/server/get-contents.js'
 
 
@@ -104,8 +105,12 @@ const style = `
 const meditatingEnbyDataURI = 'data:image/svg+xml;base64,' +
   fs.readFileSync('./src/lib/images/meditating-enby.svg').toString('base64');
 
-function generateHTML(preImageURL, topShortText, mainText, byText, image){
-return `<html lang="en">
+function escapeHTML(value) {
+  return String(value ?? '').replace(/[&<>"']/g, char => ({'&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;'}[char]));
+}
+
+function generateHTML(preImageURL, topShortText, mainText, byText, image, language = 'en'){
+return `<html lang="${language}">
 <head>
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -160,10 +165,10 @@ return `<html lang="en">
       ${image ? `<div class="content-image"><img src="${image}" alt="" style="max-width: 100%; max-height: 80px;"></div>` : ''}
       <div class="text-stuff">
         <div class="type-container">
-          <h4 class="type">${topShortText}</h4>
+          <h4 class="type">${escapeHTML(topShortText)}</h4>
         </div>
-        <h1 class="big-text">${mainText}</h1>
-        <p class='author'>${byText} </p>
+        <h1 class="big-text">${escapeHTML(mainText)}</h1>
+        <p class='author'>${escapeHTML(byText)} </p>
       </div>
     </div>
     
@@ -186,6 +191,31 @@ const currentDir = process.cwd();
 const bookTakeaways = await getBookTakeaways(false, path.join(currentDir, "/src/things"))
 const projects = await getProjects(false)
 const blogs = await getBlogs(false, path.join(currentDir, "/src/things"))
+// Optionally regenerate one article: npm run build-opengraph -- --blog=22
+const blogFilter = process.argv.find(arg => arg.startsWith('--blog='))?.slice(7);
+if (blogFilter && !blogs.some(blog => String(blog.num) === blogFilter)) {
+  throw new Error(`Unknown blog number: ${blogFilter}`);
+}
+
+async function renderImage(output, html) {
+  fs.mkdirSync(path.dirname(output), { recursive: true });
+  await nodeHtmlToImage({
+    output,
+    html,
+    beforeScreenshot: async page => {
+      // Long translated titles must fit above the footer as well.
+      await page.evaluate(() => {
+        const title = document.querySelector('.big-text');
+        const footer = document.querySelector('.bottom-thingy');
+        if (!title || !footer) return;
+        let size = 20;
+        while (title.getBoundingClientRect().bottom > footer.getBoundingClientRect().top - 12 && size > 12) {
+          title.style.fontSize = `${--size}px`;
+        }
+      });
+    }
+  });
+}
 
 function formatDate(dateString) {
   const date = new Date(dateString);
@@ -212,30 +242,45 @@ function formatDate(dateString) {
   return formattedDate;
 }
 
-for(let bookTakeaway of bookTakeaways){
-  nodeHtmlToImage({
-    output : path.join(currentDir, `/static/opengraph/book-takeaways/${bookTakeaway.num}.png`),
-    html : generateHTML("https://river.berlin/scroll.svg", `book take away #${bookTakeaway.num} · ${formatDate(bookTakeaway.metadata.dated)}`, bookTakeaway.metadata.bookTitle, ``)
-  })
+for(let bookTakeaway of blogFilter ? [] : bookTakeaways){
+  await renderImage(
+    path.join(currentDir, `/static/opengraph/book-takeaways/${bookTakeaway.num}.png`),
+    generateHTML("https://river.berlin/scroll.svg", `book take away #${bookTakeaway.num} · ${formatDate(bookTakeaway.metadata.dated)}`, bookTakeaway.metadata.bookTitle, ``)
+  );
 }
 
 for(let blog of blogs){
+  if (blogFilter && String(blog.num) !== blogFilter) continue;
   let image = null;
 
   if(blog.metadata.icon_v2){
-    const imagepath = fs.readFileSync(`./static/blog/blog-${blog.num}/icon.jpg`);
-    const base64Image = new Buffer.from(imagepath).toString('base64');
+    const imagepath = fs.readFileSync(`./static/blog/blog-${blog.num}/${blog.metadata.icon || 'icon.jpg'}`);
+    const base64Image = Buffer.from(imagepath).toString('base64');
     image = 'data:image/jpeg;base64,' + base64Image
   }
-  nodeHtmlToImage({
-    output : path.join(currentDir, `/static/opengraph/blog/${blog.num}.png`),
-    html : generateHTML("https://river.berlin/scroll.svg", `blog #${blog.num} · ${formatDate(blog.metadata.dated)}`, blog.metadata.title, ``, image ) // puts the icon in the image only for icon version v2
-  })
+  await renderImage(
+    path.join(currentDir, `/static/opengraph/blog/${blog.num}.png`),
+    generateHTML("https://river.berlin/scroll.svg", `blog #${blog.num} · ${formatDate(blog.metadata.dated)}`, blog.metadata.title, ``, image)
+  );
+  const germanPath = `./src/things/blog/blog-${blog.num}/content_de.md`;
+  if (fs.existsSync(germanPath)) {
+    const converter = new showdown.Converter({ metadata: true });
+    converter.makeHtml(fs.readFileSync(germanPath, 'utf8'));
+    const germanMetadata = converter.getMetadata();
+    const title = blog.metadata.title_de || germanMetadata.title || blog.metadata.title;
+    const date = new Date(germanMetadata.dated || blog.metadata.dated).toLocaleDateString('de-DE', {
+      day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC'
+    });
+    await renderImage(
+      path.join(currentDir, `/static/opengraph/blog/de/${blog.num}.png`),
+      generateHTML("https://river.berlin/scroll.svg", `Blog #${blog.num} · ${date} · Deutsch`, title, ``, image, 'de')
+    );
+  }
 }
 
-for(let project of projects){
-  nodeHtmlToImage({
-    output : path.join(currentDir, `/static/opengraph/projects/${project.metadata.shortPath}.png`),
-    html : generateHTML("https://river.berlin/fruits/watermelon.svg", `project #${project.num} · ${formatDate(project.metadata.dated)}`, project.metadata.projectTitle, ``)
-  })
+for(let project of blogFilter ? [] : projects){
+  await renderImage(
+    path.join(currentDir, `/static/opengraph/projects/${project.metadata.shortPath}.png`),
+    generateHTML("https://river.berlin/fruits/watermelon.svg", `project #${project.num} · ${formatDate(project.metadata.dated)}`, project.metadata.projectTitle, ``)
+  );
 }

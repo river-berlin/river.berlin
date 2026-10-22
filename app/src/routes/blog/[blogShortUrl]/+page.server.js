@@ -2,6 +2,7 @@ import showdown from "showdown";
 import showdownHighlight from "showdown-highlight";
 import { dev } from '$app/environment';
 import { getBlogs } from '$lib/server/get-contents';
+import { error } from '@sveltejs/kit';
 
 const imageMap = import.meta.glob('$things/blog/blog-*/**.{svg,jpg,png}', {
   eager: true,  // Always load eagerly for SSR
@@ -13,6 +14,11 @@ const dynamicImageMap = import.meta.glob('$things/blog/blog-*/**.{svg,jpg,png}',
   eager: false,
   import: 'default'
 });
+
+const germanMarkdowns = /** @type {Record<string, () => Promise<string>>} */ (import.meta.glob('$things/blog/blog-*/content_de.md', {
+    query: '?raw',
+    import: 'default'
+}));
 
 const COPY_ICON_SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="code-copy-icon" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>`;
 
@@ -101,6 +107,7 @@ export async function load({ params }) {
     const allBlogs = await getBlogs();
     const blogShortUrl = params.blogShortUrl;
     const blogNum = allBlogs.find(blog => blog.metadata.url === blogShortUrl)?.num;
+    if (blogNum === undefined) error(404, 'Article not found');
 
     const markdown = (await import(`$things/blog/blog-${blogNum}/content.md?raw`)).default;
     
@@ -113,7 +120,7 @@ export async function load({ params }) {
     });
     
     converter.makeHtml(markdown)
-    const metadata = converter.getMetadata()
+    const metadata = /** @type {Record<string, string>} */ (converter.getMetadata())
 
     // Get icon path from metadata and load it
     const iconPath = `/src/things/blog/blog-${blogNum}/${metadata.icon || 'icon.svg'}`;
@@ -123,6 +130,28 @@ export async function load({ params }) {
 
     // Convert markdown again for the HTML (or reuse previous conversion)
     const markdownHTML = addCodeBlockChrome(converter.makeHtml(markdown))
+
+    const germanPath = `/src/things/blog/blog-${blogNum}/content_de.md`;
+    let german = null;
+    if (germanMarkdowns[germanPath]) {
+        const germanMarkdown = await germanMarkdowns[germanPath]();
+        const germanConverter = new showdown.Converter({
+            metadata: true,
+            extensions: [showdownHighlight({pre: true})]
+        });
+        german = {
+            markdownHTML: addCodeBlockChrome(germanConverter.makeHtml(germanMarkdown)),
+            metadata: {
+                ...metadata,
+                .../** @type {Record<string, string>} */ (germanConverter.getMetadata()),
+                title: metadata.title_de || /** @type {Record<string, string>} */ (germanConverter.getMetadata()).title || metadata.title,
+                url: metadata.url,
+                iconCredit: metadata.iconCredit,
+                iconCreditUrl: metadata.iconCreditUrl,
+                hidden: metadata.hidden
+            }
+        };
+    }
     
     const returnObj = {
         blogNum, 
@@ -130,6 +159,8 @@ export async function load({ params }) {
         icon: import.meta.env.SSR ? icon : icon.default,
         markdownHTML, 
         metadata,
+        german,
+        language: 'en',
         allBlogs
     };
 

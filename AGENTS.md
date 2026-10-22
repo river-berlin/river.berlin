@@ -1,0 +1,6 @@
+# Blog editing preferences
+
+- When asked to create a blog post, create only its structure (directory, frontmatter, and supplied image with attribution). Leave the article body to the author. Do not write blog prose for them.
+- `content.md` is the English article. An optional `content_de.md` in the same directory enables the German language option at `/de/blog/<slug>/`. The optional `title_de` field directly below `title` in `content.md` sets the German title; if empty, fall back to German frontmatter `title`, then the English title. German frontmatter is optional; translated `shortSummary` can be supplied there. Image attribution comes from `content.md`.
+- When asked to correct the author's German, correct only grammar in the German they have actually written. Preserve their meaning, voice, vocabulary, and non-native style; do not rewrite for native fluency or add content. Their goal is C1 German with as few grammatical errors as possible.
+- Open-Graph images use `/opengraph/blog/<number>.png` for English and `/opengraph/blog/de/<number>.png` for German. `npm run build-opengraph` generates both when `content_de.md` exists; `npm run build-opengraph -- --blog=22` regenerates only that article. German links without a German article return 404.
