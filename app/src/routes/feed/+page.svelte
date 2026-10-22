@@ -13,6 +13,7 @@
     interface ContentItem {
         num: number;
         metadata: Metadata;
+        germanTitle?: string | null;
     }
     
     interface PageData {
@@ -148,27 +149,32 @@
     <div class="flex flex-col w-full max-w-[600px] mx-auto">
         {#each data.blogs as blog }
             <div class="relative mb-4 w-full backdrop-blur-md bg-white/30 dark:bg-[#08324c]/30">
-                <a href="/blog/{blog.metadata.url}" class="relative flex flex-col p-1.5 mb-5 no-underline text-gray-900 dark:text-gray-100 group animate-underline">
+                <div class="relative flex flex-col p-1.5 mb-5 text-gray-900 dark:text-gray-100 group animate-underline">
                     <div class="flex flex-row items-left ml-[28px]">
                         {#if blog.metadata.icon_v2}
-                            <img src="/blog/blog-{blog.num}/icon.jpg" alt="" width="100" class="mr-3 transition-all duration-2000 group-hover:hue-rotate-[151deg] rounded-xl">
+                            <a href="{blog.germanTitle ? '/de' : ''}/blog/{blog.metadata.url}/" aria-label={blog.germanTitle || blog.metadata.title} class="shrink-0 mr-3">
+                                <img src="/blog/blog-{blog.num}/icon.jpg" alt="" width="100" class="transition-all duration-2000 group-hover:hue-rotate-[151deg] rounded-xl">
+                            </a>
                         {/if}
 
-                        <div class="flex flex-col h-[100px]">
+                        <div class="flex flex-col min-h-[100px]">
                             <div>
-                                <div class="font-medium">{blog.metadata.title}</div>
+                                {#if blog.germanTitle}
+                                    <a href="/de/blog/{blog.metadata.url}/" lang="de" hreflang="de" class="block font-medium no-underline hover:underline">{blog.germanTitle}</a>
+                                {/if}
+                                <a href="/blog/{blog.metadata.url}/" lang="en" hreflang="en" class="block no-underline hover:underline {blog.germanTitle ? 'mt-1 text-sm text-gray-600 dark:text-gray-300' : 'font-medium'}">{blog.metadata.title}</a>
                                 <p class="text-xs text-gray-500 dark:text-gray-400 relative pb-2">
                                     {formatDate(blog.metadata.dated)}
                                     <span class="absolute bottom-0 left-0 w-[200px] h-1.5 curly-underline opacity-0 group-hover:opacity-100 transition-opacity duration-300"></span>
                                 </p>
                             </div>
                             <div class="flex mt-3">
-                                <span class="text-sm font-medium text-primary-700 dark:text-primary-400 whitespace-nowrap">Blog #{blog.num}</span>
+                                <a href="{blog.germanTitle ? '/de' : ''}/blog/{blog.metadata.url}/" class="text-sm font-medium text-primary-700 dark:text-primary-400 whitespace-nowrap no-underline">Blog #{blog.num}</a>
                                 <img src="/scroll.svg" alt="" width="15" class="ml-3 transition-all duration-2000 group-hover:hue-rotate-[151deg]">
                             </div>
                         </div>
                     </div>
-                </a>
+                </div>
             </div>
         {/each}
     </div>
