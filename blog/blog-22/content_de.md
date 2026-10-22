@@ -1,3 +1,9 @@
+> As fun as AI is, we built so much bad software over the last 30 years, and now the universe is punishing us for our sins.
+
+[source](https://simonwillison.net/2026/Oct/22/armin-ronacher/) 
+
+<p class="text-sm">Notiz: Die Quelle verweist auf die Website von Simon Willison, der selbst einen Link zu X benutzt. Ich habe kein Interesse, einen Link zu X zu benutzen, weil es einer faschistischen Person gehört.</p>
+
 Offensichtlich gibt es eine Junior-Entwickler-Krise jetzt, und ganz viele Softwareentwickler haben ihre Jobs verloren, weil Unternehmen glauben, dass wir [Softwareentwickler mit KI ersetzen können](https://digitaleconomy.stanford.edu/project/indicators/canaries-dashboard/)
 
 Aber hier ist die Behauptung, die ich mache. Ich glaube, KI hat das "altes Softwareentwicklungmodell" ersetzt, aber niemand kann das alte Modell noch nutzen.
