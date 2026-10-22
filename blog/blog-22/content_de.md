@@ -2,7 +2,7 @@
 
 [source](https://simonwillison.net/2026/Oct/22/armin-ronacher/) 
 
-<p class="text-sm">Notiz : die Quelle ist für Simon Willison's website, simon's website redirects to X, I have no interest in linking to X, given it's run by a facist.</p>
+<p class="text-sm">Notiz: Die Quelle verweist auf die Website von Simon Willison, der selbst einen Link zu X benutzt. Ich habe kein Interesse, einen Link zu X zu benutzen, weil es einer faschistischen Person gehört.</p>
 
 Offensichtlich gibt es eine Junior-Entwickler-Krise jetzt, und ganz viele Softwareentwickler haben ihre Jobs verloren, weil Unternehmen glauben, dass wir [Softwareentwickler mit KI ersetzen können](https://digitaleconomy.stanford.edu/project/indicators/canaries-dashboard/)
 
