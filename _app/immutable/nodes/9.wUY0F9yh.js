@@ -1,0 +1,1 @@
+import"../chunks/disclose-version.D0t62r9D.js";import"../chunks/legacy.s7KT5goK.js";import{p as a}from"../chunks/props.BAyGFd4f.js";import{component as r}from"./7.DzMl5Ct5.js";function c(t,o){let p=a(o,"data",8);r(t,{get data(){return p()}})}export{c as component};
